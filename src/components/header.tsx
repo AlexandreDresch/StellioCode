@@ -43,7 +43,7 @@ export default function Header() {
 
   return (
     <div>
-      <header className="flex items-center justify-between px-6 py-4 shadow-lg xl:px-32">
+      <header className="absolute flex min-w-full items-center justify-between px-6 py-4 shadow-lg xl:px-32">
         <div className="flex items-center gap-4">
           <Ghost size="32" />
           <h1 className="text-2xl">StellioCode</h1>
