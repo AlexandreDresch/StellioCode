@@ -4,6 +4,14 @@ module.exports = {
     content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
   	extend: {
+		animation: {
+			'gradient': 'gradient 8s linear infinite',
+		  },
+		  keyframes: {
+			'gradient': {
+			  to: { 'background-position': '200% center' },
+			}
+		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
