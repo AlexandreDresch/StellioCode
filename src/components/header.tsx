@@ -43,30 +43,34 @@ export default function Header() {
 
   return (
     <div>
-      <header className="absolute flex min-w-full items-center justify-between px-6 py-4 shadow-lg xl:px-32">
+      <header className="absolute flex min-w-full items-center justify-between px-6 py-4 shadow-lg dark:bg-black xl:px-32">
         <div className="flex items-center gap-4">
           <Ghost size="32" />
-          <h1 className="text-2xl">StellioCode</h1>
+          <h1 className="text-2xl transition-all duration-300 hover:bg-gradient-to-r hover:from-sky-700 hover:to-sky-100 hover:bg-clip-text hover:text-transparent">
+            StellioCode
+          </h1>
         </div>
         <ul className="hidden items-center gap-12 text-base font-semibold md:flex md:gap-4 xl:flex xl:gap-12">
-          <li className="relative cursor-pointer after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-black after:transition-all after:duration-300 hover:after:w-full">
-            Sobre
-          </li>
-          <li className="relative cursor-pointer after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-black after:transition-all after:duration-300 hover:after:w-full">
-            Portfólio
-          </li>
-          <li className="relative cursor-pointer after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-black after:transition-all after:duration-300 hover:after:w-full">
-            Planos
-          </li>
-          <li className="relative cursor-pointer after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-black after:transition-all after:duration-300 hover:after:w-full">
-            Entre em contato
-          </li>
+          <ul className="hidden items-center gap-12 text-base font-semibold md:flex md:gap-4 xl:flex xl:gap-12">
+            <li className="relative cursor-pointer after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-blue-400 after:transition-all after:duration-300 hover:bg-gradient-to-r hover:from-sky-700 hover:to-purple-300 hover:bg-clip-text hover:text-transparent hover:after:w-full">
+              Sobre
+            </li>
+            <li className="relative cursor-pointer after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-blue-400 after:transition-all after:duration-300 hover:bg-gradient-to-r hover:from-sky-700 hover:to-purple-300 hover:bg-clip-text hover:text-transparent hover:after:w-full">
+              Portfólio
+            </li>
+            <li className="relative cursor-pointer after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-blue-400 after:transition-all after:duration-300 hover:bg-gradient-to-r hover:from-sky-700 hover:to-purple-300 hover:bg-clip-text hover:text-transparent hover:after:w-full">
+              Planos
+            </li>
+            <li className="relative cursor-pointer after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-blue-400 after:transition-all after:duration-300 hover:bg-gradient-to-r hover:from-sky-700 hover:to-purple-300 hover:bg-clip-text hover:text-transparent hover:after:w-full">
+              Entre em contato
+            </li>
+          </ul>
         </ul>
 
-        <div className="relative hidden items-center justify-center gap-4 font-semibold md:flex">
+        <div className="relative hidden items-center justify-center font-semibold md:flex">
           <div className="flex items-center space-x-2">
             <Sun
-              className={`w-5 text-yellow-500 ${isChecked ? "opacity-50" : "opacity-100"}`}
+              className={`w-5 text-yellow-500 ${isChecked ? "opacity-40" : "opacity-100"}`}
             />
 
             <Switch
@@ -75,7 +79,7 @@ export default function Header() {
               onCheckedChange={handleSwitchChange}
             />
             <Moon
-              className={`w-5 text-gray-500 ${isChecked ? "opacity-100" : "opacity-50"}`}
+              className={`w-5 text-gray-500 ${isChecked ? "opacity-100" : "opacity-40"}`}
             />
           </div>
         </div>

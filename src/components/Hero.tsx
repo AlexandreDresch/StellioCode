@@ -62,19 +62,19 @@ const AnimatedText = ({ text }: { text: string }) => {
 
 export default function Hero() {
   return (
-    <div className="my-10 flex min-h-screen flex-col items-center justify-center md:h-lvh xl:min-h-lvh">
+    <div className="my-10 flex min-h-screen flex-col items-center justify-center xl:min-h-lvh">
       <main className="flex items-center justify-center xl:gap-24">
         <div className="m-4 flex flex-col justify-center gap-5">
           {/* <Section> */}
-          <div className="text-5xl lg:text-7xl lg:font-semibold">
+          <div className="text-5xl md:text-7xl lg:text-7xl lg:font-semibold">
             {/* <FadeInText text="Bem-vindo a" /> */}
             <h2>Bem-vindo a</h2>
           </div>
-          <div className="animate-gradient bg-[linear-gradient(to_right,theme(colors.indigo.400),theme(colors.indigo.100),theme(colors.sky.400),theme(colors.fuchsia.400),theme(colors.sky.400),theme(colors.indigo.100),theme(colors.indigo.400))] bg-[length:200%_auto] bg-clip-text text-6xl font-semibold text-transparent">
+          <div className="animate-gradient bg-[linear-gradient(to_right,theme(colors.indigo.400),theme(colors.indigo.100),theme(colors.sky.400),theme(colors.fuchsia.400),theme(colors.sky.400),theme(colors.indigo.100),theme(colors.indigo.400))] bg-[length:200%_auto] bg-clip-text text-6xl font-semibold text-transparent md:text-7xl">
             <AnimatedText text="StellioCode" />
           </div>
 
-          <p className="mt-4 p-4 text-left text-3xl text-slate-500 xl:text-4xl">
+          <p className="mt-4 p-4 text-left text-3xl text-slate-500 md:text-4xl xl:text-4xl">
             Onde sonhos viram websites!
           </p>
           {/* </Section> */}
