@@ -8,6 +8,7 @@ import {
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import Team from "@/components/team";
+import Approach from "@/components/approach";
 
 export default function About() {
   return (
@@ -19,12 +20,12 @@ export default function About() {
       </header>
 
       <main className="flex min-h-screen flex-col">
-        <section className="missaovalores-container lg:h-min-h-[80vh] mt-6 flex items-center justify-center bg-[#f9faf9] p-4 dark:bg-gray-900 dark:text-gray-100">
+        <section className="missaovalores-container mt-6 flex items-start justify-center bg-[url('bg-missaovalores-light.svg')] bg-cover bg-center bg-no-repeat p-4 dark:bg-[url('bg-missaovalores-dark.svg')] dark:text-gray-100 lg:h-[80vh]">
           <div className="container mx-auto flex flex-col items-center justify-center sm:mt-6 lg:flex-row">
             <div className="flex flex-col items-center justify-center rounded-sm p-4 text-center lg:mr-12 lg:max-w-md lg:items-start lg:text-left xl:max-w-lg">
               <h1 className="text-6xl font-bold leading-none text-gray-800 dark:text-white sm:text-7xl">
                 Nossa{" "}
-                <span className="tracking-wider text-violet-600">Missão</span>
+                <span className="tracking-wider text-violet-800">Missão</span>
               </h1>
               <p className="mb-6 mt-6 text-justify text-lg text-gray-600 dark:text-gray-300 sm:mb-12">
                 Aqui na{" "}
@@ -53,7 +54,7 @@ export default function About() {
               </p>
             </div>
 
-            <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-8 grid cursor-pointer grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
               <div className="flex transform flex-col items-center rounded-lg bg-white p-4 shadow-lg transition duration-300 hover:scale-105 dark:bg-gray-800">
                 <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 p-3 text-blue-500 shadow-md dark:bg-blue-900">
                   <FontAwesomeIcon icon={faLightbulb} />
@@ -130,16 +131,18 @@ export default function About() {
           </div>
         </section>
 
-        <section className="equipe-container flex items-center justify-center bg-gray-50 py-12 dark:bg-gray-900 lg:max-h-screen">
+        <section className="equipe-container flex items-center justify-center bg-[url('bg-equipe-light.svg')] bg-cover bg-center bg-no-repeat py-12 dark:bg-[url('bg-equipe-dark.svg')] lg:max-h-screen">
           <div className="container mx-auto text-center">
-            <h1 className="mb-6 text-4xl font-bold text-black dark:text-white">
+            <h1 className="mb-6 text-4xl font-bold text-gray-800 dark:text-white">
               Conheça nosso time de desenvolvedores:
             </h1>
             <Team />
           </div>
         </section>
 
-        <section className="approach-container"></section>
+        <section className="approach-container bg-[url('bg-approach-light.svg')] bg-cover bg-center bg-no-repeat text-center dark:bg-[url('bg-approach-dark.svg')] dark:text-gray-100">
+          <Approach />
+        </section>
 
         <section className="stacks-container"></section>
 

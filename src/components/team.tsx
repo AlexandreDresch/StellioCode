@@ -93,11 +93,11 @@ export default function Team() {
   ];
 
   return (
-    <div className="flex flex-wrap justify-center gap-6">
+    <div className="group flex cursor-pointer flex-wrap justify-center gap-6">
       {members.map((member, index) => (
         <div
           key={index}
-          className="flex max-w-xs flex-col justify-center rounded-xl bg-gray-100 p-6 text-gray-800 shadow-md transition-colors duration-500 dark:bg-gray-900 dark:text-gray-200 sm:px-12"
+          className="flex max-w-xs flex-col justify-center rounded-xl bg-gray-100 p-6 text-gray-800 opacity-100 shadow-md transition-opacity duration-500 hover:!opacity-100 group-hover:opacity-50 dark:bg-gray-900 dark:text-gray-200 sm:px-12"
         >
           <img
             src={member.image}
@@ -144,7 +144,7 @@ export default function Team() {
               </a>
               <a
                 rel="noopener noreferrer"
-                href={`mailto:${member.email}`}
+                href={member.email}
                 aria-label="Email"
                 className="rounded-md p-2 text-gray-700 transition-colors hover:text-blue-600 dark:text-gray-400 hover:dark:text-violet-400"
               >
