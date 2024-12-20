@@ -4,6 +4,7 @@ import {
   ComputerIcon,
   GhostIcon,
   LayoutDashboardIcon,
+  LogOutIcon,
   PanelBottomIcon,
   Settings2Icon,
 } from "lucide-react";
@@ -26,7 +27,7 @@ import {
 export default function Sidebar() {
   return (
     <div className="flex w-full flex-col bg-muted/40">
-      <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 border-r bg-background sm:flex">
+      <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col justify-between border-r bg-background sm:flex">
         <nav className="flex flex-col items-center gap-4 px-2 py-4">
           <TooltipProvider>
             <Tooltip>
@@ -116,6 +117,24 @@ export default function Sidebar() {
             </div>
           </TooltipProvider>
         </nav>
+
+        <nav className="flex flex-col items-center gap-4 px-2 py-4">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  to={"/auth"}
+                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-red-500"
+                >
+                  <LogOutIcon className="size-5 transition-all" />
+                  <span className="sr-only">Sair</span>
+                </Link>
+              </TooltipTrigger>
+
+              <TooltipContent side="right">Sair</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </nav>
       </aside>
 
       <div className="flex flex-col sm:hidden sm:gap-4 sm:py-4 sm:pl-14">
@@ -182,6 +201,16 @@ export default function Sidebar() {
                 >
                   <Settings2Icon className="size-5 transition-all" />
                   <span>Configurações</span>
+                </Link>
+              </nav>
+
+              <nav className="grid gap-6 text-lg font-medium fixed bottom-4 left-6">
+                <Link
+                  to={"/auth"}
+                  className="flex items-center gap-4 text-muted-foreground hover:text-red-500"
+                >
+                  <LogOutIcon className="size-5 transition-all" />
+                  <span>Sair</span>
                 </Link>
               </nav>
             </SheetContent>
