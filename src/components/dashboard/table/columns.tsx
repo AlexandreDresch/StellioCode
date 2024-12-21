@@ -10,6 +10,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Checkbox } from "@/components/ui/checkbox";
+import { cn, getProjectStatusColor, translateProjectStatus } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 export type Project = {
   id: string;
@@ -21,12 +24,49 @@ export type Project = {
 
 export const columns: ColumnDef<Project>[] = [
   {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Selecionar todos"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Selecionar linha"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: "status",
     header: "Status",
+    cell: ({ row }) => {
+      const status = row.getValue("status") as
+        | "pending"
+        | "in_progress"
+        | "completed"
+        | "cancelled";
+      const formattedStatus = translateProjectStatus(status);
+      const badgeColor = getProjectStatusColor(status);
+
+      return (
+        <Badge variant="outline" className={cn("rounded-sm", badgeColor)}>
+          {formattedStatus}
+        </Badge>
+      );
+    },
   },
   {
     accessorKey: "title",
-    header: "Nome",
+    header: "Projeto",
   },
   {
     accessorKey: "client",
@@ -70,15 +110,15 @@ export const columns: ColumnDef<Project>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuLabel>Ações</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(payment.id)}
             >
-              Copy payment ID
+              Copiar payment ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem>Ver Cliente</DropdownMenuItem>
+            <DropdownMenuItem>Ver Time</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
