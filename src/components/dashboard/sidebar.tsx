@@ -7,6 +7,7 @@ import {
   LogOutIcon,
   PanelBottomIcon,
   Settings2Icon,
+  UserPlusIcon,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import {
@@ -57,6 +58,20 @@ export default function Sidebar() {
                 </TooltipTrigger>
 
                 <TooltipContent side="right">Início</TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link
+                    to={"#clients"}
+                    className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+                  >
+                    <UserPlusIcon className="size-5 transition-all" />
+                    <span className="sr-only">Clientes</span>
+                  </Link>
+                </TooltipTrigger>
+
+                <TooltipContent side="right">Clientes</TooltipContent>
               </Tooltip>
 
               <Tooltip>
@@ -172,6 +187,14 @@ export default function Sidebar() {
                 </Link>
 
                 <Link
+                  to={"#clients"}
+                  className="flex items-center gap-4 text-muted-foreground hover:text-foreground"
+                >
+                  <UserPlusIcon className="size-5 transition-all" />
+                  <span>Clientes</span>
+                </Link>
+
+                <Link
                   to={"#developers"}
                   className="flex items-center gap-4 text-muted-foreground hover:text-foreground"
                 >
@@ -204,7 +227,7 @@ export default function Sidebar() {
                 </Link>
               </nav>
 
-              <nav className="grid gap-6 text-lg font-medium fixed bottom-4 left-6">
+              <nav className="fixed bottom-4 left-6 grid gap-6 text-lg font-medium">
                 <Link
                   to={"/auth"}
                   className="flex items-center gap-4 text-muted-foreground hover:text-red-500"

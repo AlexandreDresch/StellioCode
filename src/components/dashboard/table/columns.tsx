@@ -58,7 +58,7 @@ export const columns: ColumnDef<Project>[] = [
       const badgeColor = getProjectStatusColor(status);
 
       return (
-        <Badge variant="outline" className={cn("rounded-sm", badgeColor)}>
+        <Badge className={cn("rounded-lg hover:bg-zinc-950", badgeColor)}>
           {formattedStatus}
         </Badge>
       );

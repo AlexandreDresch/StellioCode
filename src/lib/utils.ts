@@ -22,10 +22,10 @@ export function getProjectStatusColor(
   status: "in_progress" | "pending" | "completed" | "cancelled",
 ): string {
   const colors: Record<typeof status, string> = {
-    in_progress: "border-orange-500",
-    pending: "border-yellow-500",
-    completed: "border-green-500",
-    cancelled: "border-red-500",
+    in_progress: "bg-cyan-500",
+    pending: "bg-yellow-500",
+    completed: "bg-green-500",
+    cancelled: "bg-red-500",
   };
 
   return colors[status];
