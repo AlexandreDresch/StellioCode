@@ -170,7 +170,7 @@ export default function AdminDashboard() {
           <CardHeader>
             <div className="flex items-center justify-center">
               <CardTitle className="select-none text-lg text-gray-800 sm:text-xl">
-                Clientes
+                Projetos
               </CardTitle>
               <CogIcon className="ml-auto size-4" />
             </div>

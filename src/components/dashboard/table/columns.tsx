@@ -13,6 +13,8 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn, getProjectStatusColor, translateProjectStatus } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
+import TeamEditModal from "../modals/team-edit-modal";
 
 export type Project = {
   id: string;
@@ -117,8 +119,19 @@ export const columns: ColumnDef<Project>[] = [
               Copiar payment ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Ver Cliente</DropdownMenuItem>
-            <DropdownMenuItem>Ver Time</DropdownMenuItem>
+
+            <DropdownMenuItem asChild>
+              <Link
+                to={`/acompanhamento/${row.original.id}`}
+                className="cursor-pointer"
+              >
+                Acompanhamento
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem asChild>
+              <TeamEditModal />
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
