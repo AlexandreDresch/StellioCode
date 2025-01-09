@@ -14,7 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn, getProjectStatusColor, translateProjectStatus } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import TeamEditModal from "../modals/team-edit-modal";
+import TeamEditModal from "../modals/team-edit-modal/team-edit-modal";
 
 export type Project = {
   id: string;
