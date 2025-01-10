@@ -3,6 +3,7 @@ export interface IDeveloperCardProps {
   email: string;
   avatarUrl: string;
   role: string;
+  projectsCount: number;
   githubUrl: string;
   techStack: string[];
 }

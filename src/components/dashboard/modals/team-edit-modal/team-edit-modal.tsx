@@ -30,11 +30,13 @@ export default function TeamEditModal() {
 
         <div className="flex gap-2">
           <ScrollArea className="h-[400px] w-1/2 rounded-md border p-4">
-            <DeveloperCard {...developersData[0]}/>
+            <h4 className="text-sm font-medium">Desenvolvedores</h4>
+            <DeveloperCard {...developersData[0]} />
           </ScrollArea>
 
           <ScrollArea className="h-[400px] w-1/2 rounded-md border p-4">
-            <DeveloperCard {...developersData[1]}/>
+            <h4 className="text-sm font-medium">Time</h4>
+            <DeveloperCard {...developersData[1]} />
           </ScrollArea>
         </div>
       </DialogContent>
