@@ -1,3 +1,4 @@
+import { Developer } from "@/components/dashboard/table/columns";
 import { IDeveloper } from "@/types";
 
 export const developersData: IDeveloper[] = [
@@ -55,5 +56,78 @@ export const developersData: IDeveloper[] = [
     projectsCount: 4,
     githubUrl: "https://github.com/evelynwhite",
     techStack: ["React Native", "Flutter", "Firebase"],
+  },
+];
+
+export const mockDevelopers: Developer[] = [
+  {
+    id: "dev1",
+    name: "Alice Santos",
+    activeProjectsCount: 3,
+    status: "approved",
+    level: "senior",
+  },
+  {
+    id: "dev2",
+    name: "Carlos Pereira",
+    activeProjectsCount: 0,
+    status: "pending",
+    level: "junior",
+  },
+  {
+    id: "dev3",
+    name: "Beatriz Costa",
+    activeProjectsCount: 5,
+    status: "approved",
+    level: "mid_level",
+  },
+  {
+    id: "dev4",
+    name: "Diego Almeida",
+    activeProjectsCount: 0,
+    status: "rejected",
+    level: "senior",
+  },
+  {
+    id: "dev5",
+    name: "Fernanda Oliveira",
+    activeProjectsCount: 0,
+    status: "pending",
+    level: "mid_level",
+  },
+  {
+    id: "dev6",
+    name: "Gabriel Souza",
+    activeProjectsCount: 4,
+    status: "approved",
+    level: "junior",
+  },
+  {
+    id: "dev7",
+    name: "Helena Martins",
+    activeProjectsCount: 6,
+    status: "approved",
+    level: "senior",
+  },
+  {
+    id: "dev8",
+    name: "Igor Ribeiro",
+    activeProjectsCount: 0,
+    status: "rejected",
+    level: "mid_level",
+  },
+  {
+    id: "dev9",
+    name: "Juliana Mendes",
+    activeProjectsCount: 0,
+    status: "pending",
+    level: "junior",
+  },
+  {
+    id: "dev10",
+    name: "Lucas Ferreira",
+    activeProjectsCount: 5,
+    status: "approved",
+    level: "senior",
   },
 ];
