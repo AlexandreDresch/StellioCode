@@ -1,8 +1,7 @@
-import { CogIcon } from "lucide-react";
+import { CalendarSearchIcon, CogIcon, ComputerIcon } from "lucide-react";
 
 import { DataTable } from "./table/data-table";
-import { columns } from "./table/columns";
-import { ColumnDef } from "@tanstack/react-table";
+import { columns, Developer, Project } from "./table/columns";
 import AreaChartGradient from "./charts/area-chart-gradient";
 import BarChartComponent from "./charts/bar-chart";
 import {
@@ -13,6 +12,9 @@ import {
   CardTitle,
 } from "../ui/card";
 import { projectsData } from "@/constants/projects";
+import { PieChartComponent } from "./charts/pie-chart";
+import { mockDevelopers } from "@/constants/developers";
+import { LineChartComponent } from "./charts/line-chart";
 
 export default function AdminDashboard() {
   return (
@@ -123,25 +125,87 @@ export default function AdminDashboard() {
           </CardHeader>
 
           <CardContent>
-            <DataTable
-              columns={
-                columns as ColumnDef<
-                  {
-                    id: string;
-                    title: string;
-                    client: string;
-                    price: number;
-                    status: string;
-                  },
-                  unknown
-                >[]
-              }
-              data={projectsData}
-            />
+            {projectsData?.length ? (
+              <DataTable<Project>
+                columns={columns<Project>("project")}
+                filterPlaceholder="Filtre pelo nome do projeto"
+                filterKey="title"
+                entityName="project"
+                data={projectsData}
+              />
+            ) : (
+              <div className="text-center text-muted-foreground">
+                Nenhum projeto disponível.
+              </div>
+            )}
           </CardContent>
         </Card>
 
         <AreaChartGradient />
+      </section>
+
+      <section className="mt-4 flex gap-4 max-md:flex-col">
+        <PieChartComponent />
+
+        <Card className="flex-1">
+          <CardHeader>
+            <div className="flex items-center justify-center">
+              <CardTitle className="select-none text-lg text-gray-800 sm:text-xl">
+                Desenvolvedores
+              </CardTitle>
+              <ComputerIcon className="ml-auto size-4" />
+            </div>
+          </CardHeader>
+
+          <CardContent>
+            {projectsData?.length ? (
+              <DataTable<Developer>
+                columns={columns<Developer>("developer")}
+                filterPlaceholder="Filtre por nome"
+                filterKey="name"
+                entityName="developer"
+                data={mockDevelopers}
+              />
+            ) : (
+              <div className="text-center text-muted-foreground">
+                Nenhum projeto disponível.
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </section>
+
+      <section className="mt-4 flex gap-4 flex-col">
+        
+
+        <Card className="flex-1">
+          <CardHeader>
+            <div className="flex items-center justify-center">
+              <CardTitle className="select-none text-lg text-gray-800 sm:text-xl">
+                Reuniões
+              </CardTitle>
+              <CalendarSearchIcon className="ml-auto size-4" />
+            </div>
+          </CardHeader>
+
+          <CardContent>
+            {projectsData?.length ? (
+              <DataTable<Project>
+                columns={columns<Project>("project")}
+                filterPlaceholder="Filtre pelo nome do projeto"
+                filterKey="title"
+                entityName="project"
+                data={projectsData}
+              />
+            ) : (
+              <div className="text-center text-muted-foreground">
+                Nenhum projeto disponível.
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <LineChartComponent />
       </section>
     </div>
   );
