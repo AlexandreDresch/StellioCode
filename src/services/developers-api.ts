@@ -1,17 +1,26 @@
 import api from "./api";
 
 export async function getDevelopersByProjectId({
-  postId,
+  projectId,
   token,
 }: {
-  postId: number;
+  projectId: string;
   token: string;
 }) {
-  const response = await api.get(`/api/admin/developers/${postId}`, {
+  const response = await api.get(`/api/admin/developers/project/${projectId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
+
+  return response.data;
+}
+
+export async function getDeveloperById({ developerId, token }: { developerId: string, token: string }) {
+  const response = await api.get(`/api/admin/developers/${developerId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    }});
 
   return response.data;
 }
