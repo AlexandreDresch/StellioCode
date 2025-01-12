@@ -19,9 +19,10 @@ import {
 
 import { IDeveloperCardProps } from "@/types";
 
-import { GithubIcon, PlusIcon } from "lucide-react";
+import { GithubIcon, MinusIcon, PlusIcon } from "lucide-react";
 
 export default function DeveloperCard({
+  id,
   avatarUrl,
   email,
   githubUrl,
@@ -29,6 +30,8 @@ export default function DeveloperCard({
   projectsCount,
   role,
   techStack,
+  isSelected,
+  onToggleSelect
 }: IDeveloperCardProps) {
   return (
     <Accordion type="single" collapsible>
@@ -101,8 +104,8 @@ export default function DeveloperCard({
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="outline">
-                      <PlusIcon />
+                    <Button variant="outline" onClick={() => onToggleSelect(id)}>
+                      {isSelected ? <MinusIcon /> : <PlusIcon />}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>

@@ -130,7 +130,7 @@ export const columns: ColumnDef<Project>[] = [
             </DropdownMenuItem>
 
             <DropdownMenuItem asChild>
-              <TeamEditModal />
+              <TeamEditModal projectId={row.original.id} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
