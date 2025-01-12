@@ -14,6 +14,16 @@ import {
 } from "@tanstack/react-table";
 
 import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import {
   Table,
   TableBody,
   TableCell,
@@ -29,16 +39,25 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { translateDeveloperStatus, translateProjectStatus } from "@/lib/utils";
+import { Developer, Project } from "./columns";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+interface DataTableProps<TData> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  columns: ColumnDef<TData, any>[];
   data: TData[];
+  filterPlaceholder?: string;
+  filterKey?: keyof TData;
+  entityName?: string;
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+  filterPlaceholder = "Filtre...",
+  filterKey,
+  entityName = "item",
+}: DataTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -66,17 +85,59 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  const statusOptions =
+    entityName === "developer"
+      ? ["pending", "approved", "rejected"]
+      : ["pending", "in_progress", "completed", "cancelled"];
+
   return (
     <div>
       <div className="flex items-center gap-1 py-4">
-        <Input
-          placeholder="Filtre por cliente..."
-          value={(table.getColumn("client")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("client")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+        {filterKey && (
+          <Input
+            placeholder={filterPlaceholder}
+            value={
+              (table
+                .getColumn(filterKey as string)
+                ?.getFilterValue() as string) ?? ""
+            }
+            onChange={(event) =>
+              table
+                .getColumn(filterKey as string)
+                ?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+        )}
+
+        <Select
+          onValueChange={(value) => {
+            table
+              .getColumn("status")
+              ?.setFilterValue(value === "all" ? undefined : value);
+          }}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Filtrar por status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Status</SelectLabel>
+              <SelectItem value="all">Ver Todos</SelectItem>
+              {statusOptions.map((status) => (
+                <SelectItem key={status} value={status}>
+                  {entityName === "developer"
+                    ? translateDeveloperStatus(
+                        status as Developer["status"],
+                      )
+                    : translateProjectStatus(
+                        status as Project["status"]
+                      )}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -88,22 +149,18 @@ export function DataTable<TData, TValue>({
             {table
               .getAllColumns()
               .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {typeof column.columnDef.header === "string"
-                      ? column.columnDef.header
-                      : column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
+              .map((column) => (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="capitalize"
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                >
+                  {typeof column.columnDef.header === "string"
+                    ? column.columnDef.header
+                    : "Preço"}
+                </DropdownMenuCheckboxItem>
+              ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -112,18 +169,16 @@ export function DataTable<TData, TValue>({
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  );
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -158,8 +213,9 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       <div className="flex-1 pt-2 text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} de{" "}
-        {table.getFilteredRowModel().rows.length} cliente(s) selecionados.
+        Mostrando {table.getFilteredRowModel().rows.length}{" "}
+        {entityName === "developer" ? "desenvolvedor" : "projeto"}(
+        {entityName === "developer" ? "es" : "s"}).
       </div>
 
       <div className="flex items-center justify-end space-x-2 py-4">
