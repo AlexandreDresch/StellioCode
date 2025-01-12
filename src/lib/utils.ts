@@ -30,3 +30,39 @@ export function getProjectStatusColor(
 
   return colors[status];
 }
+
+export function translateDeveloperStatus(
+  status: "pending" | "approved" | "rejected",
+): string {
+  const translations: Record<typeof status, string> = {
+    pending: "Pendente",
+    approved: "Aprovado",
+    rejected: "Rejeitado",
+  };
+
+  return translations[status];
+}
+
+export function translateDeveloperLevel(
+  status: "junior" | "mid_level" | "senior",
+): string {
+  const translations: Record<typeof status, string> = {
+    junior: "Júnior",
+    mid_level: "Pleno",
+    senior: "Sênior",
+  };
+
+  return translations[status];
+}
+
+export function getDeveloperStatusColor(
+  status: "pending" | "approved" | "rejected",
+): string {
+  const colors: Record<typeof status, string> = {
+    pending: "bg-yellow-500",
+    approved: "bg-green-500",
+    rejected: "bg-red-500",
+  };
+
+  return colors[status];
+}
