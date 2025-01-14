@@ -1,7 +1,8 @@
 import { CalendarSearchIcon, CogIcon, ComputerIcon } from "lucide-react";
 
 import { DataTable } from "./table/data-table";
-import { columns, Developer, Project } from "./table/columns";
+
+import { Developer, Event, Project } from "@/types";
 import AreaChartGradient from "./charts/area-chart-gradient";
 import BarChartComponent from "./charts/bar-chart";
 import {
@@ -14,9 +15,25 @@ import {
 import { projectsData } from "@/constants/projects";
 import { PieChartComponent } from "./charts/pie-chart";
 import { mockDevelopers } from "@/constants/developers";
-import { LineChartComponent } from "./charts/line-chart";
+import Calendar from "./calendar";
+import { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { mockEvents } from "@/constants/events";
+import { columns } from "./table/columns";
 
 export default function AdminDashboard() {
+  const [meetingsViewModel, setMeetingsViewModel] = useState<
+    "calendar" | "list"
+  >("calendar");
+
   return (
     <div className="p-4 sm:ml-14">
       <section className="flex gap-4">
@@ -175,9 +192,7 @@ export default function AdminDashboard() {
         </Card>
       </section>
 
-      <section className="mt-4 flex gap-4 flex-col">
-        
-
+      <section className="mt-4 flex flex-col gap-4">
         <Card className="flex-1">
           <CardHeader>
             <div className="flex items-center justify-center">
@@ -188,24 +203,38 @@ export default function AdminDashboard() {
             </div>
           </CardHeader>
 
-          <CardContent>
-            {projectsData?.length ? (
-              <DataTable<Project>
-                columns={columns<Project>("project")}
-                filterPlaceholder="Filtre pelo nome do projeto"
-                filterKey="title"
-                entityName="project"
-                data={projectsData}
-              />
+          <CardContent className="space-y-4">
+            <Select
+              onValueChange={(value: "calendar" | "list") => {
+                setMeetingsViewModel(value);
+              }}
+            >
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Selecione a visualização" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Visualização</SelectLabel>
+                  <SelectItem value="calendar">Calendário</SelectItem>
+
+                  <SelectItem value="list">Lista</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+
+            {meetingsViewModel === "calendar" ? (
+              <Calendar events={mockEvents} />
             ) : (
-              <div className="text-center text-muted-foreground">
-                Nenhum projeto disponível.
-              </div>
+              <DataTable<Event>
+                columns={columns<Event>("event")}
+                filterPlaceholder="Filtre por cliente"
+                filterKey="client"
+                entityName="meeting"
+                data={mockEvents}
+              />
             )}
           </CardContent>
         </Card>
-
-        <LineChartComponent />
       </section>
     </div>
   );

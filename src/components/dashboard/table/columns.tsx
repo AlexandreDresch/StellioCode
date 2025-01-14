@@ -13,9 +13,11 @@ import {
 import {
   cn,
   getDeveloperStatusColor,
+  getEventStatusColor,
   getProjectStatusColor,
   translateDeveloperLevel,
   translateDeveloperStatus,
+  translateEventStatus,
   translateProjectStatus,
 } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -23,25 +25,14 @@ import { Link } from "react-router-dom";
 import TeamEditModal from "../modals/team-edit-modal/team-edit-modal";
 import { RemoveDeveloperModal } from "../modals/remove-developer-modal";
 import { EditDeveloperModal } from "../modals/edit-developer-modal";
+import { Developer, Event, Project } from "@/types";
 
-export type Project = {
-  id: string;
-  title: string;
-  client: string;
-  price: number;
-  status: "pending" | "in_progress" | "completed" | "cancelled";
-};
-
-export type Developer = {
-  id: string;
-  name: string;
-  activeProjectsCount: number;
-  status: "pending" | "approved" | "rejected";
-  level: "junior" | "mid_level" | "senior";
-};
-
-export function columns<T extends Project | Developer>(
-  type: T extends Project ? "project" : "developer",
+export function columns<T extends Project | Developer | Event>(
+  type: T extends Project
+    ? "project"
+    : T extends Developer
+      ? "developer"
+      : "event",
 ): ColumnDef<T>[] {
   return [
     ...(type === "project"
@@ -73,20 +64,18 @@ export function columns<T extends Project | Developer>(
           },
           {
             accessorKey: "price",
-            header: ({ column }: { column: Column<T> }) => {
-              return (
-                <Button
-                  variant="ghost"
-                  className="pl-0"
-                  onClick={() =>
-                    column.toggleSorting(column.getIsSorted() === "asc")
-                  }
-                >
-                  Preço
-                  <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-              );
-            },
+            header: ({ column }: { column: Column<T> }) => (
+              <Button
+                variant="ghost"
+                className="pl-0"
+                onClick={() =>
+                  column.toggleSorting(column.getIsSorted() === "asc")
+                }
+              >
+                Preço
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+            ),
             cell: ({ row }: { row: Row<T> }) => {
               const amount = parseFloat(row.getValue("price"));
               const formatted = new Intl.NumberFormat("pt-BR", {
@@ -98,7 +87,9 @@ export function columns<T extends Project | Developer>(
             },
           },
         ]
-      : [
+      : []),
+    ...(type === "developer"
+      ? [
           {
             accessorKey: "status",
             header: "Status",
@@ -138,11 +129,54 @@ export function columns<T extends Project | Developer>(
               </span>
             ),
           },
-        ]),
+        ]
+      : []),
+    ...(type === "event"
+      ? [
+          {
+            accessorKey: "status",
+            header: "Status",
+            cell: ({ row }: { row: Row<T> }) => {
+              const status = row.getValue("status") as Event["status"];
+              const formattedStatus = translateEventStatus(status);
+              const badgeColor = getEventStatusColor(status);
+
+              return (
+                <Badge
+                  className={cn("rounded-lg hover:bg-zinc-950", badgeColor)}
+                >
+                  {formattedStatus}
+                </Badge>
+              );
+            },
+          },
+          {
+            accessorKey: "project",
+            header: "Projeto",
+          },
+          {
+            accessorKey: "client",
+            header: "Cliente",
+          },
+          {
+            accessorKey: "date",
+            header: "Data",
+            cell: ({ row }: { row: Row<T> }) => {
+              const date = row.getValue("date") as Event["date"];
+              const formattedDate = new Intl.DateTimeFormat("pt-BR", {
+                dateStyle: "short",
+                timeStyle: "short",
+              }).format(new Date(date));
+
+              return <Badge variant="outline">{formattedDate}</Badge>;
+            },
+          },
+        ]
+      : []),
     {
       id: "actions",
       header: "Ações",
-      cell: ({ row }) => {
+      cell: ({ row }: { row: Row<T> }) => {
         const item = row.original as T;
 
         return (
@@ -164,29 +198,24 @@ export function columns<T extends Project | Developer>(
               {type === "project" ? (
                 <>
                   <DropdownMenuItem asChild>
-                    <Link
-                      to={`/acompanhamento/${(row.original as Project).id}`}
-                      className="cursor-pointer"
-                    >
+                    <Link to={`/acompanhamento/${item.id}`}>
                       Acompanhamento
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <TeamEditModal projectId={(row.original as Project).id} />
+                    <TeamEditModal projectId={item.id} />
                   </DropdownMenuItem>
                 </>
-              ) : (
+              ) : type === "developer" ? (
                 <>
                   <DropdownMenuItem asChild>
-                    <EditDeveloperModal
-                      developerId={(row.original as Developer).id}
-                    />
+                    <EditDeveloperModal developerId={item.id} />
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <RemoveDeveloperModal />
                   </DropdownMenuItem>
                 </>
-              )}
+              ) : null}
             </DropdownMenuContent>
           </DropdownMenu>
         );
