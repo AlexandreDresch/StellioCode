@@ -1,4 +1,4 @@
-import { Developer } from "@/components/dashboard/table/columns";
+import { Developer } from "@/types";
 import { IDeveloper } from "@/types";
 
 export const developersData: IDeveloper[] = [

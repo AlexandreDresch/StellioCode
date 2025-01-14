@@ -1,4 +1,4 @@
-import { Project } from "@/components/dashboard/table/columns";
+import { Project } from "@/types";
 
 export const projectsData: Project[] = [
   {
