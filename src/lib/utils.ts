@@ -65,8 +65,8 @@ export const translateDeveloperLevel = (
 export const translateEventStatus = (status: Event["status"]) =>
   translateStatus(status, {
     pending: "Pendente",
-    approved: "Aprovado",
-    cancelled: "Cancelado",
+    approved: "Aprovada",
+    cancelled: "Cancelada",
   });
 
 export const getDeveloperStatusColor = (status: Developer["status"]) =>
