@@ -45,6 +45,8 @@ import { cn } from "@/lib/utils";
 import { addDays, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import MeetingDetails from "./meeting-details";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 export function MeetingManagementModal({ event }: { event: Event }) {
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -75,7 +77,19 @@ export function MeetingManagementModal({ event }: { event: Event }) {
             Clique em Salvar Alterações quando estiver pronto.
           </DialogDescription>
         </DialogHeader>
-        {isEditOpen ? (
+
+        <MeetingDetails
+          client={event.client}
+          date={event.date}
+          status={event.status}
+        />
+
+        <div className="grid w-full gap-1.5">
+          <Label htmlFor="message">Descrição</Label>
+          <Textarea value={"Projeto de um Marketplace..."} readOnly />
+        </div>
+
+        {isEditOpen && (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
@@ -181,13 +195,8 @@ export function MeetingManagementModal({ event }: { event: Event }) {
               </DialogFooter>
             </form>
           </Form>
-        ) : (
-          <MeetingDetails
-            client={event.client}
-            date={event.date}
-            status={event.status}
-          />
         )}
+
         <Button onClick={() => setIsEditOpen(!isEditOpen)} variant="ghost">
           <span>{isEditOpen ? "Fechar" : "Abrir"} Edição</span>
           {isEditOpen ? <PenOffIcon size={10} /> : <PenIcon size={10} />}
