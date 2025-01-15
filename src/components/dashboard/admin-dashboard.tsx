@@ -229,7 +229,7 @@ export default function AdminDashboard() {
                 columns={columns<Event>("event")}
                 filterPlaceholder="Filtre por cliente"
                 filterKey="client"
-                entityName="meeting"
+                entityName="event"
                 data={mockEvents}
               />
             )}

@@ -39,8 +39,12 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { translateDeveloperStatus, translateProjectStatus } from "@/lib/utils";
-import { Developer, Project } from "./columns";
+import {
+  translateDeveloperStatus,
+  translateEventStatus,
+  translateProjectStatus,
+} from "@/lib/utils";
+import { Developer, Project, Event } from "@/types";
 
 interface DataTableProps<TData> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -88,7 +92,9 @@ export function DataTable<TData>({
   const statusOptions =
     entityName === "developer"
       ? ["pending", "approved", "rejected"]
-      : ["pending", "in_progress", "completed", "cancelled"];
+      : entityName === "project"
+        ? ["pending", "in_progress", "completed", "cancelled"]
+        : ["pending", "approved", "cancelled"];
 
   return (
     <div>
@@ -127,12 +133,10 @@ export function DataTable<TData>({
               {statusOptions.map((status) => (
                 <SelectItem key={status} value={status}>
                   {entityName === "developer"
-                    ? translateDeveloperStatus(
-                        status as Developer["status"],
-                      )
-                    : translateProjectStatus(
-                        status as Project["status"]
-                      )}
+                    ? translateDeveloperStatus(status as Developer["status"])
+                    : entityName === "project"
+                      ? translateProjectStatus(status as Project["status"])
+                      : translateEventStatus(status as Event["status"])}
                 </SelectItem>
               ))}
             </SelectGroup>
@@ -214,8 +218,13 @@ export function DataTable<TData>({
       </div>
       <div className="flex-1 pt-2 text-sm text-muted-foreground">
         Mostrando {table.getFilteredRowModel().rows.length}{" "}
-        {entityName === "developer" ? "desenvolvedor" : "projeto"}(
-        {entityName === "developer" ? "es" : "s"}).
+        {entityName === "developer"
+          ? "desenvolvedor"
+          : entityName === "project"
+            ? "projeto"
+            : "coluna"}
+        ({entityName === "developer" ? "es" : "s"}
+        ).
       </div>
 
       <div className="flex items-center justify-end space-x-2 py-4">

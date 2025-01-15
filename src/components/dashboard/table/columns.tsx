@@ -26,6 +26,7 @@ import TeamEditModal from "../modals/team-edit-modal/team-edit-modal";
 import { RemoveDeveloperModal } from "../modals/remove-developer-modal";
 import { EditDeveloperModal } from "../modals/edit-developer-modal";
 import { Developer, Event, Project } from "@/types";
+import { MeetingManagementModal } from "../modals/meeting-management-modal/meeting-management-modal";
 
 export function columns<T extends Project | Developer | Event>(
   type: T extends Project
@@ -215,7 +216,11 @@ export function columns<T extends Project | Developer | Event>(
                     <RemoveDeveloperModal />
                   </DropdownMenuItem>
                 </>
-              ) : null}
+              ) : (
+                <DropdownMenuItem asChild>
+                  <MeetingManagementModal event={item as Event} />
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         );
