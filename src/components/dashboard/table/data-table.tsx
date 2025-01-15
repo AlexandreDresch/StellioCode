@@ -98,7 +98,7 @@ export function DataTable<TData>({
 
   return (
     <div>
-      <div className="flex items-center gap-1 py-4">
+      <div className="flex items-start gap-1 py-4 flex-col md:flex-row md:items-center">
         {filterKey && (
           <Input
             placeholder={filterPlaceholder}
