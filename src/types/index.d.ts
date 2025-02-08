@@ -38,3 +38,16 @@ export type Event = {
   status: "pending" | "approved" | "cancelled";
   date: Date;
 };
+
+export type SummaryMetric = {
+  change: number;
+  current: number;
+  previous: number;
+};
+
+export type Summary = {
+  totalRevenue: SummaryMetric;
+  completedProjects: SummaryMetric;
+  newProjects: SummaryMetric;
+  newClients: SummaryMetric;
+};
