@@ -1,10 +1,5 @@
 import { CogIcon } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import {
   ChartConfig,
   ChartContainer,
@@ -13,24 +8,58 @@ import {
 } from "../../ui/chart";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
-export default function BarChartComponent() {
+import { Summary } from "@/types";
+
+type BarChartComponentProps = {
+  summary: Summary | null;
+};
+
+export default function BarChartComponent({ summary }: BarChartComponentProps) {
+  if (!summary) {
+    return <p>Carregando...</p>;
+  }
+
+  const currentDate = new Date();
+  const currentMonth = currentDate.toLocaleString("pt-BR", { month: "long" });
+
+  const previousDate = new Date();
+  previousDate.setMonth(previousDate.getMonth() - 1);
+  const previousMonth = previousDate.toLocaleString("pt-BR", { month: "long" });
+
   const chartData = [
-    { slug: "Vendas", december: 186, november: 80 },
-    { slug: "Finalizados", december: 305, november: 200 },
-    { slug: "N. Projetos", december: 237, november: 120 },
-    { slug: "N. Clientes", december: 73, november: 190 },
+    {
+      slug: "Vendas",
+      [currentMonth]: summary.totalRevenue.current,
+      [previousMonth]: summary.totalRevenue.previous,
+    },
+    {
+      slug: "Finalizados",
+      [currentMonth]: summary.completedProjects.current,
+      [previousMonth]: summary.completedProjects.previous,
+    },
+    {
+      slug: "N. Projetos",
+      [currentMonth]: summary.newProjects.current,
+      [previousMonth]: summary.newProjects.previous,
+    },
+    {
+      slug: "N. Clientes",
+      [currentMonth]: summary.newClients.current,
+      [previousMonth]: summary.newClients.previous,
+    },
   ];
 
   const chartConfig = {
-    december: {
-      label: "Dezembro",
+    [currentMonth]: {
+      label: currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1),
       color: "#2563eb",
     },
-    november: {
-      label: "Novembro",
+    [previousMonth]: {
+      label: previousMonth.charAt(0).toUpperCase() + previousMonth.slice(1),
       color: "#60a5fa",
     },
   } satisfies ChartConfig;
+
   return (
     <Card className="hidden w-full md:block md:w-1/2 md:max-w-xl">
       <CardHeader>
@@ -54,13 +83,13 @@ export default function BarChartComponent() {
             />
             <ChartTooltip content={<ChartTooltipContent />} />
             <Bar
-              dataKey="december"
-              fill={chartConfig.december.color}
+              dataKey={currentMonth}
+              fill={chartConfig[currentMonth].color}
               radius={4}
             />
             <Bar
-              dataKey="november"
-              fill={chartConfig.november.color}
+              dataKey={previousMonth}
+              fill={chartConfig[previousMonth].color}
               radius={4}
             />
           </BarChart>

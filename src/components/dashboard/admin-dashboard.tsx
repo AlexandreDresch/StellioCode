@@ -16,7 +16,7 @@ import { projectsData } from "@/constants/projects";
 import { PieChartComponent } from "./charts/pie-chart";
 import { mockDevelopers } from "@/constants/developers";
 import Calendar from "./calendar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -28,11 +28,22 @@ import {
 } from "../ui/select";
 import { mockEvents } from "@/constants/events";
 import { columns } from "./table/columns";
+import CountUp from "react-countup";
+import useGetSummary from "@/hooks/api/useGetSummary";
 
 export default function AdminDashboard() {
   const [meetingsViewModel, setMeetingsViewModel] = useState<
     "calendar" | "list"
   >("calendar");
+
+  const token = "";
+
+  const { getSummary, summary } = useGetSummary();
+
+  useEffect(() => {
+    getSummary({ token });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="p-4 sm:ml-14">
@@ -52,7 +63,14 @@ export default function AdminDashboard() {
                   alt="Increase chart icon."
                   className="size-7"
                 />
-                <CardTitle className="font-semibold">R$ 5K</CardTitle>
+                <CardTitle className="font-semibold">
+                  <CountUp
+                    end={summary?.totalRevenue.current || 0}
+                    decimal=","
+                    prefix="R$ "
+                    decimals={2}
+                  />
+                </CardTitle>
 
                 <CardDescription className="text-[13px] font-medium">
                   Em Vendas
@@ -61,7 +79,11 @@ export default function AdminDashboard() {
 
               <CardContent>
                 <p className="text-xs font-medium text-orange-400">
-                  +10% em relação a novembro
+                  {summary?.totalRevenue.change !== undefined &&
+                  summary?.totalRevenue.change > 0
+                    ? "+"
+                    : ""}
+                  {summary?.totalRevenue.change}% em relação ao mês anterior
                 </p>
               </CardContent>
             </Card>
@@ -73,7 +95,9 @@ export default function AdminDashboard() {
                   alt="Battery icon."
                   className="size-7"
                 />
-                <CardTitle className="font-semibold">500</CardTitle>
+                <CardTitle className="font-semibold">
+                  <CountUp end={summary?.completedProjects.current || 0} />
+                </CardTitle>
 
                 <CardDescription className="text-[13px] font-medium">
                   Projetos Finalizados
@@ -82,7 +106,12 @@ export default function AdminDashboard() {
 
               <CardContent>
                 <p className="text-xs font-medium text-emerald-400">
-                  +8% em relação a novembro
+                  {summary?.completedProjects.change !== undefined &&
+                  summary?.completedProjects.change > 0
+                    ? "+"
+                    : ""}
+                  {summary?.completedProjects.change}% em relação ao mês
+                  anterior
                 </p>
               </CardContent>
             </Card>
@@ -90,7 +119,9 @@ export default function AdminDashboard() {
             <Card className="max-w-full">
               <CardHeader className="flex pb-0">
                 <img src="/icons/bag.svg" alt="Bag icon." className="size-7" />
-                <CardTitle className="font-semibold">20</CardTitle>
+                <CardTitle className="font-semibold">
+                  <CountUp end={summary?.newProjects.current || 0} />
+                </CardTitle>
 
                 <CardDescription className="text-[13px] font-medium">
                   Novos Projetos
@@ -99,7 +130,11 @@ export default function AdminDashboard() {
 
               <CardContent>
                 <p className="text-xs font-medium text-red-400">
-                  +5% em relação a novembro
+                  {summary?.newProjects.change !== undefined &&
+                  summary?.newProjects.change > 0
+                    ? "+"
+                    : ""}
+                  {summary?.newProjects.change}% em relação ao mês anterior
                 </p>
               </CardContent>
             </Card>
@@ -111,7 +146,9 @@ export default function AdminDashboard() {
                   alt="Increase chart icon."
                   className="size-7"
                 />
-                <CardTitle className="font-semibold">9</CardTitle>
+                <CardTitle className="font-semibold">
+                  <CountUp end={summary?.newClients.current || 0} />
+                </CardTitle>
 
                 <CardDescription className="text-[13px] font-medium">
                   Novos Clientes
@@ -120,14 +157,18 @@ export default function AdminDashboard() {
 
               <CardContent>
                 <p className="text-xs font-medium text-sky-400">
-                  +10% em relação a novembro
+                  {summary?.newClients.change !== undefined &&
+                  summary?.newClients.change > 0
+                    ? "+"
+                    : ""}
+                  {summary?.newClients.change}% em relação ao mês anterior
                 </p>
               </CardContent>
             </Card>
           </CardContent>
         </Card>
 
-        <BarChartComponent />
+        <BarChartComponent summary={summary} />
       </section>
 
       <section className="mt-4 flex gap-4 max-md:flex-col">
