@@ -1,4 +1,4 @@
-import { CogIcon } from "lucide-react";
+import { ScrollIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import {
   ChartConfig,
@@ -50,13 +50,13 @@ export default function BarChartComponent({ summary }: BarChartComponentProps) {
   ];
 
   const chartConfig = {
-    [currentMonth]: {
-      label: currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1),
-      color: "#2563eb",
-    },
     [previousMonth]: {
       label: previousMonth.charAt(0).toUpperCase() + previousMonth.slice(1),
-      color: "#60a5fa",
+      color: "#e466c9",
+    },
+    [currentMonth]: {
+      label: currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1),
+      color: "#5eeeb1",
     },
   } satisfies ChartConfig;
 
@@ -67,11 +67,11 @@ export default function BarChartComponent({ summary }: BarChartComponentProps) {
           <CardTitle className="select-none text-lg text-gray-800 sm:text-xl">
             Resumo
           </CardTitle>
-          <CogIcon className="ml-auto size-4" />
+          <ScrollIcon className="ml-auto size-4" />
         </div>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="mt-16 xl:mt-0">
         <ChartContainer config={chartConfig} className="min-h-52 w-full">
           <BarChart data={chartData}>
             <CartesianGrid vertical={false} />

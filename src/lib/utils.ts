@@ -96,3 +96,16 @@ export function formatDateToCustomString(date: Date): string {
 
   return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
+
+export function getCurrentMonthYear() {
+  const months = [
+    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+  ];
+
+  const now = new Date();
+  const month = months[now.getMonth()];
+  const year = now.getFullYear();
+
+  return `${month} ${year}`;
+}

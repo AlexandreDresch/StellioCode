@@ -30,13 +30,14 @@ import { mockEvents } from "@/constants/events";
 import { columns } from "./table/columns";
 import CountUp from "react-countup";
 import useGetSummary from "@/hooks/api/useGetSummary";
+import { getCurrentMonthYear } from "@/lib/utils";
 
 export default function AdminDashboard() {
   const [meetingsViewModel, setMeetingsViewModel] = useState<
     "calendar" | "list"
   >("calendar");
 
-  const token = "";
+  const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczOTQwNDE3NywiZXhwIjoxNzM5NDQwMTc3LCJyb2xlIjoiYWRtaW4ifQ.c-XQOQpmfpR1vJXmEhZ-pbonP8dpVefSaafDQcndUnE";
 
   const { getSummary, summary } = useGetSummary();
 
@@ -50,12 +51,14 @@ export default function AdminDashboard() {
       <section className="flex gap-4">
         <Card className="flex-1">
           <CardHeader>
-            <CardTitle className="font-semibold">Dezembro 2024</CardTitle>
+            <CardTitle className="font-semibold">
+              {getCurrentMonthYear()}
+            </CardTitle>
 
             <CardDescription>Resumo de vendas do mês atual.</CardDescription>
           </CardHeader>
 
-          <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <CardContent className="grid grid-cols-1 lg:mt-32 gap-4 md:grid-cols-2 xl:grid-cols-4">
             <Card className="max-w-full">
               <CardHeader className="flex pb-0">
                 <img
