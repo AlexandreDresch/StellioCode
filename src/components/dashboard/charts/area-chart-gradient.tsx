@@ -24,11 +24,11 @@ interface AreaChartGradientProps {
 const chartConfig = {
   inProgress: {
     label: "Em curso",
-    color: "hsl(var(--chart-1))",
+    color: "#06b6d4",
   },
   completed: {
     label: "Concluídos",
-    color: "hsl(var(--chart-2))",
+    color: "#22c55e",
   },
 } satisfies ChartConfig;
 

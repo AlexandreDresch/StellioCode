@@ -1,6 +1,6 @@
 import useAsync from "../use-async";
 
-import * as lastSixMonthsStats from "../../services/projects-api";
+import * as lastSixMonthsStatsApi from "../../services/projects-api";
 
 export default function useGetLastSixMonthsStats() {
   const {
@@ -8,7 +8,7 @@ export default function useGetLastSixMonthsStats() {
     loading: getProjectStatsLoading,
     error: getProjectStatsError,
     act: getLastSixMonthsStats,
-  } = useAsync(lastSixMonthsStats.getLastSixMonthsStats, false);
+  } = useAsync(lastSixMonthsStatsApi.getLastSixMonthsStats, false);
 
   return {
     projectStats,

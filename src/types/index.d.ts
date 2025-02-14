@@ -102,7 +102,16 @@ interface DevelopersApiResponse {
 }
 
 export interface ProjectStats {
-  month: string
-  inProgress: number
-  completed: number
+  month: string;
+  inProgress: number;
+  completed: number;
+}
+
+export interface DevelopersStats {
+  totalDevelopers: number;
+  developersByStatus: {
+    pending: number;
+    approved: number;
+    rejected: number;
+  }
 }

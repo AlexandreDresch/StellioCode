@@ -1,4 +1,4 @@
-import { DevelopersApiResponse } from "@/types";
+import { DevelopersApiResponse, DevelopersStats } from "@/types";
 import api from "./api";
 
 export async function getDevelopersByProjectId({
@@ -37,6 +37,23 @@ export async function getAllDevelopers({
 }) {
   const response = await api.get<DevelopersApiResponse>(
     `/api/admin/dashboard/developers?page=${page}&size=${size}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+}
+
+export async function getDevelopersStats({
+  token,
+}: {
+  token: string;
+}) {
+  const response = await api.get<DevelopersStats>(
+    `/api/admin/dashboard/developers/stats`,
     {
       headers: {
         Authorization: `Bearer ${token}`,

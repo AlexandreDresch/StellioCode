@@ -32,26 +32,30 @@ import { getCurrentMonthYear } from "@/lib/utils";
 import useGetAllProjectsAdmin from "@/hooks/api/useGetAllProjectsAdmin";
 import useGetLastSixMonthsStats from "@/hooks/api/useGetLastSixMonthsStats";
 import useGetAllDevelopers from "@/hooks/api/useGetAllDevelopers";
+import useGetDevelopersStats from "@/hooks/api/useGetDevelopersStats";
 
 export default function AdminDashboard() {
   const [meetingsViewModel, setMeetingsViewModel] = useState<
     "calendar" | "list"
   >("calendar");
 
-  const token = "";
-  
+  const token =
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczOTU1ODU0MiwiZXhwIjoxNzM5NTk0NTQyLCJyb2xlIjoiYWRtaW4ifQ.5k5OYgCxb2IEnw9yEdvPQjUpOORvLktPkmCylrAXmeg";
+
   const { getSummary, summary } = useGetSummary();
   const { getAllProjectsAdmin, projects, pagination, setPagination } =
     useGetAllProjectsAdmin();
   const { projectStats, getLastSixMonthsStats } = useGetLastSixMonthsStats();
   const { getAllDevelopers, developers, devPagination, setDevPagination } =
     useGetAllDevelopers();
+  const { developersStats, getDevelopersStats } = useGetDevelopersStats();
 
   useEffect(() => {
     getSummary({ token });
     getAllProjectsAdmin({ token });
     getLastSixMonthsStats({ token });
     getAllDevelopers({ token });
+    getDevelopersStats({ token });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -219,7 +223,9 @@ export default function AdminDashboard() {
       </section>
 
       <section className="mt-4 flex gap-4 max-md:flex-col">
-        <PieChartComponent />
+        {developersStats && (
+          <PieChartComponent developersStats={developersStats} />
+        )}
 
         <Card className="flex-1">
           <CardHeader>
