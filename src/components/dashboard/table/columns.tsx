@@ -60,7 +60,7 @@ export function columns<T extends Project | Developer | Event>(
             header: "Projeto",
           },
           {
-            accessorKey: "client",
+            accessorKey: "clientName",
             header: "Cliente",
           },
           {
@@ -109,7 +109,7 @@ export function columns<T extends Project | Developer | Event>(
             },
           },
           {
-            accessorKey: "name",
+            accessorKey: "fullName",
             header: "Nome",
           },
           {
@@ -122,11 +122,11 @@ export function columns<T extends Project | Developer | Event>(
             },
           },
           {
-            accessorKey: "activeProjectsCount",
+            accessorKey: "activeProjects",
             header: "Projetos Ativos",
             cell: ({ row }: { row: Row<T> }) => (
               <span className="pl-10">
-                {row.getValue("activeProjectsCount")}
+                {row.getValue("activeProjects")}
               </span>
             ),
           },

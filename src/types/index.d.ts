@@ -15,18 +15,33 @@ export interface IDeveloperCardProps extends IDeveloper {
   onToggleSelect: (id: string) => void;
 }
 
-export type Project = {
+export interface Project {
   id: string;
   title: string;
-  client: string;
-  price: number;
+  description: string;
   status: "pending" | "in_progress" | "completed" | "cancelled";
-};
+  price: number;
+  planName: string;
+  serviceName: string;
+  clientId: string;
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  clientProfilePicture: string;
+  developers: DeveloperProject[];
+}
+
+export interface DeveloperProject {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+}
 
 export type Developer = {
   id: string;
-  name: string;
-  activeProjectsCount: number;
+  fullName: string;
+  activeProjects: number;
   status: "pending" | "approved" | "rejected";
   level: "junior" | "mid_level" | "senior";
 };
@@ -51,3 +66,43 @@ export type Summary = {
   newProjects: SummaryMetric;
   newClients: SummaryMetric;
 };
+
+interface ProjectsApiResponse {
+  _embedded: {
+    internalProjectDetailsResponseDTOList: Project[];
+  };
+  _links: {
+    self: {
+      href: string;
+    };
+  };
+  page: {
+    size: number;
+    totalElements: number;
+    totalPages: number;
+    number: number;
+  };
+}
+
+interface DevelopersApiResponse {
+  _embedded: {
+    developerResponseDTOList: Developer[];
+  };
+  _links: {
+    self: {
+      href: string;
+    };
+  };
+  page: {
+    size: number;
+    totalElements: number;
+    totalPages: number;
+    number: number;
+  };
+}
+
+export interface ProjectStats {
+  month: string
+  inProgress: number
+  completed: number
+}

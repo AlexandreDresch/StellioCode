@@ -2,7 +2,7 @@ import { CalendarSearchIcon, CogIcon, ComputerIcon } from "lucide-react";
 
 import { DataTable } from "./table/data-table";
 
-import { Developer, Event, Project } from "@/types";
+import { Developer, Project } from "@/types";
 import AreaChartGradient from "./charts/area-chart-gradient";
 import BarChartComponent from "./charts/bar-chart";
 import {
@@ -12,9 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { projectsData } from "@/constants/projects";
 import { PieChartComponent } from "./charts/pie-chart";
-import { mockDevelopers } from "@/constants/developers";
 import Calendar from "./calendar";
 import { useEffect, useState } from "react";
 import {
@@ -31,18 +29,30 @@ import { columns } from "./table/columns";
 import CountUp from "react-countup";
 import useGetSummary from "@/hooks/api/useGetSummary";
 import { getCurrentMonthYear } from "@/lib/utils";
+import useGetAllProjectsAdmin from "@/hooks/api/useGetAllProjectsAdmin";
+import useGetLastSixMonthsStats from "@/hooks/api/useGetLastSixMonthsStats";
+import useGetAllDevelopers from "@/hooks/api/useGetAllDevelopers";
 
 export default function AdminDashboard() {
   const [meetingsViewModel, setMeetingsViewModel] = useState<
     "calendar" | "list"
   >("calendar");
 
-  const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczOTQwNDE3NywiZXhwIjoxNzM5NDQwMTc3LCJyb2xlIjoiYWRtaW4ifQ.c-XQOQpmfpR1vJXmEhZ-pbonP8dpVefSaafDQcndUnE";
-
+  const token = "";
+  
   const { getSummary, summary } = useGetSummary();
+  const { getAllProjectsAdmin, projects, pagination, setPagination } =
+    useGetAllProjectsAdmin();
+  const { projectStats, getLastSixMonthsStats } = useGetLastSixMonthsStats();
+  const { getAllDevelopers, developers, devPagination, setDevPagination } =
+    useGetAllDevelopers();
 
   useEffect(() => {
     getSummary({ token });
+    getAllProjectsAdmin({ token });
+    getLastSixMonthsStats({ token });
+    getAllDevelopers({ token });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -58,7 +68,7 @@ export default function AdminDashboard() {
             <CardDescription>Resumo de vendas do mês atual.</CardDescription>
           </CardHeader>
 
-          <CardContent className="grid grid-cols-1 lg:mt-32 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:mt-32 xl:grid-cols-4">
             <Card className="max-w-full">
               <CardHeader className="flex pb-0">
                 <img
@@ -186,13 +196,16 @@ export default function AdminDashboard() {
           </CardHeader>
 
           <CardContent>
-            {projectsData?.length ? (
+            {projects?._embedded?.internalProjectDetailsResponseDTOList
+              ?.length ? (
               <DataTable<Project>
                 columns={columns<Project>("project")}
                 filterPlaceholder="Filtre pelo nome do projeto"
                 filterKey="title"
                 entityName="project"
-                data={projectsData}
+                data={projects._embedded.internalProjectDetailsResponseDTOList}
+                pagination={pagination}
+                setPagination={setPagination}
               />
             ) : (
               <div className="text-center text-muted-foreground">
@@ -202,7 +215,7 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-        <AreaChartGradient />
+        {projectStats && <AreaChartGradient data={projectStats} />}
       </section>
 
       <section className="mt-4 flex gap-4 max-md:flex-col">
@@ -219,13 +232,15 @@ export default function AdminDashboard() {
           </CardHeader>
 
           <CardContent>
-            {projectsData?.length ? (
+            {developers?._embedded?.developerResponseDTOList.length ? (
               <DataTable<Developer>
                 columns={columns<Developer>("developer")}
                 filterPlaceholder="Filtre por nome"
-                filterKey="name"
+                filterKey="fullName"
                 entityName="developer"
-                data={mockDevelopers}
+                data={developers._embedded.developerResponseDTOList}
+                pagination={devPagination}
+                setPagination={setDevPagination}
               />
             ) : (
               <div className="text-center text-muted-foreground">
@@ -269,13 +284,14 @@ export default function AdminDashboard() {
             {meetingsViewModel === "calendar" ? (
               <Calendar events={mockEvents} />
             ) : (
-              <DataTable<Event>
-                columns={columns<Event>("event")}
-                filterPlaceholder="Filtre por cliente"
-                filterKey="client"
-                entityName="event"
-                data={mockEvents}
-              />
+              <></>
+              // <DataTable<Event>
+              //   columns={columns<Event>("event")}
+              //   filterPlaceholder="Filtre por cliente"
+              //   filterKey="client"
+              //   entityName="event"
+              //   data={mockEvents}
+              // />
             )}
           </CardContent>
         </Card>

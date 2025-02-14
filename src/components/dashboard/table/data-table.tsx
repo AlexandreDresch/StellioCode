@@ -3,6 +3,7 @@ import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
+  PaginationState,
   SortingState,
   VisibilityState,
   flexRender,
@@ -61,7 +62,12 @@ export function DataTable<TData>({
   filterPlaceholder = "Filtre...",
   filterKey,
   entityName = "item",
-}: DataTableProps<TData>) {
+  pagination,
+  setPagination,
+}: DataTableProps<TData> & {
+  pagination: PaginationState;
+  setPagination: React.Dispatch<React.SetStateAction<PaginationState>>;
+}) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -75,6 +81,8 @@ export function DataTable<TData>({
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    manualPagination: true,
+    onPaginationChange: setPagination,
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
@@ -86,6 +94,7 @@ export function DataTable<TData>({
       columnFilters,
       columnVisibility,
       rowSelection,
+      pagination,
     },
   });
 
@@ -98,7 +107,7 @@ export function DataTable<TData>({
 
   return (
     <div>
-      <div className="flex items-start gap-1 py-4 flex-col md:flex-row md:items-center">
+      <div className="flex flex-col items-start gap-1 py-4 md:flex-row md:items-center">
         {filterKey && (
           <Input
             placeholder={filterPlaceholder}
@@ -231,7 +240,12 @@ export function DataTable<TData>({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.previousPage()}
+          onClick={() =>
+            setPagination((prev) => ({
+              ...prev,
+              pageIndex: prev.pageIndex - 1,
+            }))
+          }
           disabled={!table.getCanPreviousPage()}
         >
           Anterior
@@ -239,7 +253,12 @@ export function DataTable<TData>({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.nextPage()}
+          onClick={() =>
+            setPagination((prev) => ({
+              ...prev,
+              pageIndex: prev.pageIndex + 1,
+            }))
+          }
           disabled={!table.getCanNextPage()}
         >
           Próximo
