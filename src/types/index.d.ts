@@ -46,12 +46,15 @@ export type Developer = {
   level: "junior" | "mid_level" | "senior";
 };
 
-export type Event = {
+export type Meeting = {
   id: string;
-  project: string;
-  client: string;
   status: "pending" | "approved" | "cancelled";
-  date: Date;
+  clientId: string;  
+  clientName: string;  
+  projectId: string;
+  projectName: string;
+  projectDescription: string;
+  scheduledAt: Date;  
 };
 
 export type SummaryMetric = {
@@ -87,6 +90,23 @@ interface ProjectsApiResponse {
 interface DevelopersApiResponse {
   _embedded: {
     developerResponseDTOList: Developer[];
+  };
+  _links: {
+    self: {
+      href: string;
+    };
+  };
+  page: {
+    size: number;
+    totalElements: number;
+    totalPages: number;
+    number: number;
+  };
+}
+
+interface MeetingsApiResponse {
+  _embedded: {
+    meetingResponseDTOList: Meeting[];
   };
   _links: {
     self: {

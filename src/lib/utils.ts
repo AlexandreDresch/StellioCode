@@ -1,4 +1,4 @@
-import { Developer, Event, Project } from "@/types";
+import { Developer, Meeting, Project } from "@/types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -62,7 +62,7 @@ export const translateDeveloperLevel = (
     senior: "Sênior",
   });
 
-export const translateEventStatus = (status: Event["status"]) =>
+export const translateEventStatus = (status: Meeting["status"]) =>
   translateStatus(status, {
     pending: "Pendente",
     approved: "Aprovada",
@@ -76,7 +76,7 @@ export const getDeveloperStatusColor = (status: Developer["status"]) =>
     rejected: "bg-red-500",
   });
 
-export const getEventStatusColor = (status: Event["status"]) =>
+export const getEventStatusColor = (status: Meeting["status"]) =>
   getStatusColor(status, {
     pending: "bg-yellow-500",
     approved: "bg-green-500",
@@ -88,6 +88,10 @@ export const getEventStatusColor = (status: Event["status"]) =>
  * @param date - The date to format.
  */
 export function formatDateToCustomString(date: Date): string {
+  if (isNaN(date.getTime())) {
+    throw new Error("Invalid date format");
+  }
+
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
@@ -99,8 +103,18 @@ export function formatDateToCustomString(date: Date): string {
 
 export function getCurrentMonthYear() {
   const months = [
-    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
   ];
 
   const now = new Date();

@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
-import { translateEventStatus } from "@/lib/utils";
-import { Event } from "@/types";
+import { cn, getEventStatusColor, translateEventStatus } from "@/lib/utils";
+import { Meeting } from "@/types";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
@@ -13,7 +13,7 @@ import {
 interface IMeetingDetails {
   client: string;
   date: Date;
-  status: Event["status"];
+  status: Meeting["status"];
 }
 
 export default function MeetingDetails({
@@ -21,6 +21,7 @@ export default function MeetingDetails({
   date,
   status,
 }: IMeetingDetails) {
+  const badgeColor = getEventStatusColor(status);
   return (
     <div className="">
       <ul className="space-y-3">
@@ -63,7 +64,7 @@ export default function MeetingDetails({
             <span className="text-sm font-normal">Status:</span>
           </div>
 
-          <Badge className="bg-blue-300 text-blue-800 hover:bg-blue-300">
+          <Badge className={cn("rounded-lg hover:bg-zinc-950", badgeColor)}>
             {translateEventStatus(status)}
           </Badge>
         </li>

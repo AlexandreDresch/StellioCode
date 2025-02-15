@@ -25,15 +25,15 @@ import { Link } from "react-router-dom";
 import TeamEditModal from "../modals/team-edit-modal/team-edit-modal";
 import { RemoveDeveloperModal } from "../modals/remove-developer-modal";
 import { EditDeveloperModal } from "../modals/edit-developer-modal";
-import { Developer, Event, Project } from "@/types";
+import { Developer, Meeting, Project } from "@/types";
 import { MeetingManagementModal } from "../modals/meeting-management-modal/meeting-management-modal";
 
-export function columns<T extends Project | Developer | Event>(
+export function columns<T extends Project | Developer | Meeting>(
   type: T extends Project
     ? "project"
     : T extends Developer
       ? "developer"
-      : "event",
+      : "meeting",
 ): ColumnDef<T>[] {
   return [
     ...(type === "project"
@@ -125,20 +125,18 @@ export function columns<T extends Project | Developer | Event>(
             accessorKey: "activeProjects",
             header: "Projetos Ativos",
             cell: ({ row }: { row: Row<T> }) => (
-              <span className="pl-10">
-                {row.getValue("activeProjects")}
-              </span>
+              <span className="pl-10">{row.getValue("activeProjects")}</span>
             ),
           },
         ]
       : []),
-    ...(type === "event"
+    ...(type === "meeting"
       ? [
           {
             accessorKey: "status",
             header: "Status",
             cell: ({ row }: { row: Row<T> }) => {
-              const status = row.getValue("status") as Event["status"];
+              const status = row.getValue("status") as Meeting["status"];
               const formattedStatus = translateEventStatus(status);
               const badgeColor = getEventStatusColor(status);
 
@@ -152,18 +150,18 @@ export function columns<T extends Project | Developer | Event>(
             },
           },
           {
-            accessorKey: "project",
+            accessorKey: "projectName",
             header: "Projeto",
           },
           {
-            accessorKey: "client",
+            accessorKey: "clientName",
             header: "Cliente",
           },
           {
-            accessorKey: "date",
+            accessorKey: "scheduledAt",
             header: "Data",
             cell: ({ row }: { row: Row<T> }) => {
-              const date = row.getValue("date") as Event["date"];
+              const date = row.getValue("scheduledAt") as Meeting["scheduledAt"];
               const formattedDate = new Intl.DateTimeFormat("pt-BR", {
                 dateStyle: "short",
                 timeStyle: "short",
@@ -218,7 +216,7 @@ export function columns<T extends Project | Developer | Event>(
                 </>
               ) : (
                 <DropdownMenuItem asChild>
-                  <MeetingManagementModal event={item as Event} />
+                  <MeetingManagementModal event={item as Meeting} />
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>

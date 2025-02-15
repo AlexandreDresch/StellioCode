@@ -33,7 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Event } from "@/types";
+import { Meeting } from "@/types";
 import { useState } from "react";
 import {
   Popover,
@@ -48,14 +48,15 @@ import MeetingDetails from "./meeting-details";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
-export function MeetingManagementModal({ event }: { event: Event }) {
+export function MeetingManagementModal({ event }: { event: Meeting }) {
   const [isEditOpen, setIsEditOpen] = useState(false);
 
   const form = useForm<z.infer<typeof editEventSchema>>({
     resolver: zodResolver(editEventSchema),
     defaultValues: {
+      description: event.projectDescription,
       status: event.status,
-      date: event.date,
+      date: event.scheduledAt,
     },
   });
 
@@ -71,27 +72,44 @@ export function MeetingManagementModal({ event }: { event: Event }) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Reunião com {event.client}</DialogTitle>
+          <DialogTitle>Reunião com {event.clientName}</DialogTitle>
           <DialogDescription>
-            Faça alterações no status ou dia da reunião em Abrir/Fechar Edição.
+            Faça alterações em Abrir/Fechar Edição.
             Clique em Salvar Alterações quando estiver pronto.
           </DialogDescription>
         </DialogHeader>
 
         <MeetingDetails
-          client={event.client}
-          date={event.date}
+          client={event.clientName}
+          date={event.scheduledAt}
           status={event.status}
         />
 
-        <div className="grid w-full gap-1.5">
-          <Label htmlFor="message">Descrição</Label>
-          <Textarea value={"Projeto de um Marketplace..."} readOnly />
-        </div>
+        {!isEditOpen && (
+          <div className="grid w-full gap-1.5">
+            <Label htmlFor="message">Descrição do Projeto</Label>
+            <Textarea value={event.projectDescription} readOnly />
+          </div>
+        )}
 
         {isEditOpen && (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Descrição do Projeto</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="status"

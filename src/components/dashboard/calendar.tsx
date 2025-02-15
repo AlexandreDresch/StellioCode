@@ -10,28 +10,34 @@ import { createEventModalPlugin } from "@schedule-x/event-modal";
 
 import "@schedule-x/theme-default/dist/index.css";
 import { useEffect, useMemo, useState } from "react";
-import { Event } from "@/types";
+import { Meeting } from "@/types";
 import { formatDateToCustomString } from "@/lib/utils";
 
-export default function Calendar({ events }: { events: Event[] }) {
+export default function Calendar({ events }: { events: Meeting[] }) {
   const eventsService = useState(() => createEventsServicePlugin())[0];
 
-  const calendarEvents = useMemo(
-    () =>
-      events.map((event) => {
-        const endDate = new Date(event.date);
+  const calendarEvents = useMemo(() => {
+    return events
+      .map((event) => {
+        const startDate = new Date(event.scheduledAt + ":00");
+        if (isNaN(startDate.getTime())) {
+          console.error("Invalid date format:", event.scheduledAt);
+          return null;
+        }
+
+        const endDate = new Date(startDate);
         endDate.setHours(endDate.getHours() + 1);
 
         return {
           id: event.id,
-          title: event.client,
-          start: formatDateToCustomString(event.date),
+          title: event.clientName,
+          start: formatDateToCustomString(startDate),
           end: formatDateToCustomString(endDate),
-          description: event.project,
+          description: event.projectName,
         };
-      }),
-    [events],
-  );
+      })
+      .filter((event): event is NonNullable<typeof event> => event !== null);
+  }, [events]);
 
   const calendar = useCalendarApp({
     views: [

@@ -45,7 +45,7 @@ import {
   translateEventStatus,
   translateProjectStatus,
 } from "@/lib/utils";
-import { Developer, Project, Event } from "@/types";
+import { Developer, Project, Meeting } from "@/types";
 
 interface DataTableProps<TData> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -145,7 +145,7 @@ export function DataTable<TData>({
                     ? translateDeveloperStatus(status as Developer["status"])
                     : entityName === "project"
                       ? translateProjectStatus(status as Project["status"])
-                      : translateEventStatus(status as Event["status"])}
+                      : translateEventStatus(status as Meeting["status"])}
                 </SelectItem>
               ))}
             </SelectGroup>

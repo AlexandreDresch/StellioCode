@@ -52,7 +52,7 @@ export default function BarChartComponent({ summary }: BarChartComponentProps) {
   const chartConfig = {
     [previousMonth]: {
       label: previousMonth.charAt(0).toUpperCase() + previousMonth.slice(1),
-      color: "#e466c9",
+      color: "#38bdf8",
     },
     [currentMonth]: {
       label: currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1),

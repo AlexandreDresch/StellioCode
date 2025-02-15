@@ -2,7 +2,7 @@ import { CalendarSearchIcon, CogIcon, ComputerIcon } from "lucide-react";
 
 import { DataTable } from "./table/data-table";
 
-import { Developer, Project } from "@/types";
+import { Developer, Meeting, Project } from "@/types";
 import AreaChartGradient from "./charts/area-chart-gradient";
 import BarChartComponent from "./charts/bar-chart";
 import {
@@ -24,7 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { mockEvents } from "@/constants/events";
 import { columns } from "./table/columns";
 import CountUp from "react-countup";
 import useGetSummary from "@/hooks/api/useGetSummary";
@@ -33,6 +32,7 @@ import useGetAllProjectsAdmin from "@/hooks/api/useGetAllProjectsAdmin";
 import useGetLastSixMonthsStats from "@/hooks/api/useGetLastSixMonthsStats";
 import useGetAllDevelopers from "@/hooks/api/useGetAllDevelopers";
 import useGetDevelopersStats from "@/hooks/api/useGetDevelopersStats";
+import useGetAllMeetings from "@/hooks/api/useGetAllMeetings";
 
 export default function AdminDashboard() {
   const [meetingsViewModel, setMeetingsViewModel] = useState<
@@ -49,6 +49,8 @@ export default function AdminDashboard() {
   const { getAllDevelopers, developers, devPagination, setDevPagination } =
     useGetAllDevelopers();
   const { developersStats, getDevelopersStats } = useGetDevelopersStats();
+  const { getAllMeetings, meetings, meetingPagination, setMeetingPagination } =
+    useGetAllMeetings();
 
   useEffect(() => {
     getSummary({ token });
@@ -56,6 +58,7 @@ export default function AdminDashboard() {
     getLastSixMonthsStats({ token });
     getAllDevelopers({ token });
     getDevelopersStats({ token });
+    getAllMeetings({ token });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -287,17 +290,24 @@ export default function AdminDashboard() {
               </SelectContent>
             </Select>
 
-            {meetingsViewModel === "calendar" ? (
-              <Calendar events={mockEvents} />
-            ) : (
-              <></>
-              // <DataTable<Event>
-              //   columns={columns<Event>("event")}
-              //   filterPlaceholder="Filtre por cliente"
-              //   filterKey="client"
-              //   entityName="event"
-              //   data={mockEvents}
-              // />
+            {meetings?._embedded?.meetingResponseDTOList?.length && (
+              <>
+                {meetingsViewModel === "calendar" ? (
+                  <Calendar
+                    events={meetings?._embedded?.meetingResponseDTOList}
+                  />
+                ) : (
+                  <DataTable<Meeting>
+                    columns={columns<Meeting>("meeting")}
+                    filterPlaceholder="Filtre por cliente"
+                    filterKey="clientName"
+                    entityName="meeting"
+                    data={meetings?._embedded?.meetingResponseDTOList}
+                    pagination={meetingPagination}
+                    setPagination={setMeetingPagination}
+                  />
+                )}
+              </>
             )}
           </CardContent>
         </Card>
