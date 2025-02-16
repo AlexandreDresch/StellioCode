@@ -1,19 +1,21 @@
 import { z } from "zod";
 
 export const editEventSchema = z.object({
-  description: z
-    .string()
-    .min(3, "A descrição deve ter pelo menos 3 caracteres.")
-    .max(255, "A descrição não pode ter mais de 255 caracteres."),
-  status: z.enum(["pending", "approved", "cancelled"], {
+  status: z.enum(["pending", "accepted", "rejected"], {
     message: "Status inválido.",
   }),
   date: z
-    .preprocess(
-      (arg) => (typeof arg === "string" ? new Date(arg) : arg),
+    .union([
       z.date(),
-    )
-    .refine((date) => date > new Date(), {
-      message: "A data deve ser no futuro.",
+      z
+        .string()
+        .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, "Data inválida.")
+        .transform((val) => new Date(val + ":00")),
+    ])
+    .refine((val) => val instanceof Date && !isNaN(val.getTime()), {
+      message: "Data inválida.",
     }),
+  time: z.string().regex(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/, {
+    message: "Hora inválida. Deve seguir o formato HH:MM.",
+  }),
 });

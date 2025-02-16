@@ -17,7 +17,61 @@ export async function getAllMeetings({
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }
+    },
+  );
+
+  return response.data;
+}
+
+export async function updateMeetingStatus({
+  meetingId,
+  status,
+  token,
+}: {
+  meetingId: string;
+  status: string;
+  token: string;
+}) {
+  const data = {
+    status,
+  };
+
+  const response = await api.put(
+    `/api/admin/dashboard/meetings/${meetingId}/status`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  return response.data;
+}
+
+export async function updateMeetingDate({
+  meetingId,
+  date,
+  token,
+}: {
+  meetingId: string;
+  date: string;
+  token: string;
+}) {
+  const data = {
+    date,
+  };
+
+  const response = await api.put(
+    `/api/admin/dashboard/meetings/${meetingId}/date`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    },
   );
 
   return response.data;

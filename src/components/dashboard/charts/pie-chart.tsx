@@ -24,9 +24,9 @@ export function PieChartComponent({ developersStats }: PieChartProps) {
     if (!developersStats) return []
 
     return [
-      { status: "Pendente", count: developersStats.developersByStatus.pending, fill: "#eab308" },
-      { status: "Aprovado", count: developersStats.developersByStatus.approved, fill: "#22c55e" },
-      { status: "Rejeitado", count: developersStats.developersByStatus.rejected, fill: "#ef4444" },
+      { status: "Pendente", count: developersStats.developersByStatus.pending, fill: "#facc15" },
+      { status: "Aprovado", count: developersStats.developersByStatus.approved, fill: "#4ade80" },
+      { status: "Rejeitado", count: developersStats.developersByStatus.rejected, fill: "#f87171" },
     ]
   }, [developersStats])
 

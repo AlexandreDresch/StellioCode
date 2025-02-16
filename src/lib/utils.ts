@@ -40,10 +40,10 @@ export const translateProjectStatus = (status: Project["status"]) =>
 
 export const getProjectStatusColor = (status: Project["status"]) =>
   getStatusColor(status, {
-    in_progress: "bg-cyan-500",
-    pending: "bg-yellow-500",
-    completed: "bg-green-500",
-    cancelled: "bg-red-500",
+    in_progress: "bg-cyan-400",
+    pending: "bg-yellow-400",
+    completed: "bg-green-400",
+    cancelled: "bg-red-400",
   });
 
 export const translateDeveloperStatus = (status: Developer["status"]) =>
@@ -65,22 +65,22 @@ export const translateDeveloperLevel = (
 export const translateEventStatus = (status: Meeting["status"]) =>
   translateStatus(status, {
     pending: "Pendente",
-    approved: "Aprovada",
-    cancelled: "Cancelada",
+    accepted: "Aprovada",
+    rejected: "Cancelada",
   });
 
 export const getDeveloperStatusColor = (status: Developer["status"]) =>
   getStatusColor(status, {
-    pending: "bg-yellow-500",
-    approved: "bg-green-500",
-    rejected: "bg-red-500",
+    pending: "bg-yellow-400",
+    approved: "bg-green-400",
+    rejected: "bg-red-400",
   });
 
 export const getEventStatusColor = (status: Meeting["status"]) =>
   getStatusColor(status, {
-    pending: "bg-yellow-500",
-    approved: "bg-green-500",
-    cancelled: "bg-red-500",
+    pending: "bg-yellow-400",
+    accepted: "bg-green-400",
+    rejected: "bg-red-400",
   });
 
 /**
@@ -122,4 +122,27 @@ export function getCurrentMonthYear() {
   const year = now.getFullYear();
 
   return `${month} ${year}`;
+}
+
+export function getTimeFromDate(dateTimeString: string) {
+  return dateTimeString.split("T")[1];
+}
+
+export function formatDateToISO(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+export function setTimeInISODate(isoDate: string, newTime: string): string {
+  const [hours, minutes] = newTime.split(":").map(Number);
+  const [year, month, day] = isoDate.split("T")[0].split("-").map(Number);
+
+  const date = new Date(year, month - 1, day, hours, minutes);
+
+  return formatDateToISO(date);
 }

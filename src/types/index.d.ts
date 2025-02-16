@@ -48,7 +48,7 @@ export type Developer = {
 
 export type Meeting = {
   id: string;
-  status: "pending" | "approved" | "cancelled";
+  status: "pending" | "accepted" | "rejected";
   clientId: string;  
   clientName: string;  
   projectId: string;

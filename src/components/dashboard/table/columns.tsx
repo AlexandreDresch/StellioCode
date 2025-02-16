@@ -137,8 +137,12 @@ export function columns<T extends Project | Developer | Meeting>(
             header: "Status",
             cell: ({ row }: { row: Row<T> }) => {
               const status = row.getValue("status") as Meeting["status"];
-              const formattedStatus = translateEventStatus(status);
-              const badgeColor = getEventStatusColor(status);
+              const formattedStatus = translateEventStatus(
+                status.toLowerCase() as Meeting["status"],
+              );
+              const badgeColor = getEventStatusColor(
+                status.toLowerCase() as Meeting["status"],
+              );
 
               return (
                 <Badge
@@ -161,7 +165,9 @@ export function columns<T extends Project | Developer | Meeting>(
             accessorKey: "scheduledAt",
             header: "Data",
             cell: ({ row }: { row: Row<T> }) => {
-              const date = row.getValue("scheduledAt") as Meeting["scheduledAt"];
+              const date = row.getValue(
+                "scheduledAt",
+              ) as Meeting["scheduledAt"];
               const formattedDate = new Intl.DateTimeFormat("pt-BR", {
                 dateStyle: "short",
                 timeStyle: "short",

@@ -11,6 +11,7 @@ import {
 import {
   CalendarIcon,
   CalendarSyncIcon,
+  LoaderCircleIcon,
   PenIcon,
   PenOffIcon,
 } from "lucide-react";
@@ -41,12 +42,20 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { cn } from "@/lib/utils";
+import {
+  cn,
+  formatDateToISO,
+  getTimeFromDate,
+  setTimeInISODate,
+} from "@/lib/utils";
 import { addDays, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import MeetingDetails from "./meeting-details";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import useUpdateMeetingStatus from "@/hooks/api/useUpdateMeetingStatus";
+import { Input } from "@/components/ui/input";
+import useUpdateMeetingDate from "@/hooks/api/useUpdateMeetingDate";
 
 export function MeetingManagementModal({ event }: { event: Meeting }) {
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -54,14 +63,58 @@ export function MeetingManagementModal({ event }: { event: Meeting }) {
   const form = useForm<z.infer<typeof editEventSchema>>({
     resolver: zodResolver(editEventSchema),
     defaultValues: {
-      description: event.projectDescription,
-      status: event.status,
+      status: event.status.toLowerCase() as Meeting["status"],
       date: event.scheduledAt,
+      time: getTimeFromDate(event.scheduledAt as unknown as string),
     },
   });
 
+  const token = "";
+
+  const { updateMeetingStatus, updatedMeeting, updateMeetingLoading } =
+    useUpdateMeetingStatus();
+  const { updateMeetingDate, updatedMeetingDate, updateMeetingDateLoading } =
+    useUpdateMeetingDate();
+
   function onSubmit(values: z.infer<typeof editEventSchema>) {
-    console.log("Form values:", values);
+    const date = formatDateToISO(values.date);
+    const finalDate = setTimeInISODate(date, values.time);
+
+    const statusChanged = event.status !== values.status;
+    const dateChanged = (event.scheduledAt as unknown as string) !== finalDate;
+
+    if (statusChanged && dateChanged) {
+      Promise.all([
+        updateMeetingStatus({
+          meetingId: event.id,
+          status: values.status.toUpperCase(),
+          token,
+        }),
+        updateMeetingDate({
+          meetingId: event.id,
+          date: finalDate,
+          token,
+        }),
+      ]).then(() => {
+        setIsEditOpen(false);
+      });
+    } else if (statusChanged) {
+      updateMeetingStatus({
+        meetingId: event.id,
+        status: values.status.toUpperCase(),
+        token,
+      }).then(() => {
+        setIsEditOpen(false);
+      });
+    } else if (dateChanged) {
+      updateMeetingDate({
+        meetingId: event.id,
+        date: finalDate,
+        token,
+      }).then(() => {
+        setIsEditOpen(false);
+      });
+    }
   }
 
   return (
@@ -74,42 +127,33 @@ export function MeetingManagementModal({ event }: { event: Meeting }) {
         <DialogHeader>
           <DialogTitle>Reunião com {event.clientName}</DialogTitle>
           <DialogDescription>
-            Faça alterações em Abrir/Fechar Edição.
-            Clique em Salvar Alterações quando estiver pronto.
+            Faça alterações em Abrir/Fechar Edição. Clique em Salvar Alterações
+            quando estiver pronto.
           </DialogDescription>
         </DialogHeader>
 
         <MeetingDetails
           client={event.clientName}
-          date={event.scheduledAt}
-          status={event.status}
+          date={
+            updatedMeetingDate?.scheduledAt
+              ? updatedMeetingDate.scheduledAt
+              : event.scheduledAt
+          }
+          status={
+            updatedMeeting?.status
+              ? (updatedMeeting.status.toLowerCase() as Meeting["status"])
+              : (event.status.toLowerCase() as Meeting["status"])
+          }
         />
 
-        {!isEditOpen && (
-          <div className="grid w-full gap-1.5">
-            <Label htmlFor="message">Descrição do Projeto</Label>
-            <Textarea value={event.projectDescription} readOnly />
-          </div>
-        )}
+        <div className="grid w-full gap-1.5">
+          <Label htmlFor="message">Descrição do Projeto</Label>
+          <Textarea value={event.projectDescription} readOnly />
+        </div>
 
         {isEditOpen && (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Descrição do Projeto</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <FormField
                 control={form.control}
                 name="status"
@@ -119,15 +163,18 @@ export function MeetingManagementModal({ event }: { event: Meeting }) {
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        defaultValue={field.value.toLowerCase()}
+                        disabled={
+                          updateMeetingLoading || updateMeetingDateLoading
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione o status" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="pending">Pendente</SelectItem>
-                          <SelectItem value="approved">Aprovado</SelectItem>
-                          <SelectItem value="rejected">Rejeitado</SelectItem>
+                          <SelectItem value="accepted">Aprovada</SelectItem>
+                          <SelectItem value="rejected">Cancelada</SelectItem>
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -150,6 +197,9 @@ export function MeetingManagementModal({ event }: { event: Meeting }) {
                             "w-full justify-start text-left font-normal",
                             !field.value && "text-muted-foreground",
                           )}
+                          disabled={
+                            updateMeetingLoading || updateMeetingDateLoading
+                          }
                         >
                           <CalendarIcon className="mr-2" />
                           {field.value ? (
@@ -208,14 +258,48 @@ export function MeetingManagementModal({ event }: { event: Meeting }) {
                 )}
               />
 
+              <FormField
+                control={form.control}
+                name="time"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Hora da Reunião</FormLabel>
+                    <Input
+                      aria-label="Time"
+                      type="time"
+                      {...field}
+                      disabled={
+                        updateMeetingLoading || updateMeetingDateLoading
+                      }
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <DialogFooter>
-                <Button type="submit">Salvar Alterações</Button>
+                <Button
+                  type="submit"
+                  disabled={updateMeetingLoading || updateMeetingDateLoading}
+                  className="min-w-36"
+                >
+                  {" "}
+                  {updateMeetingLoading || updateMeetingDateLoading ? (
+                    <LoaderCircleIcon className="animate-spin" />
+                  ) : (
+                    <span>Salvar Alterações</span>
+                  )}
+                </Button>
               </DialogFooter>
             </form>
           </Form>
         )}
 
-        <Button onClick={() => setIsEditOpen(!isEditOpen)} variant="ghost">
+        <Button
+          onClick={() => setIsEditOpen(!isEditOpen)}
+          variant="ghost"
+          disabled={updateMeetingLoading || updateMeetingDateLoading}
+        >
           <span>{isEditOpen ? "Fechar" : "Abrir"} Edição</span>
           {isEditOpen ? <PenOffIcon size={10} /> : <PenIcon size={10} />}
         </Button>

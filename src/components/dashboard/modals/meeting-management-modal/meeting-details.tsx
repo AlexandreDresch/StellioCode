@@ -31,7 +31,7 @@ export default function MeetingDetails({
             <span className="text-sm font-normal">Cliente:</span>
           </div>
 
-          <Badge className="bg-green-400 text-green-900 hover:bg-green-400">
+          <Badge className="bg-cyan-300 text-cyan-900 hover:bg-cyan-300">
             {client}
           </Badge>
         </li>

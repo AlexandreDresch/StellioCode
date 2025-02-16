@@ -1,4 +1,9 @@
-import { CalendarSearchIcon, CogIcon, ComputerIcon } from "lucide-react";
+import {
+  CalendarSearchIcon,
+  CogIcon,
+  ComputerIcon,
+  RefreshCwIcon,
+} from "lucide-react";
 
 import { DataTable } from "./table/data-table";
 
@@ -33,6 +38,7 @@ import useGetLastSixMonthsStats from "@/hooks/api/useGetLastSixMonthsStats";
 import useGetAllDevelopers from "@/hooks/api/useGetAllDevelopers";
 import useGetDevelopersStats from "@/hooks/api/useGetDevelopersStats";
 import useGetAllMeetings from "@/hooks/api/useGetAllMeetings";
+import { Button } from "../ui/button";
 
 export default function AdminDashboard() {
   const [meetingsViewModel, setMeetingsViewModel] = useState<
@@ -40,7 +46,7 @@ export default function AdminDashboard() {
   >("calendar");
 
   const token =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczOTU1ODU0MiwiZXhwIjoxNzM5NTk0NTQyLCJyb2xlIjoiYWRtaW4ifQ.5k5OYgCxb2IEnw9yEdvPQjUpOORvLktPkmCylrAXmeg";
+    "";
 
   const { getSummary, summary } = useGetSummary();
   const { getAllProjectsAdmin, projects, pagination, setPagination } =
@@ -62,6 +68,10 @@ export default function AdminDashboard() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  function handleRefreshMeetings() {
+    getAllMeetings({ token });
+  }
 
   return (
     <div className="p-4 sm:ml-14">
@@ -263,11 +273,16 @@ export default function AdminDashboard() {
       <section className="mt-4 flex flex-col gap-4">
         <Card className="flex-1">
           <CardHeader>
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-between">
               <CardTitle className="select-none text-lg text-gray-800 sm:text-xl">
                 Reuniões
               </CardTitle>
-              <CalendarSearchIcon className="ml-auto size-4" />
+              <div className="flex items-center">
+                <Button variant="ghost" className="group" onClick={handleRefreshMeetings}>
+                  <RefreshCwIcon className="group-hover:animate-spin" />
+                </Button>
+                <CalendarSearchIcon className="ml-auto size-4" />
+              </div>
             </div>
           </CardHeader>
 
