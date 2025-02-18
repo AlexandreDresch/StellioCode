@@ -9,35 +9,53 @@ import {
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import DeveloperCard from "./developer-card";
-import { developersData } from "@/constants/developers";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { projectsData } from "@/constants/projects";
+import useGetApprovedDevelopers from "@/hooks/api/useGetApprovedDevelopers";
+import { IDeveloper } from "@/types";
+import { UserSkeleton } from "@/components/skeletons/user-skeleton";
 
 export default function TeamEditModal({ projectId }: { projectId: string }) {
-  const [allDevelopers] = useState(developersData);
-  const [selectedDevelopers, setSelectedDevelopers] = useState(
-    developersData.filter(
-      (developer) => developer.currentProjectId === projectId,
-    ),
+  const {
+    getApprovedDevelopers,
+    approvedDevelopers,
+    getApprovedDevelopersLoading,
+  } = useGetApprovedDevelopers();
+
+  const token =
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczOTgzNjA3MSwiZXhwIjoxNzM5ODcyMDcxLCJyb2xlIjoiYWRtaW4ifQ.IsY6n0RTdoa9OmlqJejWVt6LOwA1LkBg2Kru6pXbcos";
+
+  const [allDevelopers, setAllDevelopers] = useState<IDeveloper[]>([]);
+  const [selectedDevelopers, setSelectedDevelopers] = useState<IDeveloper[]>(
+    [],
   );
 
-  const selectedProject = projectsData.find(
-    (project) => project.id === projectId,
-  );
+  useEffect(() => {
+    getApprovedDevelopers({ token });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (approvedDevelopers) {
+      setAllDevelopers(approvedDevelopers);
+    }
+  }, [approvedDevelopers]);
+
+  useEffect(() => {
+    setSelectedDevelopers(
+      allDevelopers.filter((developer) =>
+        developer.currentProjectIds?.includes(projectId),
+      ),
+    );
+  }, [allDevelopers, projectId]);
 
   function handleDeveloperSelection(id: string) {
-    const developer = allDevelopers.find((dev) => dev.id === id);
-
-    if (!developer) return;
-
-    const isAlreadySelected = selectedDevelopers.some((dev) => dev.id === id);
-
-    if (isAlreadySelected) {
-      setSelectedDevelopers(selectedDevelopers.filter((dev) => dev.id !== id));
-    } else {
-      setSelectedDevelopers([...selectedDevelopers, developer]);
-    }
+    setSelectedDevelopers((prev) => {
+      const isAlreadySelected = prev.some((dev) => dev.id === id);
+      return isAlreadySelected
+        ? prev.filter((dev) => dev.id !== id)
+        : [...prev, allDevelopers.find((dev) => dev.id === id)!];
+    });
   }
 
   return (
@@ -50,42 +68,53 @@ export default function TeamEditModal({ projectId }: { projectId: string }) {
         <DialogHeader>
           <DialogTitle>Gerenciar Time</DialogTitle>
           <DialogDescription>
-            Adicione e/ou remova desenvolvedores ao projeto{" "}
-            <span className="font-semibold">{selectedProject?.title}</span> e
-            clique em salvar quando estiver pronto.
+            Adicione e/ou remova desenvolvedores do projeto e clique em salvar
+            quando estiver pronto.
           </DialogDescription>
         </DialogHeader>
 
         <div className="flex gap-2">
           <ScrollArea className="h-[400px] w-1/2 rounded-md border p-4">
             <h4 className="text-sm font-medium">Desenvolvedores</h4>
-            {allDevelopers
-              .filter(
-                (developer) =>
-                  !selectedDevelopers.some(
-                    (selectedDev) => selectedDev.id === developer.id,
-                  ),
-              )
-              .map((developer) => (
-                <DeveloperCard
-                  key={developer.id}
-                  {...developer}
-                  isSelected={false}
-                  onToggleSelect={() => handleDeveloperSelection(developer.id)}
-                />
-              ))}
+            {getApprovedDevelopersLoading
+              ? Array.from({ length: 4 }).map((_, index) => (
+                  <UserSkeleton key={index} />
+                ))
+              : allDevelopers
+                  .filter(
+                    (dev) =>
+                      !selectedDevelopers.some(
+                        (selectedDev) => selectedDev.id === dev.id,
+                      ),
+                  )
+                  .map((developer) => (
+                    <DeveloperCard
+                      key={developer.id}
+                      {...developer}
+                      isSelected={false}
+                      onToggleSelect={() =>
+                        handleDeveloperSelection(developer.id)
+                      }
+                    />
+                  ))}
           </ScrollArea>
 
           <ScrollArea className="h-[400px] w-1/2 rounded-md border p-4">
             <h4 className="text-sm font-medium">Time</h4>
-            {selectedDevelopers.map((developer) => (
-              <DeveloperCard
-                key={developer.id}
-                {...developer}
-                isSelected={true}
-                onToggleSelect={() => handleDeveloperSelection(developer.id)}
-              />
-            ))}
+            {getApprovedDevelopersLoading
+              ? Array.from({ length: 4 }).map((_, index) => (
+                  <UserSkeleton key={index} />
+                ))
+              : selectedDevelopers.map((developer) => (
+                  <DeveloperCard
+                    key={developer.id}
+                    {...developer}
+                    isSelected={true}
+                    onToggleSelect={() =>
+                      handleDeveloperSelection(developer.id)
+                    }
+                  />
+                ))}
           </ScrollArea>
         </div>
 

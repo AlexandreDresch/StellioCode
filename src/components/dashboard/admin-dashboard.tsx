@@ -46,7 +46,7 @@ export default function AdminDashboard() {
   >("calendar");
 
   const token =
-    "";
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczOTgzNjA3MSwiZXhwIjoxNzM5ODcyMDcxLCJyb2xlIjoiYWRtaW4ifQ.IsY6n0RTdoa9OmlqJejWVt6LOwA1LkBg2Kru6pXbcos";
 
   const { getSummary, summary } = useGetSummary();
   const { getAllProjectsAdmin, projects, pagination, setPagination } =

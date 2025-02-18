@@ -3,8 +3,8 @@ export interface IDeveloper {
   name: string;
   email: string;
   avatarUrl: string;
-  role: string;
-  currentProjectId: string | null;
+  level: string;
+  currentProjectIds: string[] | null;
   projectsCount: number;
   githubUrl: string;
   techStack: string[];

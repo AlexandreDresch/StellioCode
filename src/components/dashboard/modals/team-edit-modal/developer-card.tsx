@@ -28,7 +28,7 @@ export default function DeveloperCard({
   githubUrl,
   name,
   projectsCount,
-  role,
+  level,
   techStack,
   isSelected,
   onToggleSelect
@@ -54,19 +54,19 @@ export default function DeveloperCard({
             </div>
           </div>
         </AccordionTrigger>
-        <AccordionContent>
+        <AccordionContent className="w-full max-w-xs">
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2">
-              <h4 className="text-xs font-medium">Função:</h4>
-              <Badge variant="outline">{role}</Badge>
+              <h4 className="text-xs font-medium">Nível:</h4>
+              <Badge variant="outline">{level}</Badge>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex gap-2 flex-col">
               <h4 className="text-xs font-medium">Tecnologias:</h4>
-              <ul className="flex list-none gap-1">
+              <ul className="grid grid-cols-3 list-none gap-1">
                 {techStack.map((tech) => (
                   <li key={tech}>
-                    <Badge variant="outline">{tech}</Badge>
+                    <Badge variant="outline" className="w-full">{tech}</Badge>
                   </li>
                 ))}
               </ul>
