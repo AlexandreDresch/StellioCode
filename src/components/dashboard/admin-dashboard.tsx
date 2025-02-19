@@ -46,7 +46,7 @@ export default function AdminDashboard() {
   >("calendar");
 
   const token =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczOTgzNjA3MSwiZXhwIjoxNzM5ODcyMDcxLCJyb2xlIjoiYWRtaW4ifQ.IsY6n0RTdoa9OmlqJejWVt6LOwA1LkBg2Kru6pXbcos";
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczOTkyMDg0OCwiZXhwIjoxNzM5OTU2ODQ4LCJyb2xlIjoiYWRtaW4ifQ.0JAJzPlRRmRXOVbzXjc7fsHFj7MMnqO4-PjRDe_YUbM";
 
   const { getSummary, summary } = useGetSummary();
   const { getAllProjectsAdmin, projects, pagination, setPagination } =
@@ -71,6 +71,14 @@ export default function AdminDashboard() {
 
   function handleRefreshMeetings() {
     getAllMeetings({ token });
+  }
+
+  function handleRefreshDevelopers() {
+    getAllDevelopers({ token });
+  }
+
+  function handleRefreshProjects() {
+    getAllProjectsAdmin({ token });
   }
 
   return (
@@ -204,11 +212,20 @@ export default function AdminDashboard() {
       <section className="mt-4 flex gap-4 max-md:flex-col">
         <Card className="flex-1">
           <CardHeader>
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-between">
               <CardTitle className="select-none text-lg text-gray-800 sm:text-xl">
-                Projetos
+              Projetos
               </CardTitle>
-              <CogIcon className="ml-auto size-4" />
+              <div className="flex items-center">
+                <Button
+                  variant="ghost"
+                  className="group"
+                  onClick={handleRefreshProjects}
+                >
+                  <RefreshCwIcon className="group-hover:animate-spin" />
+                </Button>
+                <CogIcon className="ml-auto size-4" />
+              </div>
             </div>
           </CardHeader>
 
@@ -242,11 +259,20 @@ export default function AdminDashboard() {
 
         <Card className="flex-1">
           <CardHeader>
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-between">
               <CardTitle className="select-none text-lg text-gray-800 sm:text-xl">
                 Desenvolvedores
               </CardTitle>
-              <ComputerIcon className="ml-auto size-4" />
+              <div className="flex items-center">
+                <Button
+                  variant="ghost"
+                  className="group"
+                  onClick={handleRefreshDevelopers}
+                >
+                  <RefreshCwIcon className="group-hover:animate-spin" />
+                </Button>
+                <ComputerIcon className="ml-auto size-4" />
+              </div>
             </div>
           </CardHeader>
 
@@ -278,7 +304,11 @@ export default function AdminDashboard() {
                 Reuniões
               </CardTitle>
               <div className="flex items-center">
-                <Button variant="ghost" className="group" onClick={handleRefreshMeetings}>
+                <Button
+                  variant="ghost"
+                  className="group"
+                  onClick={handleRefreshMeetings}
+                >
                   <RefreshCwIcon className="group-hover:animate-spin" />
                 </Button>
                 <CalendarSearchIcon className="ml-auto size-4" />

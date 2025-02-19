@@ -31,7 +31,8 @@ export default function DeveloperCard({
   level,
   techStack,
   isSelected,
-  onToggleSelect
+  onSelect,
+  onRemove,
 }: IDeveloperCardProps) {
   return (
     <Accordion type="single" collapsible>
@@ -61,12 +62,14 @@ export default function DeveloperCard({
               <Badge variant="outline">{level}</Badge>
             </div>
 
-            <div className="flex gap-2 flex-col">
+            <div className="flex flex-col gap-2">
               <h4 className="text-xs font-medium">Tecnologias:</h4>
-              <ul className="grid grid-cols-3 list-none gap-1">
+              <ul className="grid list-none grid-cols-3 gap-1">
                 {techStack.map((tech) => (
                   <li key={tech}>
-                    <Badge variant="outline" className="w-full">{tech}</Badge>
+                    <Badge variant="outline" className="w-full">
+                      {tech}
+                    </Badge>
                   </li>
                 ))}
               </ul>
@@ -104,12 +107,21 @@ export default function DeveloperCard({
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="outline" onClick={() => onToggleSelect(id)}>
+                    <Button
+                      variant="outline"
+                      onClick={
+                        isSelected ? () => onRemove(id) : () => onSelect(id)
+                      }
+                    >
                       {isSelected ? <MinusIcon /> : <PlusIcon />}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Adicionar ao Time</p>
+                    {isSelected ? (
+                      <p>Remover do Time</p>
+                    ) : (
+                      <p>Adicionar ao Time</p>
+                    )}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

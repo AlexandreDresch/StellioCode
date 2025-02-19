@@ -12,7 +12,8 @@ export interface IDeveloper {
 
 export interface IDeveloperCardProps extends IDeveloper {
   isSelected: boolean;
-  onToggleSelect: (id: string) => void;
+  onSelect: (id: string) => void;
+  onRemove: (id: string) => void;
 }
 
 export interface Project {

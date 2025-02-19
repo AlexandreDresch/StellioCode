@@ -69,7 +69,7 @@ export function MeetingManagementModal({ event }: { event: Meeting }) {
     },
   });
 
-  const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczOTgzNjA3MSwiZXhwIjoxNzM5ODcyMDcxLCJyb2xlIjoiYWRtaW4ifQ.IsY6n0RTdoa9OmlqJejWVt6LOwA1LkBg2Kru6pXbcos";
+  const token ="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczOTkyMDg0OCwiZXhwIjoxNzM5OTU2ODQ4LCJyb2xlIjoiYWRtaW4ifQ.0JAJzPlRRmRXOVbzXjc7fsHFj7MMnqO4-PjRDe_YUbM"
 
   const { updateMeetingStatus, updatedMeeting, updateMeetingLoading } =
     useUpdateMeetingStatus();
@@ -283,7 +283,6 @@ export function MeetingManagementModal({ event }: { event: Meeting }) {
                   disabled={updateMeetingLoading || updateMeetingDateLoading}
                   className="min-w-36"
                 >
-                  {" "}
                   {updateMeetingLoading || updateMeetingDateLoading ? (
                     <LoaderCircleIcon className="animate-spin" />
                   ) : (

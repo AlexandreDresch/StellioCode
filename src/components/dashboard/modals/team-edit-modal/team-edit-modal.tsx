@@ -14,6 +14,9 @@ import { Button } from "@/components/ui/button";
 import useGetApprovedDevelopers from "@/hooks/api/useGetApprovedDevelopers";
 import { IDeveloper } from "@/types";
 import { UserSkeleton } from "@/components/skeletons/user-skeleton";
+import useAssignDevelopersToProject from "@/hooks/api/useAssignDevelopersToProject";
+import { LoaderCircleIcon } from "lucide-react";
+import useRemoveDeveloperFromProject from "@/hooks/api/useRemoveDeveloperFromProject";
 
 export default function TeamEditModal({ projectId }: { projectId: string }) {
   const {
@@ -21,9 +24,17 @@ export default function TeamEditModal({ projectId }: { projectId: string }) {
     approvedDevelopers,
     getApprovedDevelopersLoading,
   } = useGetApprovedDevelopers();
+  const {
+    assignDevelopersToProject,
+    assignDevelopersToProjectLoading,
+  } = useAssignDevelopersToProject();
+  const {
+    removeDeveloperFromProject,
+    removeDeveloperFromProjectLoading,
+  } = useRemoveDeveloperFromProject();
 
   const token =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczOTgzNjA3MSwiZXhwIjoxNzM5ODcyMDcxLCJyb2xlIjoiYWRtaW4ifQ.IsY6n0RTdoa9OmlqJejWVt6LOwA1LkBg2Kru6pXbcos";
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczOTkyMDg0OCwiZXhwIjoxNzM5OTU2ODQ4LCJyb2xlIjoiYWRtaW4ifQ.0JAJzPlRRmRXOVbzXjc7fsHFj7MMnqO4-PjRDe_YUbM";
 
   const [allDevelopers, setAllDevelopers] = useState<IDeveloper[]>([]);
   const [selectedDevelopers, setSelectedDevelopers] = useState<IDeveloper[]>(
@@ -56,6 +67,33 @@ export default function TeamEditModal({ projectId }: { projectId: string }) {
         ? prev.filter((dev) => dev.id !== id)
         : [...prev, allDevelopers.find((dev) => dev.id === id)!];
     });
+  }
+
+  function handleRemoveDeveloperFromProject(developerId: string) {
+    if (removeDeveloperFromProjectLoading) return;
+
+    removeDeveloperFromProject({ projectId, developerId, token })
+      .then(() => {
+        setSelectedDevelopers(
+          selectedDevelopers.filter((dev) => dev.id !== developerId),
+        );
+      })
+      .catch((error) => {
+        console.error("Erro ao remover desenvolvedor:", error);
+        alert("Erro ao remover desenvolvedor. Tente novamente.");
+      });
+  }
+
+  function handleAssignDevelopersToProject() {
+    if (assignDevelopersToProjectLoading) return;
+
+    const developerIds = selectedDevelopers.map((dev) => dev.id);
+
+    assignDevelopersToProject({ projectId, developerIds, token })
+      .catch((error) => {
+        console.error("Erro ao atribuir desenvolvedores:", error);
+        alert("Erro ao atribuir desenvolvedores. Tente novamente.");
+      });
   }
 
   return (
@@ -92,8 +130,9 @@ export default function TeamEditModal({ projectId }: { projectId: string }) {
                       key={developer.id}
                       {...developer}
                       isSelected={false}
-                      onToggleSelect={() =>
-                        handleDeveloperSelection(developer.id)
+                      onSelect={() => handleDeveloperSelection(developer.id)}
+                      onRemove={() =>
+                        handleRemoveDeveloperFromProject(developer.id)
                       }
                     />
                   ))}
@@ -110,8 +149,9 @@ export default function TeamEditModal({ projectId }: { projectId: string }) {
                     key={developer.id}
                     {...developer}
                     isSelected={true}
-                    onToggleSelect={() =>
-                      handleDeveloperSelection(developer.id)
+                    onSelect={() => handleDeveloperSelection(developer.id)}
+                    onRemove={() =>
+                      handleRemoveDeveloperFromProject(developer.id)
                     }
                   />
                 ))}
@@ -119,8 +159,17 @@ export default function TeamEditModal({ projectId }: { projectId: string }) {
         </div>
 
         <div className="flex justify-end gap-2">
-          <Button variant="outline" className="w-1/5">
-            Salvar
+          <Button
+            variant="outline"
+            className="w-1/5"
+            onClick={handleAssignDevelopersToProject}
+            disabled={assignDevelopersToProjectLoading}
+          >
+            {assignDevelopersToProjectLoading ? (
+              <LoaderCircleIcon className="animate-spin" />
+            ) : (
+              <span>Salvar</span>
+            )}
           </Button>
         </div>
       </DialogContent>
