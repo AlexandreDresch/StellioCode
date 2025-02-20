@@ -1,4 +1,9 @@
-import { DevelopersApiResponse, DevelopersStats, IDeveloper } from "@/types";
+import {
+  DevelopersApiResponse,
+  DevelopersStats,
+  IDeveloper,
+  IDeveloperById,
+} from "@/types";
 import api from "./api";
 
 export async function getDevelopersByProjectId({
@@ -13,15 +18,6 @@ export async function getDevelopersByProjectId({
       Authorization: `Bearer ${token}`,
     },
   });
-
-  return response.data;
-}
-
-export async function getDeveloperById({ developerId, token }: { developerId: string, token: string }) {
-  const response = await api.get(`/api/admin/developers/${developerId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    }});
 
   return response.data;
 }
@@ -41,41 +37,74 @@ export async function getAllDevelopers({
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }
+    },
   );
 
   return response.data;
 }
 
-export async function getDevelopersStats({
-  token,
-}: {
-  token: string;
-}) {
+export async function getDevelopersStats({ token }: { token: string }) {
   const response = await api.get<DevelopersStats>(
     `/api/admin/dashboard/developers/stats`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }
+    },
   );
 
   return response.data;
 }
 
-export async function getApprovedDevelopers({
-  token,
-}: {
-  token: string;
-}) {
+export async function getApprovedDevelopers({ token }: { token: string }) {
   const response = await api.get<IDeveloper[]>(
     `/api/admin/dashboard/developers/approved`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }
+    },
+  );
+
+  return response.data;
+}
+
+export async function getDeveloperById({
+  token,
+  developerId,
+}: {
+  token: string;
+  developerId: string;
+}) {
+  const response = await api.get<IDeveloperById>(
+    `/api/admin/dashboard/developers/${developerId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  return response.data;
+}
+
+export async function editDeveloper({
+  token,
+  developerId,
+  data,
+}: {
+  token: string;
+  developerId: string;
+  data: IDeveloperById;
+}) {
+  const response = await api.patch<IDeveloper[]>(
+    `/api/admin/dashboard/developers/${developerId}`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
   );
 
   return response.data;

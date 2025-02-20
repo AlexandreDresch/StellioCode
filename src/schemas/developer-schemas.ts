@@ -8,7 +8,7 @@ export const editDeveloperSchema = z.object({
   phone: z
     .string()
     .regex(
-      /^\(?[1-9]{2}\)?\s?[9]?[6-9]\d{3}-?\d{4}$/,
+      /^\(?\d{2}\)?\s?\d{1}?\d{4}[-\s]?\d{4}$/,
       "Número de telefone inválido. Deve seguir o formato brasileiro, como (11) 91234-5678.",
     ),
   status: z.enum(["pending", "approved", "rejected"], {

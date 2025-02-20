@@ -29,9 +29,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import useGetDeveloperById from "@/hooks/api/useGetDeveloperById";
+import { useEffect } from "react";
+import { DeveloperFormSkeleton } from "@/components/skeletons/developer-form-skeleton";
+import useUpdateDeveloper from "@/hooks/api/useUpdateDeveloper";
 
 export function EditDeveloperModal({ developerId }: { developerId: string }) {
-  console.log(developerId);
+  const token =
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDAxMTcxNCwiZXhwIjoxNzQwMDQ3NzE0LCJyb2xlIjoiYWRtaW4ifQ.BxDKGv-XAFOmadNwXDHeUzYIMviOwmpA0_Hj7KRLwMQ";
+
+  const { developer, getDeveloperById, getDeveloperLoading } =
+    useGetDeveloperById();
+  const { updateDeveloper, updateDeveloperLoading } = useUpdateDeveloper();
+
+  useEffect(() => {
+    getDeveloperById({ token, developerId });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const form = useForm<z.infer<typeof editDeveloperSchema>>({
     resolver: zodResolver(editDeveloperSchema),
@@ -44,8 +59,30 @@ export function EditDeveloperModal({ developerId }: { developerId: string }) {
     },
   });
 
+  useEffect(() => {
+    if (developer) {
+      form.reset({
+        name: developer.name || "",
+        phone: developer.phone || "",
+        status: developer.status || "",
+        level: developer.level || "",
+        technologies: developer.technologies || [],
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [developer]);
+
   function onSubmit(values: z.infer<typeof editDeveloperSchema>) {
-    console.log("Form values:", values);
+    updateDeveloper({
+      token,
+      developerId,
+      data: {
+        name: values.name,
+        phone: values.phone,
+        status: values.status,
+        level: values.level,
+      },
+    });
   }
 
   return (
@@ -58,61 +95,27 @@ export function EditDeveloperModal({ developerId }: { developerId: string }) {
         <DialogHeader>
           <DialogTitle>Editação de perfil</DialogTitle>
           <DialogDescription>
-            Faça mudanças no perfil do desenvolvedor aqui. Clique em Salvar
+            Faça mudanças no perfil de {developer?.name} aqui. Clique em Salvar
             Alterações quando estiver pronto.
           </DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nome</FormLabel>
-                  <FormControl>
-                    <Input placeholder="John Doe" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Telefone</FormLabel>
-                  <FormControl>
-                    <Input placeholder="(11) 91234-5678" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="flex w-full gap-2">
+        {getDeveloperLoading ? (
+          <DeveloperFormSkeleton />
+        ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="status"
+                name="name"
                 render={({ field }) => (
-                  <FormItem className="w-1/2">
-                    <FormLabel>Status</FormLabel>
+                  <FormItem>
+                    <FormLabel>Nome</FormLabel>
                     <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="pending">Pendente</SelectItem>
-                          <SelectItem value="approved">Aprovado</SelectItem>
-                          <SelectItem value="rejected">Rejeitado</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Input
+                        placeholder="John Doe"
+                        {...field}
+                        disabled={getDeveloperLoading || updateDeveloperLoading}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -121,36 +124,93 @@ export function EditDeveloperModal({ developerId }: { developerId: string }) {
 
               <FormField
                 control={form.control}
-                name="level"
+                name="phone"
                 render={({ field }) => (
-                  <FormItem className="w-1/2">
-                    <FormLabel>Nível</FormLabel>
+                  <FormItem>
+                    <FormLabel>Telefone</FormLabel>
                     <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o nível" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="junior">Júnior</SelectItem>
-                          <SelectItem value="mid_level">Pleno</SelectItem>
-                          <SelectItem value="senior">Sênior</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Input
+                        placeholder="(11) 91234-5678"
+                        {...field}
+                        disabled={getDeveloperLoading || updateDeveloperLoading}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            </div>
 
-            <DialogFooter>
-              <Button type="submit">Salvar Alterações</Button>
-            </DialogFooter>
-          </form>
-        </Form>
+              <div className="flex w-full gap-2">
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem className="w-1/2">
+                      <FormLabel>Status</FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={
+                            getDeveloperLoading || updateDeveloperLoading
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">Pendente</SelectItem>
+                            <SelectItem value="approved">Aprovado</SelectItem>
+                            <SelectItem value="rejected">Rejeitado</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="level"
+                  render={({ field }) => (
+                    <FormItem className="w-1/2">
+                      <FormLabel>Nível</FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={
+                            getDeveloperLoading || updateDeveloperLoading
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o nível" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="junior">Júnior</SelectItem>
+                            <SelectItem value="mid_level">Pleno</SelectItem>
+                            <SelectItem value="senior">Sênior</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <DialogFooter>
+                <Button
+                  type="submit"
+                  disabled={getDeveloperLoading || updateDeveloperLoading}
+                >
+                  Salvar Alterações
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        )}
       </DialogContent>
     </Dialog>
   );

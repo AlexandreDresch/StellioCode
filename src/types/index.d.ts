@@ -10,6 +10,15 @@ export interface IDeveloper {
   techStack: string[];
 }
 
+export interface IDeveloperById {
+  id: string;
+  name: string;
+  phone: string;
+  status: "pending" | "approved" | "rejected";
+  level: "junior" | "mid_level" | "senior";
+  technologies: string[];
+}
+
 export interface IDeveloperCardProps extends IDeveloper {
   isSelected: boolean;
   onSelect: (id: string) => void;

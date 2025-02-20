@@ -43,10 +43,10 @@ import { Button } from "../ui/button";
 export default function AdminDashboard() {
   const [meetingsViewModel, setMeetingsViewModel] = useState<
     "calendar" | "list"
-  >("calendar");
+  >("list");
 
   const token =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczOTkyMDg0OCwiZXhwIjoxNzM5OTU2ODQ4LCJyb2xlIjoiYWRtaW4ifQ.0JAJzPlRRmRXOVbzXjc7fsHFj7MMnqO4-PjRDe_YUbM";
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDAxMTcxNCwiZXhwIjoxNzQwMDQ3NzE0LCJyb2xlIjoiYWRtaW4ifQ.BxDKGv-XAFOmadNwXDHeUzYIMviOwmpA0_Hj7KRLwMQ";
 
   const { getSummary, summary } = useGetSummary();
   const { getAllProjectsAdmin, projects, pagination, setPagination } =
@@ -75,6 +75,7 @@ export default function AdminDashboard() {
 
   function handleRefreshDevelopers() {
     getAllDevelopers({ token });
+    getDevelopersStats({ token });
   }
 
   function handleRefreshProjects() {
