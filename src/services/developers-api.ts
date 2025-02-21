@@ -109,3 +109,22 @@ export async function editDeveloper({
 
   return response.data;
 }
+
+export async function deleteDeveloper({
+  token,
+  developerId,
+}: {
+  token: string;
+  developerId: string;
+}) {
+  const response = await api.delete(
+    `/api/admin/dashboard/developers/${developerId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  return response.data;
+}

@@ -24,17 +24,13 @@ export default function TeamEditModal({ projectId }: { projectId: string }) {
     approvedDevelopers,
     getApprovedDevelopersLoading,
   } = useGetApprovedDevelopers();
-  const {
-    assignDevelopersToProject,
-    assignDevelopersToProjectLoading,
-  } = useAssignDevelopersToProject();
-  const {
-    removeDeveloperFromProject,
-    removeDeveloperFromProjectLoading,
-  } = useRemoveDeveloperFromProject();
+  const { assignDevelopersToProject, assignDevelopersToProjectLoading } =
+    useAssignDevelopersToProject();
+  const { removeDeveloperFromProject, removeDeveloperFromProjectLoading } =
+    useRemoveDeveloperFromProject();
 
   const token =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczOTkyMDg0OCwiZXhwIjoxNzM5OTU2ODQ4LCJyb2xlIjoiYWRtaW4ifQ.0JAJzPlRRmRXOVbzXjc7fsHFj7MMnqO4-PjRDe_YUbM";
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDA5NjUyMSwiZXhwIjoxNzQwMTMyNTIxLCJyb2xlIjoiYWRtaW4ifQ.sP7zFAMNJMelqPlyVFE7CagdZbKFFU0iIoFaoO7DAn4";
 
   const [allDevelopers, setAllDevelopers] = useState<IDeveloper[]>([]);
   const [selectedDevelopers, setSelectedDevelopers] = useState<IDeveloper[]>(
@@ -72,16 +68,26 @@ export default function TeamEditModal({ projectId }: { projectId: string }) {
   function handleRemoveDeveloperFromProject(developerId: string) {
     if (removeDeveloperFromProjectLoading) return;
 
-    removeDeveloperFromProject({ projectId, developerId, token })
-      .then(() => {
-        setSelectedDevelopers(
-          selectedDevelopers.filter((dev) => dev.id !== developerId),
-        );
-      })
-      .catch((error) => {
-        console.error("Erro ao remover desenvolvedor:", error);
-        alert("Erro ao remover desenvolvedor. Tente novamente.");
-      });
+    const developer = allDevelopers.find((dev) => dev.id === developerId);
+
+    const isSavedOnDatabase = developer?.currentProjectIds?.includes(projectId);
+
+    if (isSavedOnDatabase) {
+      removeDeveloperFromProject({ projectId, developerId, token })
+        .then(() => {
+          setSelectedDevelopers((prevDevelopers) =>
+            prevDevelopers.filter((dev) => dev.id !== developerId),
+          );
+        })
+        .catch((error) => {
+          console.error("Erro ao remover desenvolvedor:", error);
+          alert("Erro ao remover desenvolvedor. Tente novamente.");
+        });
+    } else {
+      setSelectedDevelopers((prevDevelopers) =>
+        prevDevelopers.filter((dev) => dev.id !== developerId),
+      );
+    }
   }
 
   function handleAssignDevelopersToProject() {
@@ -89,11 +95,12 @@ export default function TeamEditModal({ projectId }: { projectId: string }) {
 
     const developerIds = selectedDevelopers.map((dev) => dev.id);
 
-    assignDevelopersToProject({ projectId, developerIds, token })
-      .catch((error) => {
+    assignDevelopersToProject({ projectId, developerIds, token }).catch(
+      (error) => {
         console.error("Erro ao atribuir desenvolvedores:", error);
         alert("Erro ao atribuir desenvolvedores. Tente novamente.");
-      });
+      },
+    );
   }
 
   return (

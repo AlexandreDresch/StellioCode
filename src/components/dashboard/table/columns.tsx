@@ -217,7 +217,7 @@ export function columns<T extends Project | Developer | Meeting>(
                     <EditDeveloperModal developerId={item.id} />
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <RemoveDeveloperModal />
+                    <RemoveDeveloperModal developerId={item.id} />
                   </DropdownMenuItem>
                 </>
               ) : (

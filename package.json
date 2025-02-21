@@ -28,6 +28,7 @@
     "@schedule-x/events-service": "^2.13.0",
     "@schedule-x/react": "^2.13.0",
     "@schedule-x/theme-default": "^2.13.0",
+    "@schedule-x/theme-shadcn": "^2.20.0",
     "@tanstack/react-table": "^8.20.6",
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",

@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { FilePenLineIcon } from "lucide-react";
+import { FilePenLineIcon, LoaderCircleIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -36,7 +36,7 @@ import useUpdateDeveloper from "@/hooks/api/useUpdateDeveloper";
 
 export function EditDeveloperModal({ developerId }: { developerId: string }) {
   const token =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDAxMTcxNCwiZXhwIjoxNzQwMDQ3NzE0LCJyb2xlIjoiYWRtaW4ifQ.BxDKGv-XAFOmadNwXDHeUzYIMviOwmpA0_Hj7KRLwMQ";
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDA5NjUyMSwiZXhwIjoxNzQwMTMyNTIxLCJyb2xlIjoiYWRtaW4ifQ.sP7zFAMNJMelqPlyVFE7CagdZbKFFU0iIoFaoO7DAn4";
 
   const { developer, getDeveloperById, getDeveloperLoading } =
     useGetDeveloperById();
@@ -203,9 +203,15 @@ export function EditDeveloperModal({ developerId }: { developerId: string }) {
               <DialogFooter>
                 <Button
                   type="submit"
+                  className="min-w-10"
                   disabled={getDeveloperLoading || updateDeveloperLoading}
                 >
-                  Salvar Alterações
+                  {updateDeveloperLoading ? (
+                    <LoaderCircleIcon className="animate-spin" />
+                  ) : (
+                    <span>Salvar Alterações</span>
+                  )}
+                  
                 </Button>
               </DialogFooter>
             </form>

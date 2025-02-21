@@ -8,7 +8,7 @@ import {
 import { createEventsServicePlugin } from "@schedule-x/events-service";
 import { createEventModalPlugin } from "@schedule-x/event-modal";
 
-import "@schedule-x/theme-default/dist/index.css";
+import "@schedule-x/theme-shadcn/dist/index.css";
 import { useEffect, useMemo, useState } from "react";
 import { Meeting } from "@/types";
 import { formatDateToCustomString } from "@/lib/utils";
@@ -46,6 +46,7 @@ export default function Calendar({ events }: { events: Meeting[] }) {
       createViewMonthGrid(),
       createViewMonthAgenda(),
     ],
+    theme: 'shadcn',
     events: calendarEvents,
     plugins: [eventsService, createEventModalPlugin()],
     locale: "pt-BR",

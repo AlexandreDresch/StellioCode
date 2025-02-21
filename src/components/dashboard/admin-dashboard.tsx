@@ -43,10 +43,10 @@ import { Button } from "../ui/button";
 export default function AdminDashboard() {
   const [meetingsViewModel, setMeetingsViewModel] = useState<
     "calendar" | "list"
-  >("list");
+  >("calendar");
 
   const token =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDAxMTcxNCwiZXhwIjoxNzQwMDQ3NzE0LCJyb2xlIjoiYWRtaW4ifQ.BxDKGv-XAFOmadNwXDHeUzYIMviOwmpA0_Hj7KRLwMQ";
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDA5NjUyMSwiZXhwIjoxNzQwMTMyNTIxLCJyb2xlIjoiYWRtaW4ifQ.sP7zFAMNJMelqPlyVFE7CagdZbKFFU0iIoFaoO7DAn4";
 
   const { getSummary, summary } = useGetSummary();
   const { getAllProjectsAdmin, projects, pagination, setPagination } =
@@ -290,7 +290,7 @@ export default function AdminDashboard() {
               />
             ) : (
               <div className="text-center text-muted-foreground">
-                Nenhum projeto disponível.
+                Nenhum desenvolvedor encontrado.
               </div>
             )}
           </CardContent>
