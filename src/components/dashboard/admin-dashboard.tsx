@@ -2,6 +2,7 @@ import {
   CalendarSearchIcon,
   CogIcon,
   ComputerIcon,
+  HandCoinsIcon,
   RefreshCwIcon,
 } from "lucide-react";
 
@@ -39,6 +40,9 @@ import useGetAllDevelopers from "@/hooks/api/useGetAllDevelopers";
 import useGetDevelopersStats from "@/hooks/api/useGetDevelopersStats";
 import useGetAllMeetings from "@/hooks/api/useGetAllMeetings";
 import { Button } from "../ui/button";
+import Plans from "../plans";
+import { PieChartInteractive } from "./charts/pie-chart-interactive";
+import { demoPlans } from "@/constants/plans";
 
 export default function AdminDashboard() {
   const [meetingsViewModel, setMeetingsViewModel] = useState<
@@ -46,7 +50,7 @@ export default function AdminDashboard() {
   >("calendar");
 
   const token =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDA5NjUyMSwiZXhwIjoxNzQwMTMyNTIxLCJyb2xlIjoiYWRtaW4ifQ.sP7zFAMNJMelqPlyVFE7CagdZbKFFU0iIoFaoO7DAn4";
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDE4MjI3NCwiZXhwIjoxNzQwMjE4Mjc0LCJyb2xlIjoiYWRtaW4ifQ.ahVM5QpTuial9_C-ooxQCfAsvHQsHt_JY1BelOUUxfs";
 
   const { getSummary, summary } = useGetSummary();
   const { getAllProjectsAdmin, projects, pagination, setPagination } =
@@ -215,7 +219,7 @@ export default function AdminDashboard() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="select-none text-lg text-gray-800 sm:text-xl">
-              Projetos
+                Projetos
               </CardTitle>
               <div className="flex items-center">
                 <Button
@@ -355,6 +359,34 @@ export default function AdminDashboard() {
                 )}
               </>
             )}
+          </CardContent>
+        </Card>
+      </section>
+
+      <section className="mt-4 flex gap-4 max-md:flex-col">
+        <PieChartInteractive />
+
+        <Card className="flex-1">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="select-none text-lg text-gray-800 sm:text-xl">
+                Planos
+              </CardTitle>
+              <div className="flex items-center">
+                <Button
+                  variant="ghost"
+                  className="group"
+                  onClick={handleRefreshDevelopers}
+                >
+                  <RefreshCwIcon className="group-hover:animate-spin" />
+                </Button>
+                <HandCoinsIcon className="ml-auto size-4" />
+              </div>
+            </div>
+          </CardHeader>
+
+          <CardContent>
+            <Plans plans={demoPlans} view="dashboard"/>
           </CardContent>
         </Card>
       </section>
