@@ -145,3 +145,20 @@ export interface DevelopersStats {
     rejected: number;
   }
 }
+
+export interface PricingPlan {
+  name: string;
+  price: string;
+  yearlyPrice: string;
+  period: string;
+  features: string[];
+  description: string;
+  popular: boolean;
+}
+
+export interface PricingProps {
+  plans: PricingPlan[];
+  title?: string;
+  description?: string;
+  view: "dashboard" | "client";
+}

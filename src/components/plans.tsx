@@ -8,23 +8,7 @@ import { Check, Star } from "lucide-react";
 import { useState, useRef } from "react";
 import confetti from "canvas-confetti";
 import NumberFlow from "@number-flow/react";
-
-interface PricingPlan {
-  name: string;
-  price: string;
-  yearlyPrice: string;
-  period: string;
-  features: string[];
-  description: string;
-  isPopular: boolean;
-}
-
-interface PricingProps {
-  plans: PricingPlan[];
-  title?: string;
-  description?: string;
-  view: "dashboard" | "client";
-}
+import { PricingProps } from "@/types";
 
 export default function Plans({
   plans,
@@ -100,7 +84,7 @@ export default function Plans({
             whileInView={
               isDesktop
                 ? {
-                    y: plan.isPopular ? -20 : 0,
+                    y: plan.popular ? -20 : 0,
                     opacity: 1,
                     x: index === 2 ? -30 : index === 0 ? 30 : 0,
                     scale: index === 0 || index === 2 ? 0.94 : 1.0,
@@ -118,9 +102,9 @@ export default function Plans({
             }}
             className={cn(
               `relative rounded-2xl border-[1px] bg-background p-6 text-center lg:flex lg:flex-col lg:justify-center`,
-              plan.isPopular ? "border-2 border-[#F76680]" : "border-border",
+              plan.popular ? "border-2 border-[#F76680]" : "border-border",
               "flex flex-col",
-              !plan.isPopular && "mt-5",
+              !plan.popular && "mt-5",
               index === 0 || index === 2
                 ? "-translate-z-[50px] rotate-y-[10deg] z-0 translate-x-0 translate-y-0 transform"
                 : "z-10",
@@ -128,7 +112,7 @@ export default function Plans({
               index === 2 && "origin-left",
             )}
           >
-            {plan.isPopular && (
+            {plan.popular && (
               <div className="absolute right-0 top-0 flex items-center rounded-bl-xl rounded-tr-xl bg-gradient-to-bl from-[#F76680] via-[#9D2C7D] to-[#57007B] px-2 py-0.5">
                 <Star className="h-4 w-4 fill-current text-primary-foreground" />
                 <span className="ml-1 font-sans font-semibold text-primary-foreground">
@@ -141,9 +125,6 @@ export default function Plans({
                 {plan.name}
               </p>
               <div className="mt-6 flex items-center justify-center gap-x-2">
-                <span className="text-sm font-semibold leading-6 tracking-wide text-muted-foreground">
-                  a partir de
-                </span>
                 <span className="text-5xl font-bold tracking-tight text-foreground">
                   <NumberFlow
                     value={
@@ -192,7 +173,7 @@ export default function Plans({
                   }),
                   "group relative w-full gap-2 overflow-hidden text-lg font-semibold tracking-tighter",
                   "transform-gpu ring-offset-current transition-all duration-300 ease-out hover:ring-2 hover:ring-[#F76680]",
-                  plan.isPopular
+                  plan.popular
                     ? "bg-gradient-to-bl from-[#F76680] via-[#9D2C7D] to-[#57007B] text-primary-foreground hover:text-primary-foreground"
                     : "bg-background text-foreground",
                 )}

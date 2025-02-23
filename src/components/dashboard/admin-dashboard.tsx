@@ -42,7 +42,7 @@ import useGetAllMeetings from "@/hooks/api/useGetAllMeetings";
 import { Button } from "../ui/button";
 import Plans from "../plans";
 import { PieChartInteractive } from "./charts/pie-chart-interactive";
-import { demoPlans } from "@/constants/plans";
+import useGetAllPlans from "@/hooks/api/useGetAllPlans";
 
 export default function AdminDashboard() {
   const [meetingsViewModel, setMeetingsViewModel] = useState<
@@ -50,7 +50,7 @@ export default function AdminDashboard() {
   >("calendar");
 
   const token =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDE4MjI3NCwiZXhwIjoxNzQwMjE4Mjc0LCJyb2xlIjoiYWRtaW4ifQ.ahVM5QpTuial9_C-ooxQCfAsvHQsHt_JY1BelOUUxfs";
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDI2NTQ2NywiZXhwIjoxNzQwMzAxNDY3LCJyb2xlIjoiYWRtaW4ifQ.02653EIX7HajXYZAFLRjQHwLSnAEC0_BRJNgaf98E1U";
 
   const { getSummary, summary } = useGetSummary();
   const { getAllProjectsAdmin, projects, pagination, setPagination } =
@@ -61,6 +61,7 @@ export default function AdminDashboard() {
   const { developersStats, getDevelopersStats } = useGetDevelopersStats();
   const { getAllMeetings, meetings, meetingPagination, setMeetingPagination } =
     useGetAllMeetings();
+  const { getPlans, plans } = useGetAllPlans();
 
   useEffect(() => {
     getSummary({ token });
@@ -69,6 +70,7 @@ export default function AdminDashboard() {
     getAllDevelopers({ token });
     getDevelopersStats({ token });
     getAllMeetings({ token });
+    getPlans();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -386,7 +388,7 @@ export default function AdminDashboard() {
           </CardHeader>
 
           <CardContent>
-            <Plans plans={demoPlans} view="dashboard"/>
+            {plans !== null && <Plans plans={plans} view="dashboard" />}
           </CardContent>
         </Card>
       </section>
