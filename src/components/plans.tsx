@@ -11,7 +11,7 @@ import NumberFlow from "@number-flow/react";
 import { PricingProps } from "@/types";
 
 export default function Plans({
-  plans,
+  plans = [],
   view,
   title = "Simples, Transparente e Direto",
   description = "Escolha o plano que funciona para você.\nTodos os planos incluem acesso à nossa plataforma, ferramentas de monitoramento, e suporte dedicado.",
@@ -49,6 +49,19 @@ export default function Plans({
     }
   };
 
+  if (plans.length === 0) {
+    return (
+      <div className="container py-20 text-center">
+        <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
+          {title}
+        </h2>
+        <p className="mt-4 text-lg text-muted-foreground">
+          Nenhum plano disponível no momento.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="container py-20">
       <div className="mb-12 space-y-4 text-center">
@@ -72,7 +85,8 @@ export default function Plans({
           </Label>
         </label>
         <span className="ml-2 font-semibold">
-          Pagamento anual <span className="text-primary">(20% de desconto)</span>
+          Pagamento anual{" "}
+          <span className="text-primary">(20% de desconto)</span>
         </span>
       </div>
 

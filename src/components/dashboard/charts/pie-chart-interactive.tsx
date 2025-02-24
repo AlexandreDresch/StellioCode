@@ -74,7 +74,7 @@ export function PieChartInteractive() {
   const months = React.useMemo(() => desktopData.map((item) => item.month), [])
 
   return (
-    <Card data-chart={id} className="flex flex-col md:w-1/4">
+    <Card data-chart={id} className="flex flex-col [1370px]:w-1/4">
       <ChartStyle id={id} config={chartConfig} />
       <CardHeader className="flex-row items-start space-y-0 pb-0">
         <div className="grid gap-1">

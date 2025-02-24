@@ -1,4 +1,4 @@
-import { ProjectsApiResponse, ProjectStats } from "@/types";
+import { IProjectUpdateData, ProjectsApiResponse, ProjectStats } from "@/types";
 import api from "./api";
 
 export async function getAllProjectsAdmin({
@@ -12,6 +12,44 @@ export async function getAllProjectsAdmin({
 }) {
   const response = await api.get<ProjectsApiResponse>(
     `/api/admin/dashboard/projects?page=${page}&size=${size}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  return response.data;
+}
+
+export async function getProjectByIdAdmin({
+  token,
+  projectId,
+}: {
+  token: string;
+  projectId: string;
+}) {
+  const response = await api.get(`/api/admin/dashboard/projects/${projectId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+}
+
+export async function editProject({
+  token,
+  projectId,
+  data,
+}: {
+  token: string;
+  projectId: string;
+  data: IProjectUpdateData;
+}) {
+  const response = await api.patch(
+    `/api/admin/dashboard/projects/${projectId}`,
+    data,
     {
       headers: {
         Authorization: `Bearer ${token}`,

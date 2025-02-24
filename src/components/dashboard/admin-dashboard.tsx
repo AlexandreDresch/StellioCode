@@ -43,6 +43,7 @@ import { Button } from "../ui/button";
 import Plans from "../plans";
 import { PieChartInteractive } from "./charts/pie-chart-interactive";
 import useGetAllPlans from "@/hooks/api/useGetAllPlans";
+import PlansSkeleton from "../skeletons/plans-skeleton";
 
 export default function AdminDashboard() {
   const [meetingsViewModel, setMeetingsViewModel] = useState<
@@ -50,7 +51,7 @@ export default function AdminDashboard() {
   >("calendar");
 
   const token =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDI2NTQ2NywiZXhwIjoxNzQwMzAxNDY3LCJyb2xlIjoiYWRtaW4ifQ.02653EIX7HajXYZAFLRjQHwLSnAEC0_BRJNgaf98E1U";
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDMzMDQ1MywiZXhwIjoxNzQwMzY2NDUzLCJyb2xlIjoiYWRtaW4ifQ.1xvZSLFisql3DHHLaWCCDMOwVOAmIVFDamjjFBoZOEM";
 
   const { getSummary, summary } = useGetSummary();
   const { getAllProjectsAdmin, projects, pagination, setPagination } =
@@ -61,7 +62,7 @@ export default function AdminDashboard() {
   const { developersStats, getDevelopersStats } = useGetDevelopersStats();
   const { getAllMeetings, meetings, meetingPagination, setMeetingPagination } =
     useGetAllMeetings();
-  const { getPlans, plans } = useGetAllPlans();
+  const { getPlans, plans, getPlansLoading } = useGetAllPlans();
 
   useEffect(() => {
     getSummary({ token });
@@ -86,6 +87,10 @@ export default function AdminDashboard() {
 
   function handleRefreshProjects() {
     getAllProjectsAdmin({ token });
+  }
+
+  function handleRefreshPlans() {
+    getPlans();
   }
 
   return (
@@ -365,7 +370,7 @@ export default function AdminDashboard() {
         </Card>
       </section>
 
-      <section className="mt-4 flex gap-4 max-md:flex-col">
+      <section className="mt-4 flex gap-4 max-[1370px]:flex-col">
         <PieChartInteractive />
 
         <Card className="flex-1">
@@ -378,7 +383,7 @@ export default function AdminDashboard() {
                 <Button
                   variant="ghost"
                   className="group"
-                  onClick={handleRefreshDevelopers}
+                  onClick={handleRefreshPlans}
                 >
                   <RefreshCwIcon className="group-hover:animate-spin" />
                 </Button>
@@ -388,7 +393,11 @@ export default function AdminDashboard() {
           </CardHeader>
 
           <CardContent>
-            {plans !== null && <Plans plans={plans} view="dashboard" />}
+            {getPlansLoading ? (
+              <PlansSkeleton />
+            ) : (
+              <Plans plans={plans ? plans : []} view="dashboard" />
+            )}
           </CardContent>
         </Card>
       </section>

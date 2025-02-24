@@ -147,6 +147,7 @@ export interface DevelopersStats {
 }
 
 export interface PricingPlan {
+  id: string;
   name: string;
   price: string;
   yearlyPrice: string;
@@ -161,4 +162,25 @@ export interface PricingProps {
   title?: string;
   description?: string;
   view: "dashboard" | "client";
+}
+
+export interface Service {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  category: string;
+  duration: string;
+  createdAt: string;
+  updatedAt: string;
+  active: boolean;
+}
+
+export interface IProjectUpdateData {
+  title: string;
+  description: string;
+  status: "pending" | "in_progress" | "completed" | "cancelled";
+  price: number;
+  planId: string;
+  serviceId: string;
 }

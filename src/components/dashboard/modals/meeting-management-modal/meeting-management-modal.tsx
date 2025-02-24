@@ -69,7 +69,7 @@ export function MeetingManagementModal({ event }: { event: Meeting }) {
     },
   });
 
-  const token ="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczOTkyMDg0OCwiZXhwIjoxNzM5OTU2ODQ4LCJyb2xlIjoiYWRtaW4ifQ.0JAJzPlRRmRXOVbzXjc7fsHFj7MMnqO4-PjRDe_YUbM"
+  const token ="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDMzMDQ1MywiZXhwIjoxNzQwMzY2NDUzLCJyb2xlIjoiYWRtaW4ifQ.1xvZSLFisql3DHHLaWCCDMOwVOAmIVFDamjjFBoZOEM"
 
   const { updateMeetingStatus, updatedMeeting, updateMeetingLoading } =
     useUpdateMeetingStatus();
