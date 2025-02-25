@@ -44,6 +44,7 @@ import Plans from "../plans";
 import { PieChartInteractive } from "./charts/pie-chart-interactive";
 import useGetAllPlans from "@/hooks/api/useGetAllPlans";
 import PlansSkeleton from "../skeletons/plans-skeleton";
+import useGetPlansStats from "@/hooks/api/useGetPlansStats";
 
 export default function AdminDashboard() {
   const [meetingsViewModel, setMeetingsViewModel] = useState<
@@ -51,7 +52,7 @@ export default function AdminDashboard() {
   >("calendar");
 
   const token =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDMzMDQ1MywiZXhwIjoxNzQwMzY2NDUzLCJyb2xlIjoiYWRtaW4ifQ.1xvZSLFisql3DHHLaWCCDMOwVOAmIVFDamjjFBoZOEM";
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDQ0NjUxNSwiZXhwIjoxNzQwNDgyNTE1LCJyb2xlIjoiYWRtaW4ifQ._LjFvP3jdXnrnYJyQsf02mVX3h0uw-9OFwuXKayqENk";
 
   const { getSummary, summary } = useGetSummary();
   const { getAllProjectsAdmin, projects, pagination, setPagination } =
@@ -63,6 +64,7 @@ export default function AdminDashboard() {
   const { getAllMeetings, meetings, meetingPagination, setMeetingPagination } =
     useGetAllMeetings();
   const { getPlans, plans, getPlansLoading } = useGetAllPlans();
+  const { getPlansStats, plansStats } = useGetPlansStats();
 
   useEffect(() => {
     getSummary({ token });
@@ -71,6 +73,7 @@ export default function AdminDashboard() {
     getAllDevelopers({ token });
     getDevelopersStats({ token });
     getAllMeetings({ token });
+    getPlansStats({ token });
     getPlans();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -91,6 +94,7 @@ export default function AdminDashboard() {
 
   function handleRefreshPlans() {
     getPlans();
+    getPlansStats({ token });
   }
 
   return (
@@ -371,7 +375,7 @@ export default function AdminDashboard() {
       </section>
 
       <section className="mt-4 flex gap-4 max-[1370px]:flex-col">
-        <PieChartInteractive />
+        {plansStats && <PieChartInteractive plansData={plansStats} />}
 
         <Card className="flex-1">
           <CardHeader>

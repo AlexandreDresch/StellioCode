@@ -1,6 +1,6 @@
-import * as React from "react"
-import { Label, Pie, PieChart, Sector } from "recharts"
-import { PieSectorDataItem } from "recharts/types/polar/Pie"
+import * as React from "react";
+import { Label, Pie, PieChart, Sector } from "recharts";
+import { PieSectorDataItem } from "recharts/types/polar/Pie";
 
 import {
   Card,
@@ -8,92 +8,86 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartStyle,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-const desktopData = [
-  { month: "january", desktop: 186, fill: "var(--color-january)" },
-  { month: "february", desktop: 305, fill: "var(--color-february)" },
-  { month: "march", desktop: 237, fill: "var(--color-march)" },
-  { month: "april", desktop: 173, fill: "var(--color-april)" },
-  { month: "may", desktop: 209, fill: "var(--color-may)" },
-]
+} from "@/components/ui/select";
+import { IPlanStatsData } from "@/types";
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
+  BÁSICO: {
+    label: "BÁSICO",
+    color: "#38bdf8",
   },
-  desktop: {
-    label: "Desktop",
+  EMPRESARIAL: {
+    label: "EMPRESARIAL",
+    color: "#5eeeb1",
   },
-  mobile: {
-    label: "Mobile",
+  PROFISSIONAL: {
+    label: "PROFISSIONAL",
+    color: "#F87171",
   },
-  january: {
-    label: "January",
-    color: "hsl(var(--chart-1))",
-  },
-  february: {
-    label: "February",
-    color: "hsl(var(--chart-2))",
-  },
-  march: {
-    label: "March",
-    color: "hsl(var(--chart-3))",
-  },
-  april: {
-    label: "April",
-    color: "hsl(var(--chart-4))",
-  },
-  may: {
-    label: "May",
-    color: "hsl(var(--chart-5))",
-  },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
-export function PieChartInteractive() {
-  const id = "pie-interactive"
-  const [activeMonth, setActiveMonth] = React.useState(desktopData[0].month)
+export function PieChartInteractive({
+  plansData,
+}: {
+  plansData: IPlanStatsData[];
+}) {
+  const id = "pie-interactive";
+  const [activePlan, setActivePlan] = React.useState(plansData[0].planName);
 
   const activeIndex = React.useMemo(
-    () => desktopData.findIndex((item) => item.month === activeMonth),
-    [activeMonth]
-  )
-  const months = React.useMemo(() => desktopData.map((item) => item.month), [])
+    () => plansData.findIndex((item) => item.planName === activePlan),
+    [activePlan, plansData],
+  );
+
+  const plans = React.useMemo(
+    () => plansData.map((item) => item.planName),
+    [plansData],
+  );
+
+  const enhancedPlansData = React.useMemo(
+    () =>
+      plansData.map((item) => ({
+        ...item,
+        fill: chartConfig[item.planName as keyof typeof chartConfig]?.color,
+      })),
+    [plansData],
+  );
 
   return (
-    <Card data-chart={id} className="flex flex-col [1370px]:w-1/4">
+    <Card data-chart={id} className="[1370px]:w-1/4 2xl:w-1/5 flex flex-col">
       <ChartStyle id={id} config={chartConfig} />
-      <CardHeader className="flex-row items-start space-y-0 pb-0">
+      <CardHeader className="flex-col items-start space-y-2 pb-0">
         <div className="grid gap-1">
           <CardTitle>Planos</CardTitle>
-          <CardDescription>Estatísticas de uso</CardDescription>
+          <CardDescription>Estatísticas Mensais</CardDescription>
         </div>
-        <Select value={activeMonth} onValueChange={setActiveMonth}>
+        <Select value={activePlan} onValueChange={setActivePlan}>
           <SelectTrigger
-            className="ml-auto h-7 w-[130px] rounded-lg pl-2.5"
-            aria-label="Select a value"
+            className="h-7 w-full rounded-lg pl-2.5"
+            aria-label="Selecione um plano"
           >
-            <SelectValue placeholder="Select month" />
+            <SelectValue placeholder="Selecione um Plano" />
           </SelectTrigger>
           <SelectContent align="end" className="rounded-xl">
-            {months.map((key) => {
-              const config = chartConfig[key as keyof typeof chartConfig]
+            {plans.map((key) => {
+              const config = chartConfig[key as keyof typeof chartConfig];
 
               if (!config) {
-                return null
+                return null;
               }
 
               return (
@@ -106,13 +100,13 @@ export function PieChartInteractive() {
                     <span
                       className="flex h-3 w-3 shrink-0 rounded-sm"
                       style={{
-                        backgroundColor: `var(--color-${key})`,
+                        backgroundColor: config.color,
                       }}
                     />
                     {config?.label}
                   </div>
                 </SelectItem>
-              )
+              );
             })}
           </SelectContent>
         </Select>
@@ -129,9 +123,9 @@ export function PieChartInteractive() {
               content={<ChartTooltipContent hideLabel />}
             />
             <Pie
-              data={desktopData}
-              dataKey="desktop"
-              nameKey="month"
+              data={enhancedPlansData}
+              dataKey="monthlyRevenue"
+              nameKey="planName"
               innerRadius={60}
               strokeWidth={5}
               activeIndex={activeIndex}
@@ -162,19 +156,22 @@ export function PieChartInteractive() {
                         <tspan
                           x={viewBox.cx}
                           y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold"
+                          className="fill-foreground text-xl font-bold"
                         >
-                          {desktopData[activeIndex].desktop.toLocaleString()}
+                          R$
+                          {plansData[
+                            activeIndex
+                          ].monthlyRevenue.toLocaleString()}{" "}
                         </tspan>
                         <tspan
                           x={viewBox.cx}
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          Total
+                          {plansData[activeIndex].planName}
                         </tspan>
                       </text>
-                    )
+                    );
                   }
                 }}
               />
@@ -183,5 +180,5 @@ export function PieChartInteractive() {
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

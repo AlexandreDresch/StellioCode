@@ -6,3 +6,16 @@ export async function getAllPlans() {
 
   return response.data;
 }
+
+export async function getPlansStats({ token }: { token: string }) {
+  const response = await api.get(
+    `/api/admin/dashboard/plans/stats`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  return response.data;
+}

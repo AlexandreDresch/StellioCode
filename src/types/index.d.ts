@@ -59,12 +59,12 @@ export type Developer = {
 export type Meeting = {
   id: string;
   status: "pending" | "accepted" | "rejected";
-  clientId: string;  
-  clientName: string;  
+  clientId: string;
+  clientName: string;
   projectId: string;
   projectName: string;
   projectDescription: string;
-  scheduledAt: Date;  
+  scheduledAt: Date;
 };
 
 export type SummaryMetric = {
@@ -143,7 +143,7 @@ export interface DevelopersStats {
     pending: number;
     approved: number;
     rejected: number;
-  }
+  };
 }
 
 export interface PricingPlan {
@@ -183,4 +183,10 @@ export interface IProjectUpdateData {
   price: number;
   planId: string;
   serviceId: string;
+}
+
+export interface IPlanStatsData {
+  planName: string;
+  monthlyRevenue: number;
+  totalContracts: number;
 }
