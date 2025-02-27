@@ -3,11 +3,12 @@ import {
   CogIcon,
   ComputerIcon,
   GhostIcon,
+  HandCoinsIcon,
   LayoutDashboardIcon,
   LogOutIcon,
   PanelBottomIcon,
+  ServerIcon,
   Settings2Icon,
-  UserPlusIcon,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import {
@@ -16,16 +17,85 @@ import {
   SheetContent,
   SheetTitle,
   SheetDescription,
+  SheetClose,
 } from "../ui/sheet";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import useLogout from "@/hooks/auth/use-logout";
+import { useState } from "react";
+import { Badge } from "../ui/badge";
+import useUserName from "@/hooks/auth/use-user-name";
+
+const sidebarLinks = [
+  {
+    id: "summary",
+    icon: <LayoutDashboardIcon className="size-5 transition-all" />,
+    text: "Início",
+    tooltip: "Início",
+  },
+  {
+    id: "projects",
+    icon: <CogIcon className="size-5 transition-all" />,
+    text: "Projetos",
+    tooltip: "Projetos",
+  },
+  {
+    id: "developers",
+    icon: <ComputerIcon className="size-5 transition-all" />,
+    text: "Desenvolvedores",
+    tooltip: "Desenvolvedores",
+  },
+  {
+    id: "meetings",
+    icon: <CalendarSearchIcon className="size-5 transition-all" />,
+    text: "Reuniões",
+    tooltip: "Reuniões",
+  },
+  {
+    id: "plans",
+    icon: <HandCoinsIcon className="size-5 transition-all" />,
+    text: "Planos",
+    tooltip: "Planos",
+  },
+  {
+    id: "services",
+    icon: <ServerIcon className="size-5 transition-all" />,
+    text: "Serviços",
+    tooltip: "Serviços",
+  },
+  {
+    id: "settings",
+    icon: <Settings2Icon className="size-5 transition-all" />,
+    text: "Configurações",
+    tooltip: "Configurações",
+  },
+];
 
 export default function Sidebar() {
+  const [openSheet, setOpenSheet] = useState(false);
+
+  const logout = useLogout();
+  const name = useUserName();
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    logout();
+    navigate("/auth");
+  }
+
+  function scrollTo(targetId: string) {
+    setOpenSheet(false);
+    const targetSection = document.getElementById(targetId);
+    if (targetSection) {
+      targetSection.scrollIntoView({ behavior: "smooth" });
+    }
+  }
+
   return (
     <div className="flex w-full flex-col bg-muted/40">
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col justify-between border-r bg-background sm:flex">
@@ -41,94 +111,28 @@ export default function Sidebar() {
                   <span className="sr-only">StellioCode</span>
                 </Link>
               </TooltipTrigger>
-
               <TooltipContent side="right">Página Inicial</TooltipContent>
             </Tooltip>
 
             <div className="grid gap-6 text-lg font-medium">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link
-                    to={"#"}
-                    className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                  >
-                    <LayoutDashboardIcon className="size-5 transition-all" />
-                    <span className="sr-only">Início</span>
-                  </Link>
-                </TooltipTrigger>
-
-                <TooltipContent side="right">Início</TooltipContent>
-              </Tooltip>
-
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link
-                    to={"#clients"}
-                    className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                  >
-                    <UserPlusIcon className="size-5 transition-all" />
-                    <span className="sr-only">Clientes</span>
-                  </Link>
-                </TooltipTrigger>
-
-                <TooltipContent side="right">Clientes</TooltipContent>
-              </Tooltip>
-
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link
-                    to={"#developers"}
-                    className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                  >
-                    <ComputerIcon className="size-5 transition-all" />
-                    <span className="sr-only">Desenvolvedores</span>
-                  </Link>
-                </TooltipTrigger>
-
-                <TooltipContent side="right">Desenvolvedores</TooltipContent>
-              </Tooltip>
-
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link
-                    to={"#projects"}
-                    className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                  >
-                    <CogIcon className="size-5 transition-all" />
-                    <span className="sr-only">Projetos</span>
-                  </Link>
-                </TooltipTrigger>
-
-                <TooltipContent side="right">Projetos</TooltipContent>
-              </Tooltip>
-
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link
-                    to={"#meetings"}
-                    className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                  >
-                    <CalendarSearchIcon className="size-5 transition-all" />
-                    <span className="sr-only">Reuniões</span>
-                  </Link>
-                </TooltipTrigger>
-
-                <TooltipContent side="right">Reuniões</TooltipContent>
-              </Tooltip>
-
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link
-                    to={"#settings"}
-                    className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                  >
-                    <Settings2Icon className="size-5 transition-all" />
-                    <span className="sr-only">Configurações</span>
-                  </Link>
-                </TooltipTrigger>
-
-                <TooltipContent side="right">Configurações</TooltipContent>
-              </Tooltip>
+              {sidebarLinks.map((link) => (
+                <Tooltip key={link.id}>
+                  <TooltipTrigger asChild>
+                    <a
+                      href={`#${link.id}`}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        scrollTo(link.id);
+                      }}
+                      className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+                    >
+                      {link.icon}
+                      <span className="sr-only">{link.text}</span>
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">{link.tooltip}</TooltipContent>
+                </Tooltip>
+              ))}
             </div>
           </TooltipProvider>
         </nav>
@@ -137,15 +141,15 @@ export default function Sidebar() {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link
-                  to={"/auth"}
+                <Button
+                  variant="ghost"
+                  onClick={handleLogout}
                   className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-red-500"
                 >
                   <LogOutIcon className="size-5 transition-all" />
                   <span className="sr-only">Sair</span>
-                </Link>
+                </Button>
               </TooltipTrigger>
-
               <TooltipContent side="right">Sair</TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -153,8 +157,8 @@ export default function Sidebar() {
       </aside>
 
       <div className="flex flex-col sm:hidden sm:gap-4 sm:py-4 sm:pl-14">
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
-          <Sheet>
+        <header className="fixed top-0 z-30 flex h-14 w-full items-center justify-between gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+          <Sheet open={openSheet} onOpenChange={setOpenSheet}>
             <SheetTrigger asChild>
               <Button size="icon" variant="outline" className="sm:hidden">
                 <PanelBottomIcon className="size-5" />
@@ -178,66 +182,46 @@ export default function Sidebar() {
               </SheetDescription>
 
               <nav className="grid gap-6 text-lg font-medium">
-                <Link
-                  to={"#"}
-                  className="flex items-center gap-4 text-muted-foreground hover:text-foreground"
-                >
-                  <LayoutDashboardIcon className="size-5 transition-all" />
-                  <span>Início</span>
-                </Link>
-
-                <Link
-                  to={"#clients"}
-                  className="flex items-center gap-4 text-muted-foreground hover:text-foreground"
-                >
-                  <UserPlusIcon className="size-5 transition-all" />
-                  <span>Clientes</span>
-                </Link>
-
-                <Link
-                  to={"#developers"}
-                  className="flex items-center gap-4 text-muted-foreground hover:text-foreground"
-                >
-                  <ComputerIcon className="size-5 transition-all" />
-                  <span>Desenvolvedores</span>
-                </Link>
-
-                <Link
-                  to={"#projects"}
-                  className="flex items-center gap-4 text-muted-foreground hover:text-foreground"
-                >
-                  <CogIcon className="size-5 transition-all" />
-                  <span>Projetos</span>
-                </Link>
-
-                <Link
-                  to={"#meetings"}
-                  className="flex items-center gap-4 text-muted-foreground hover:text-foreground"
-                >
-                  <CalendarSearchIcon className="size-5 transition-all" />
-                  <span>Reuniões</span>
-                </Link>
-
-                <Link
-                  to={"#settings"}
-                  className="flex items-center gap-4 text-muted-foreground hover:text-foreground"
-                >
-                  <Settings2Icon className="size-5 transition-all" />
-                  <span>Configurações</span>
-                </Link>
+                {sidebarLinks.map((link) => (
+                  <SheetClose key={link.id} asChild>
+                    <a
+                      href={`#${link.id}`}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        setTimeout(() => {
+                          scrollTo(link.id);
+                        }, 100);
+                      }}
+                      className="flex items-center gap-4 text-muted-foreground hover:text-foreground"
+                    >
+                      {link.icon}
+                      <span>{link.text}</span>
+                    </a>
+                  </SheetClose>
+                ))}
               </nav>
 
               <nav className="fixed bottom-4 left-6 grid gap-6 text-lg font-medium">
-                <Link
-                  to={"/auth"}
-                  className="flex items-center gap-4 text-muted-foreground hover:text-red-500"
-                >
-                  <LogOutIcon className="size-5 transition-all" />
-                  <span>Sair</span>
-                </Link>
+                <SheetClose asChild>
+                  <Button
+                    variant="ghost"
+                    onClick={handleLogout}
+                    className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-red-500"
+                  >
+                    <LogOutIcon className="size-5 transition-all" />
+                    <span className="sr-only">Sair</span>
+                  </Button>
+                </SheetClose>
               </nav>
             </SheetContent>
           </Sheet>
+
+          <Badge
+            variant="outline"
+            className="flex items-center gap-4 px-2.5 text-muted-foreground"
+          >
+            {name}
+          </Badge>
         </header>
       </div>
     </div>

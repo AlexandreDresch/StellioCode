@@ -89,3 +89,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+[id] {
+  scroll-margin-top: 65px;
+}
