@@ -1,4 +1,5 @@
 import { createContext, ReactNode } from "react";
+import { toast } from "sonner";
 import useLocalStorage from "@/hooks/auth/use-local-storage";
 
 interface UserData {
@@ -12,6 +13,7 @@ interface UserData {
 interface UserContextType {
   userData: UserData | null;
   setUserData: (data: UserData) => void;
+  logout: () => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -24,11 +26,19 @@ interface UserProviderProps {
 export function UserProvider({ children }: UserProviderProps) {
   const [userData, setUserData] = useLocalStorage<UserData | null>(
     "userData",
-    null
+    null,
   );
 
+  const logout = () => {
+    localStorage.removeItem("userData");
+
+    setUserData(null);
+
+    toast.success("Logout realizado com sucesso!");
+  };
+
   return (
-    <UserContext.Provider value={{ userData, setUserData }}>
+    <UserContext.Provider value={{ userData, setUserData, logout }}>
       {children}
     </UserContext.Provider>
   );

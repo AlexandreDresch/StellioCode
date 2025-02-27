@@ -98,8 +98,8 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="p-4 sm:ml-14">
-      <section className="flex gap-4">
+    <div className="p-4 sm:ml-14 max-sm:mt-14">
+      <section className="flex gap-4" id="summary">
         <Card className="flex-1">
           <CardHeader>
             <CardTitle className="font-semibold">
@@ -225,7 +225,7 @@ export default function AdminDashboard() {
         <BarChartComponent summary={summary} />
       </section>
 
-      <section className="mt-4 flex gap-4 max-md:flex-col">
+      <section className="mt-4 flex gap-4 max-md:flex-col" id="projects">
         <Card className="flex-1">
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -268,7 +268,7 @@ export default function AdminDashboard() {
         {projectStats && <AreaChartGradient data={projectStats} />}
       </section>
 
-      <section className="mt-4 flex gap-4 max-md:flex-col">
+      <section className="mt-4 flex gap-4 max-md:flex-col" id="developers">
         {developersStats && (
           <PieChartComponent developersStats={developersStats} />
         )}
@@ -312,7 +312,7 @@ export default function AdminDashboard() {
         </Card>
       </section>
 
-      <section className="mt-4 flex flex-col gap-4">
+      <section className="mt-4 flex flex-col gap-4" id="meetings">
         <Card className="flex-1">
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -374,7 +374,7 @@ export default function AdminDashboard() {
         </Card>
       </section>
 
-      <section className="mt-4 flex gap-4 max-[1370px]:flex-col">
+      <section className="mt-4 flex gap-4 max-[1370px]:flex-col" id="plans">
         {plansStats && <PieChartInteractive plansData={plansStats} />}
 
         <Card className="flex-1">
