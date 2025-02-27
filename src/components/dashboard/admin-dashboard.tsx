@@ -45,14 +45,14 @@ import { PieChartInteractive } from "./charts/pie-chart-interactive";
 import useGetAllPlans from "@/hooks/api/useGetAllPlans";
 import PlansSkeleton from "../skeletons/plans-skeleton";
 import useGetPlansStats from "@/hooks/api/useGetPlansStats";
+import useToken from "@/hooks/auth/use-token";
 
 export default function AdminDashboard() {
   const [meetingsViewModel, setMeetingsViewModel] = useState<
     "calendar" | "list"
-  >("calendar");
+  >("list");
 
-  const token =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDQ0NjUxNSwiZXhwIjoxNzQwNDgyNTE1LCJyb2xlIjoiYWRtaW4ifQ._LjFvP3jdXnrnYJyQsf02mVX3h0uw-9OFwuXKayqENk";
+  const token = useToken();
 
   const { getSummary, summary } = useGetSummary();
   const { getAllProjectsAdmin, projects, pagination, setPagination } =

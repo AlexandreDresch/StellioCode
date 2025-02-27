@@ -17,6 +17,7 @@ import { UserSkeleton } from "@/components/skeletons/user-skeleton";
 import useAssignDevelopersToProject from "@/hooks/api/useAssignDevelopersToProject";
 import { LoaderCircleIcon } from "lucide-react";
 import useRemoveDeveloperFromProject from "@/hooks/api/useRemoveDeveloperFromProject";
+import useToken from "@/hooks/auth/use-token";
 
 export default function TeamEditModal({ projectId }: { projectId: string }) {
   const {
@@ -29,8 +30,7 @@ export default function TeamEditModal({ projectId }: { projectId: string }) {
   const { removeDeveloperFromProject, removeDeveloperFromProjectLoading } =
     useRemoveDeveloperFromProject();
 
-  const token =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDA5NjUyMSwiZXhwIjoxNzQwMTMyNTIxLCJyb2xlIjoiYWRtaW4ifQ.sP7zFAMNJMelqPlyVFE7CagdZbKFFU0iIoFaoO7DAn4";
+  const token = useToken();
 
   const [allDevelopers, setAllDevelopers] = useState<IDeveloper[]>([]);
   const [selectedDevelopers, setSelectedDevelopers] = useState<IDeveloper[]>(

@@ -10,13 +10,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import useDeleteDeveloper from "@/hooks/api/useDeleteDeveloper";
+import useToken from "@/hooks/auth/use-token";
 import { LoaderCircleIcon, TrashIcon } from "lucide-react";
 
 export function RemoveDeveloperModal({ developerId }: { developerId: string }) {
   const { deleteDeveloper, deleteDeveloperLoading } = useDeleteDeveloper();
 
-  const token =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDA5NjUyMSwiZXhwIjoxNzQwMTMyNTIxLCJyb2xlIjoiYWRtaW4ifQ.sP7zFAMNJMelqPlyVFE7CagdZbKFFU0iIoFaoO7DAn4";
+  const token = useToken();
 
   function handleDeleteDeveloper() {
     deleteDeveloper({ developerId, token });

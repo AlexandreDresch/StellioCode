@@ -40,12 +40,12 @@ import {
 import useGetAllPlans from "@/hooks/api/useGetAllPlans";
 import useGetAllServices from "@/hooks/api/useGetAllServices";
 import useUpdateProject from "@/hooks/api/useUpdateProject";
+import useToken from "@/hooks/auth/use-token";
 
 export default function ProjectEditModal({ projectId }: { projectId: string }) {
   const [isEditOpen, setIsEditOpen] = useState(false);
 
-  const token =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDMzMDQ1MywiZXhwIjoxNzQwMzY2NDUzLCJyb2xlIjoiYWRtaW4ifQ.1xvZSLFisql3DHHLaWCCDMOwVOAmIVFDamjjFBoZOEM";
+  const token = useToken();
 
   const { getProjectByIdAdmin, getProjectLoading, project } =
     useGetProjectByIdAdmin();

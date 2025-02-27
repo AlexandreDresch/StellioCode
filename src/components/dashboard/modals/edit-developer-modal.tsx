@@ -33,10 +33,10 @@ import useGetDeveloperById from "@/hooks/api/useGetDeveloperById";
 import { useEffect } from "react";
 import { DeveloperFormSkeleton } from "@/components/skeletons/developer-form-skeleton";
 import useUpdateDeveloper from "@/hooks/api/useUpdateDeveloper";
+import useToken from "@/hooks/auth/use-token";
 
 export function EditDeveloperModal({ developerId }: { developerId: string }) {
-  const token =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDA5NjUyMSwiZXhwIjoxNzQwMTMyNTIxLCJyb2xlIjoiYWRtaW4ifQ.sP7zFAMNJMelqPlyVFE7CagdZbKFFU0iIoFaoO7DAn4";
+   const token = useToken();
 
   const { developer, getDeveloperById, getDeveloperLoading } =
     useGetDeveloperById();

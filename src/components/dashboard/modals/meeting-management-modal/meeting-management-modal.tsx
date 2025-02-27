@@ -56,6 +56,7 @@ import { Label } from "@/components/ui/label";
 import useUpdateMeetingStatus from "@/hooks/api/useUpdateMeetingStatus";
 import { Input } from "@/components/ui/input";
 import useUpdateMeetingDate from "@/hooks/api/useUpdateMeetingDate";
+import useToken from "@/hooks/auth/use-token";
 
 export function MeetingManagementModal({ event }: { event: Meeting }) {
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -69,7 +70,7 @@ export function MeetingManagementModal({ event }: { event: Meeting }) {
     },
   });
 
-  const token ="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MDMzMDQ1MywiZXhwIjoxNzQwMzY2NDUzLCJyb2xlIjoiYWRtaW4ifQ.1xvZSLFisql3DHHLaWCCDMOwVOAmIVFDamjjFBoZOEM"
+  const token = useToken();
 
   const { updateMeetingStatus, updatedMeeting, updateMeetingLoading } =
     useUpdateMeetingStatus();
