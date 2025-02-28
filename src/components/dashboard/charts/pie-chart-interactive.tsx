@@ -68,7 +68,7 @@ export function PieChartInteractive({
   );
 
   return (
-    <Card data-chart={id} className="[1370px]:w-1/4 2xl:w-2/5 flex flex-col">
+    <Card data-chart={id} className="[1370px]:w-1/4 2xl:w-2/6 flex flex-col">
       <ChartStyle id={id} config={chartConfig} />
       <CardHeader className="flex-col items-start space-y-2 pb-0">
         <div className="grid gap-1">

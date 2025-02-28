@@ -9,6 +9,7 @@ import { useState, useRef } from "react";
 import confetti from "canvas-confetti";
 import NumberFlow from "@number-flow/react";
 import { PricingProps } from "@/types";
+import { PlanManagementModal } from "./dashboard/modals/plan-management-modal/plan-management-modal";
 
 export default function Plans({
   plans = [],
@@ -178,22 +179,26 @@ export default function Plans({
               </ul>
 
               <hr className="my-4 w-full" />
+              {view === "client" ? (
+                <a
+                  href={"/agendamento"}
+                  className={cn(
+                    buttonVariants({
+                      variant: "outline",
+                    }),
+                    "group relative w-full gap-2 overflow-hidden text-lg font-semibold tracking-tighter",
+                    "transform-gpu ring-offset-current transition-all duration-300 ease-out hover:ring-2 hover:ring-[#F76680]",
+                    plan.popular
+                      ? "bg-gradient-to-bl from-[#F76680] via-[#9D2C7D] to-[#57007B] text-primary-foreground hover:text-primary-foreground"
+                      : "bg-background text-foreground",
+                  )}
+                >
+                  Escolher plano
+                </a>
+              ) : (
+                <PlanManagementModal plan={plan} />
+              )}
 
-              <a
-                href={"/agendamento"}
-                className={cn(
-                  buttonVariants({
-                    variant: "outline",
-                  }),
-                  "group relative w-full gap-2 overflow-hidden text-lg font-semibold tracking-tighter",
-                  "transform-gpu ring-offset-current transition-all duration-300 ease-out hover:ring-2 hover:ring-[#F76680]",
-                  plan.popular
-                    ? "bg-gradient-to-bl from-[#F76680] via-[#9D2C7D] to-[#57007B] text-primary-foreground hover:text-primary-foreground"
-                    : "bg-background text-foreground",
-                )}
-              >
-                {view === "client" ? "Escolher Plano" : "Editar Plano"}
-              </a>
               <p className="mt-6 text-xs leading-5 text-muted-foreground">
                 {plan.description}
               </p>
