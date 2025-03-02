@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const editPlanSchema = z.object({
+const basePlanSchema = z.object({
   name: z.string().min(1, { message: "Nome é obrigatório." }),
   price: z.coerce
     .number()
@@ -17,4 +17,10 @@ export const editPlanSchema = z.object({
     .nonempty({ message: "Pelo menos uma feature é obrigatória" }),
   description: z.string().min(1, { message: "Descrição é obrigatória." }),
   popular: z.boolean(),
+});
+
+export const editPlanSchema = basePlanSchema;
+
+export const addPlanSchema = basePlanSchema.extend({
+  period: z.string().min(1, { message: "Período é obrigatório." }),
 });

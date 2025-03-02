@@ -17,6 +17,26 @@ export async function getPlansStats({ token }: { token: string }) {
   return response.data;
 }
 
+export async function addPlan({
+  token,
+  data,
+}: {
+  token: string;
+  data: PricingPlan;
+}) {
+  const response = await api.post<PricingPlan>(
+    `/api/admin/dashboard/plans`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  return response.data;
+}
+
 export async function editPlan({
   token,
   planId,
@@ -35,6 +55,22 @@ export async function editPlan({
       },
     },
   );
+
+  return response.data;
+}
+
+export async function deletePlan({
+  token,
+  planId,
+}: {
+  token: string;
+  planId: string;
+}) {
+  const response = await api.delete(`/api/admin/dashboard/plans/${planId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   return response.data;
 }

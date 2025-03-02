@@ -3,6 +3,8 @@ import {
   CogIcon,
   ComputerIcon,
   HandCoinsIcon,
+  MoreHorizontalIcon,
+  PlusIcon,
   RefreshCwIcon,
 } from "lucide-react";
 
@@ -46,6 +48,16 @@ import useGetAllPlans from "@/hooks/api/useGetAllPlans";
 import PlansSkeleton from "../skeletons/plans-skeleton";
 import useGetPlansStats from "@/hooks/api/useGetPlansStats";
 import useToken from "@/hooks/auth/use-token";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { RemovePlanModal } from "./modals/remove-plan-modal";
+import { AddPlanModal } from "./modals/add-plan-modal";
 
 export default function AdminDashboard() {
   const [meetingsViewModel, setMeetingsViewModel] = useState<
@@ -98,7 +110,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="p-4 sm:ml-14 max-sm:mt-14">
+    <div className="p-4 max-sm:mt-14 sm:ml-14">
       <section className="flex gap-4" id="summary">
         <Card className="flex-1">
           <CardHeader>
@@ -384,6 +396,39 @@ export default function AdminDashboard() {
                 Planos
               </CardTitle>
               <div className="flex items-center">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                      <span className="sr-only">Abrir menu</span>
+                      <MoreHorizontalIcon className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                    <DropdownMenuItem asChild>
+                      <AddPlanModal
+                        isDisabled={plans === null || plans?.length >= 3}
+                      />
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    {plans?.map((plan) => {
+                      return (
+                        <DropdownMenuItem key={plan.id} asChild>
+                          <RemovePlanModal plan={plan} />
+                        </DropdownMenuItem>
+                      );
+                    })}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                {plans && plans?.length > 3 && (
+                  <Button
+                    variant="ghost"
+                    className="group"
+                    onClick={handleRefreshPlans}
+                  >
+                    <PlusIcon />
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   className="group"
