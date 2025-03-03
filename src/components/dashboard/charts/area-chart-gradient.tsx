@@ -55,7 +55,7 @@ export default function AreaChartGradient({ data }: AreaChartGradientProps) {
   }));
 
   return (
-    <Card className="hidden w-full md:block md:w-1/2 md:max-w-xl">
+    <Card className="w-full md:block md:w-1/2 md:max-w-xl">
       <CardHeader>
         <CardTitle>Projetos</CardTitle>
         <CardDescription>

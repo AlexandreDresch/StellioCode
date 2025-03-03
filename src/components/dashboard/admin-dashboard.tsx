@@ -4,8 +4,8 @@ import {
   ComputerIcon,
   HandCoinsIcon,
   MoreHorizontalIcon,
-  PlusIcon,
   RefreshCwIcon,
+  ServerIcon,
 } from "lucide-react";
 
 import { DataTable } from "./table/data-table";
@@ -58,6 +58,12 @@ import {
 } from "../ui/dropdown-menu";
 import { RemovePlanModal } from "./modals/remove-plan-modal";
 import { AddPlanModal } from "./modals/add-plan-modal";
+import { ServicePieChart } from "./charts/service-pie-chart";
+import { Services } from "./services";
+import useGetAllServices from "@/hooks/api/useGetAllServices";
+import useGetServicesStats from "@/hooks/api/useGetServicesStats";
+import { RemoveServiceModal } from "./modals/remove-service-modal";
+import { AddServiceModal } from "./modals/add-service-modal";
 
 export default function AdminDashboard() {
   const [meetingsViewModel, setMeetingsViewModel] = useState<
@@ -77,6 +83,8 @@ export default function AdminDashboard() {
     useGetAllMeetings();
   const { getPlans, plans, getPlansLoading } = useGetAllPlans();
   const { getPlansStats, plansStats } = useGetPlansStats();
+  const { getAllServices, services, getServicesLoading } = useGetAllServices();
+  const { getServicesStats, servicesStats } = useGetServicesStats();
 
   useEffect(() => {
     getSummary({ token });
@@ -87,6 +95,8 @@ export default function AdminDashboard() {
     getAllMeetings({ token });
     getPlansStats({ token });
     getPlans();
+    getAllServices();
+    getServicesStats({ token });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -107,6 +117,11 @@ export default function AdminDashboard() {
   function handleRefreshPlans() {
     getPlans();
     getPlansStats({ token });
+  }
+
+  function handleRefreshServices() {
+    getAllServices();
+    getServicesStats({ token });
   }
 
   return (
@@ -420,15 +435,6 @@ export default function AdminDashboard() {
                     })}
                   </DropdownMenuContent>
                 </DropdownMenu>
-                {plans && plans?.length > 3 && (
-                  <Button
-                    variant="ghost"
-                    className="group"
-                    onClick={handleRefreshPlans}
-                  >
-                    <PlusIcon />
-                  </Button>
-                )}
                 <Button
                   variant="ghost"
                   className="group"
@@ -447,6 +453,59 @@ export default function AdminDashboard() {
             ) : (
               <Plans plans={plans ? plans : []} view="dashboard" />
             )}
+          </CardContent>
+        </Card>
+      </section>
+
+      <section className="mt-4 flex gap-4 max-[1370px]:flex-col" id="services">
+        {servicesStats && <ServicePieChart serviceStats={servicesStats} />}
+
+        <Card className="flex-1">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="select-none text-lg text-gray-800 sm:text-xl">
+                Serviços
+              </CardTitle>
+              <div className="flex items-center">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                      <span className="sr-only">Abrir menu</span>
+                      <MoreHorizontalIcon className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                    <DropdownMenuItem asChild>
+                      <AddServiceModal />
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    {services?.map((service) => {
+                      return (
+                        <DropdownMenuItem key={service.id} asChild>
+                          <RemoveServiceModal service={service} />
+                        </DropdownMenuItem>
+                      );
+                    })}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <Button
+                  variant="ghost"
+                  className="group"
+                  onClick={handleRefreshServices}
+                >
+                  <RefreshCwIcon className="group-hover:animate-spin" />
+                </Button>
+                <ServerIcon className="ml-auto size-4" />
+              </div>
+            </div>
+          </CardHeader>
+
+          <CardContent>
+            <Services
+              services={services ? services : []}
+              isLoading={getServicesLoading}
+            />
           </CardContent>
         </Card>
       </section>
