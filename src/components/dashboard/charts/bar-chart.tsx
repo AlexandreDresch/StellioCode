@@ -11,14 +11,10 @@ import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 import { Summary } from "@/types";
 
 type BarChartComponentProps = {
-  summary: Summary | null;
+  summary: Summary;
 };
 
 export default function BarChartComponent({ summary }: BarChartComponentProps) {
-  if (!summary) {
-    return <p>Carregando...</p>;
-  }
-
   const currentDate = new Date();
   const currentMonth = currentDate.toLocaleString("pt-BR", { month: "long" });
 

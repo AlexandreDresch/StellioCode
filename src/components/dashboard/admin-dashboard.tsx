@@ -6,6 +6,7 @@ import {
   MoreHorizontalIcon,
   RefreshCwIcon,
   ServerIcon,
+  StarIcon,
 } from "lucide-react";
 
 import { DataTable } from "./table/data-table";
@@ -64,6 +65,10 @@ import useGetAllServices from "@/hooks/api/useGetAllServices";
 import useGetServicesStats from "@/hooks/api/useGetServicesStats";
 import { RemoveServiceModal } from "./modals/remove-service-modal";
 import { AddServiceModal } from "./modals/add-service-modal";
+import { BentoGrid } from "../bento-grid";
+import { BentoCard } from "../bento-card";
+import useGetAllFeaturedProjects from "@/hooks/api/useGetAllFeaturedProjects";
+import { AddFeaturedProjectModal } from "./modals/add-featured-project/add-featured-project";
 
 export default function AdminDashboard() {
   const [meetingsViewModel, setMeetingsViewModel] = useState<
@@ -85,6 +90,7 @@ export default function AdminDashboard() {
   const { getPlansStats, plansStats } = useGetPlansStats();
   const { getAllServices, services, getServicesLoading } = useGetAllServices();
   const { getServicesStats, servicesStats } = useGetServicesStats();
+  const { getFeaturedProjects, featuredProjects } = useGetAllFeaturedProjects();
 
   useEffect(() => {
     getSummary({ token });
@@ -97,6 +103,7 @@ export default function AdminDashboard() {
     getPlans();
     getAllServices();
     getServicesStats({ token });
+    getFeaturedProjects();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -122,6 +129,10 @@ export default function AdminDashboard() {
   function handleRefreshServices() {
     getAllServices();
     getServicesStats({ token });
+  }
+
+  function handleRefreshFeaturedProjects() {
+    getFeaturedProjects();
   }
 
   return (
@@ -249,7 +260,7 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-        <BarChartComponent summary={summary} />
+        {summary && <BarChartComponent summary={summary} />}
       </section>
 
       <section className="mt-4 flex gap-4 max-md:flex-col" id="projects">
@@ -506,6 +517,58 @@ export default function AdminDashboard() {
               services={services ? services : []}
               isLoading={getServicesLoading}
             />
+          </CardContent>
+        </Card>
+      </section>
+
+      <section className="mt-4 flex gap-4 max-[1370px]:flex-col" id="services">
+        <Card className="flex-1">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="select-none text-lg text-gray-800 sm:text-xl">
+                Projetos Destacados
+              </CardTitle>
+              <div className="flex items-center">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                      <span className="sr-only">Abrir menu</span>
+                      <MoreHorizontalIcon className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                    <DropdownMenuItem asChild>
+                      <AddFeaturedProjectModal />
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <Button
+                  variant="ghost"
+                  className="group"
+                  onClick={handleRefreshFeaturedProjects}
+                >
+                  <RefreshCwIcon className="group-hover:animate-spin" />
+                </Button>
+                <StarIcon className="ml-auto size-4" />
+              </div>
+            </div>
+          </CardHeader>
+
+          <CardContent>
+            <BentoGrid className="lg:grid-rows-3">
+              {featuredProjects &&
+                featuredProjects.map((project, index) => (
+                  <BentoCard
+                    key={project.title}
+                    backgroundImage={project.imageUrl}
+                    description={project.description}
+                    href={`/projetos/${project.projectId}`}
+                    title={project.title}
+                    index={index}
+                  />
+                ))}
+            </BentoGrid>
           </CardContent>
         </Card>
       </section>

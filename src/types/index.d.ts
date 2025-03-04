@@ -190,3 +190,12 @@ export interface IPlanStatsData {
   monthlyRevenue: number;
   totalContracts: number;
 }
+
+export interface FeaturedProject {
+  projectId: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  createdAt: string;
+  updatedAt: string;
+}

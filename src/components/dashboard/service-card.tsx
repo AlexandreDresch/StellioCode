@@ -14,7 +14,7 @@ export function ServiceCard({
   return (
     <div
       className={cn(
-        "group/feature relative flex flex-col py-10 dark:border-neutral-800 lg:border-r",
+        "group/feature relative flex flex-col py-10 dark:border-neutral-800 lg:border-r h-full",
         (index === 0 || index === 4) && "dark:border-neutral-800 lg:border-l",
         index < 4 && "dark:border-neutral-800 lg:border-b",
       )}
