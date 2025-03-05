@@ -1,34 +1,32 @@
-import { FeaturedProject, PricingPlan } from "@/types";
+import { FeaturedProject } from "@/types";
 import api from "./api";
 
 export async function getAllFeaturedProjects() {
-  const response = await api.get<FeaturedProject[]>(`/api/public/featured-projects`);
+  const response = await api.get<FeaturedProject[]>(
+    `/api/public/featured-projects`,
+  );
 
   return response.data;
 }
 
-export async function getPlansStats({ token }: { token: string }) {
-  const response = await api.get(`/api/admin/dashboard/plans/stats`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return response.data;
-}
-
-export async function addPlan({
+export async function addFeaturedProject({
   token,
   data,
 }: {
   token: string;
-  data: PricingPlan;
+  data: { title: string; description: string; image: File };
 }) {
-  const response = await api.post<PricingPlan>(
-    `/api/admin/dashboard/plans`,
-    data,
+  const formData = new FormData();
+  formData.append("title", data.title);
+  formData.append("description", data.description);
+  formData.append("image", data.image);
+
+  const response = await api.post<FeaturedProject>(
+    "/api/admin/dashboard/featured-projects",
+    formData,
     {
       headers: {
+        "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${token}`,
       },
     },
@@ -37,20 +35,28 @@ export async function addPlan({
   return response.data;
 }
 
-export async function editPlan({
+export async function editFeaturedProject({
   token,
-  planId,
+  featuredProjectId,
   data,
 }: {
   token: string;
-  planId: string;
-  data: PricingPlan;
+  featuredProjectId: string;
+  data: { title: string; description: string; image?: File };
 }) {
-  const response = await api.put<PricingPlan>(
-    `/api/admin/dashboard/plans/${planId}`,
-    data,
+  const formData = new FormData();
+  formData.append("title", data.title);
+  formData.append("description", data.description);
+  if (data.image) {
+    formData.append("image", data.image);
+  }
+
+  const response = await api.put<FeaturedProject>(
+    `/api/admin/dashboard/featured-projects/${featuredProjectId}`,
+    formData,
     {
       headers: {
+        "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${token}`,
       },
     },
@@ -59,18 +65,21 @@ export async function editPlan({
   return response.data;
 }
 
-export async function deletePlan({
+export async function deleteFeaturedProject({
   token,
-  planId,
+  featuredProjectId,
 }: {
   token: string;
-  planId: string;
+  featuredProjectId: string;
 }) {
-  const response = await api.delete(`/api/admin/dashboard/plans/${planId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
+  const response = await api.delete(
+    `/api/admin/dashboard/featured-projects/${featuredProjectId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     },
-  });
+  );
 
   return response.data;
 }

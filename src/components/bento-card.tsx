@@ -19,31 +19,42 @@ export function BentoCard({
   const classes = [
     {
       className: "lg:row-start-1 lg:row-end-4 lg:col-start-2 lg:col-end-3",
+      isTall: true,
+      isMedium: false,
     },
     {
       className: "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-3",
+      isTall: false,
+      isMedium: true,
     },
     {
       className: "lg:col-start-1 lg:col-end-2 lg:row-start-3 lg:row-end-4",
+      isTall: false,
+      isMedium: false,
     },
     {
       className: "lg:col-start-3 lg:col-end-3 lg:row-start-1 lg:row-end-2",
+      isTall: false,
+      isMedium: true,
     },
     {
       className: "lg:col-start-3 lg:col-end-3 lg:row-start-2 lg:row-end-4",
+      isTall: false,
+      isMedium: false,
     },
   ];
-
-  const selectedClass = classes[index % classes.length].className;
+  const selectedClass = classes[index % classes.length];
+  const isTallCard = selectedClass.isTall;
+  const isMediumCard = selectedClass.isMedium;
 
   return (
     <motion.div
       key={title}
       className={cn(
-        "group relative col-span-3 flex flex-col justify-between overflow-hidden rounded-xl",
-        "bg-white [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]",
-        "transform-gpu dark:bg-black dark:[border:1px_solid_rgba(255,255,255,.1)] dark:[box-shadow:0_-20px_80px_-20px_#ffffff1f_inset]",
-        selectedClass,
+        "group relative flex flex-col justify-between overflow-hidden rounded-lg",
+        "bg-white shadow-md",
+        "transform-gpu dark:bg-black",
+        selectedClass.className,
       )}
       whileHover="hover"
       initial="initial"
@@ -75,7 +86,7 @@ export function BentoCard({
       </div>
 
       <motion.div
-        className="pointer-events-none absolute inset-0 z-0 mr-3 flex items-center justify-end"
+        className="pointer-events-none absolute inset-0 z-0 flex items-center justify-end"
         variants={{
           initial: { opacity: 0, scale: 0.9 },
           hover: { opacity: 1, scale: 1 },
@@ -85,7 +96,14 @@ export function BentoCard({
         <img
           src={backgroundImage}
           alt={title}
-          className="h-32 w-52 rounded-lg object-cover shadow-lg"
+          className={cn(
+            "rounded-lg object-cover shadow-sm",
+            isTallCard
+              ? "h-64 w-full"
+              : isMediumCard
+                ? "h-44 w-64"
+                : "w-50 h-32",
+          )}
         />
       </motion.div>
 

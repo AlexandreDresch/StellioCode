@@ -69,6 +69,14 @@ import { BentoGrid } from "../bento-grid";
 import { BentoCard } from "../bento-card";
 import useGetAllFeaturedProjects from "@/hooks/api/useGetAllFeaturedProjects";
 import { AddFeaturedProjectModal } from "./modals/add-featured-project/add-featured-project";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui/accordion";
+import { RemoveFeaturedProjectModal } from "./modals/remove-featured-project-modal";
+import { FeaturedProjectEditModal } from "./modals/featured-project-edit-modal/featured-project-edit-modal";
 
 export default function AdminDashboard() {
   const [meetingsViewModel, setMeetingsViewModel] = useState<
@@ -521,7 +529,7 @@ export default function AdminDashboard() {
         </Card>
       </section>
 
-      <section className="mt-4 flex gap-4 max-[1370px]:flex-col" id="services">
+      <section className="mt-4 flex gap-4 max-[1370px]:flex-col" id="featured-projects">
         <Card className="flex-1">
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -541,6 +549,51 @@ export default function AdminDashboard() {
                     <DropdownMenuItem asChild>
                       <AddFeaturedProjectModal />
                     </DropdownMenuItem>
+
+                    <Accordion
+                      type="single"
+                      collapsible
+                      className="w-full px-2"
+                    >
+                      <AccordionItem value="item-1">
+                        <AccordionTrigger>Edição</AccordionTrigger>
+                        <AccordionContent>
+                          {featuredProjects &&
+                            featuredProjects?.map((featuredProject) => {
+                              return (
+                                <DropdownMenuItem
+                                  key={featuredProject.projectId}
+                                  asChild
+                                >
+                                  <FeaturedProjectEditModal
+                                    featuredProject={featuredProject}
+                                  />
+                                </DropdownMenuItem>
+                              );
+                            })}
+                        </AccordionContent>
+                      </AccordionItem>
+                      <AccordionItem value="item-2">
+                        <AccordionTrigger>Deleção</AccordionTrigger>
+                        <AccordionContent>
+                          {featuredProjects &&
+                            featuredProjects?.map((featuredProject) => {
+                              return (
+                                <DropdownMenuItem
+                                  key={featuredProject.projectId}
+                                  asChild
+                                >
+                                  <RemoveFeaturedProjectModal
+                                    featuredProject={featuredProject}
+                                  />
+                                </DropdownMenuItem>
+                              );
+                            })}
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+
+                    <DropdownMenuSeparator />
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <Button

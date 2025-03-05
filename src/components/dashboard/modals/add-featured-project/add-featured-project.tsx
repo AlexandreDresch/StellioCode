@@ -24,16 +24,16 @@ import {
 import { Input } from "@/components/ui/input";
 import useToken from "@/hooks/auth/use-token";
 import { toast } from "sonner";
-import useCreatePlan from "@/hooks/api/useCreatePlan";
 
 import { useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import { addFeaturedProjectSchema } from "@/schemas/featured-projects-schemas";
 import { FileUpload } from "./file-upload";
+import useCreateFeaturedProject from "@/hooks/api/useCreateFeaturedProject";
 
 export function AddFeaturedProjectModal() {
   const [description, setDescription] = useState("");
-  const [file, setFile] = useState<File[]>([]);
+  const [file, setFile] = useState<File | null>(null);
 
   const form = useForm<z.infer<typeof addFeaturedProjectSchema>>({
     resolver: zodResolver(addFeaturedProjectSchema),
@@ -43,10 +43,24 @@ export function AddFeaturedProjectModal() {
   });
 
   const token = useToken();
-  const { addPlan, createPlanError, createPlanLoading } = useCreatePlan();
+  const {
+    addFeaturedProject,
+    createFeaturedProjectError,
+    createFeaturedProjectLoading,
+  } = useCreateFeaturedProject();
 
   function onSubmit(values: z.infer<typeof addFeaturedProjectSchema>) {
-    addPlan({
+    if (!file) {
+      toast.error("Por favor, selecione uma imagem.");
+      return;
+    }
+
+    if (description.length <= 0) {
+      toast.error("Por favor, escreva uma descrição para o Projeto Destacado.");
+      return;
+    }
+    
+    addFeaturedProject({
       token,
       data: {
         title: values.title,
@@ -58,14 +72,16 @@ export function AddFeaturedProjectModal() {
         toast.success("Projeto Destacado criado com sucesso!");
       })
       .catch(() => {
-        console.error("Erro ao criar Projeto Destacado:", createPlanError);
+        console.error(
+          "Erro ao criar Projeto Destacado:",
+          createFeaturedProjectError,
+        );
         toast.error("Erro ao criar Projeto Destacado, tente novamente.");
       });
   }
 
-  function handleFileUpload(file: File[]) {
+  function handleSetFile(file: File) {
     setFile(file);
-    console.log(file);
   }
 
   return (
@@ -98,7 +114,7 @@ export function AddFeaturedProjectModal() {
               )}
             />
 
-            <FileUpload onChange={handleFileUpload} />
+            <FileUpload onChange={handleSetFile} />
 
             <div>
               <FormLabel>Descrição</FormLabel>
@@ -129,9 +145,9 @@ export function AddFeaturedProjectModal() {
               <Button
                 type="submit"
                 className="min-w-36"
-                disabled={createPlanLoading}
+                disabled={createFeaturedProjectLoading}
               >
-                {createPlanLoading ? (
+                {createFeaturedProjectLoading ? (
                   <LoaderCircleIcon className="animate-spin" />
                 ) : (
                   <span>Criar Projeto Destacado</span>
