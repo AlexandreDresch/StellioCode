@@ -53,7 +53,7 @@ export default function DevDashboard() {
 
   return (
     <div className="max-sm:mt-14 sm:ml-14">
-      <section className="relative h-[260px] w-full overflow-hidden rounded-lg bg-background/80">
+      <section className="relative h-[260px] w-full overflow-hidden rounded-lg bg-background/80" id="summary">
         <div className="absolute inset-0">
           <WavesBackground
             lineColor={"rgba(0, 0, 0, 0.3)"}

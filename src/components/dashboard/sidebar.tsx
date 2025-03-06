@@ -30,49 +30,58 @@ import useLogout from "@/hooks/auth/use-logout";
 import { useState } from "react";
 import { Badge } from "../ui/badge";
 import useUserName from "@/hooks/auth/use-user-name";
+import useRole from "@/hooks/auth/use-role";
 
+// Define os links da sidebar
 const sidebarLinks = [
   {
     id: "summary",
     icon: <LayoutDashboardIcon className="size-5 transition-all" />,
     text: "Início",
     tooltip: "Início",
+    roles: ["admin", "developer"],
   },
   {
     id: "projects",
     icon: <CogIcon className="size-5 transition-all" />,
     text: "Projetos",
     tooltip: "Projetos",
+    roles: ["admin", "developer"],
   },
   {
     id: "developers",
     icon: <ComputerIcon className="size-5 transition-all" />,
     text: "Desenvolvedores",
     tooltip: "Desenvolvedores",
+    roles: ["admin"],
   },
   {
     id: "meetings",
     icon: <CalendarSearchIcon className="size-5 transition-all" />,
     text: "Reuniões",
     tooltip: "Reuniões",
+    roles: ["admin", "developer"],
   },
   {
     id: "plans",
     icon: <HandCoinsIcon className="size-5 transition-all" />,
     text: "Planos",
     tooltip: "Planos",
+    roles: ["admin"],
   },
   {
     id: "services",
     icon: <ServerIcon className="size-5 transition-all" />,
     text: "Serviços",
     tooltip: "Serviços",
+    roles: ["admin"],
   },
   {
     id: "settings",
     icon: <Settings2Icon className="size-5 transition-all" />,
     text: "Configurações",
     tooltip: "Configurações",
+    roles: ["admin"],
   },
 ];
 
@@ -81,6 +90,7 @@ export default function Sidebar() {
 
   const logout = useLogout();
   const name = useUserName();
+  const role = useRole();
   const navigate = useNavigate();
 
   function handleLogout() {
@@ -95,6 +105,10 @@ export default function Sidebar() {
       targetSection.scrollIntoView({ behavior: "smooth" });
     }
   }
+
+  const filteredLinks = sidebarLinks.filter((link) =>
+    link.roles.includes(role as string),
+  );
 
   return (
     <div className="flex w-full flex-col bg-muted/40">
@@ -115,7 +129,7 @@ export default function Sidebar() {
             </Tooltip>
 
             <div className="grid gap-6 text-lg font-medium">
-              {sidebarLinks.map((link) => (
+              {filteredLinks.map((link) => (
                 <Tooltip key={link.id}>
                   <TooltipTrigger asChild>
                     <a
@@ -182,7 +196,7 @@ export default function Sidebar() {
               </SheetDescription>
 
               <nav className="grid gap-6 text-lg font-medium">
-                {sidebarLinks.map((link) => (
+                {filteredLinks.map((link) => (
                   <SheetClose key={link.id} asChild>
                     <a
                       href={`#${link.id}`}
