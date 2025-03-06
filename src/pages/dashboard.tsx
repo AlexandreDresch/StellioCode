@@ -7,7 +7,7 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ userRole }: DashboardProps) {
-  if (userRole !== "admin" && userRole !== "dev") {
+  if (userRole !== "admin" && userRole !== "developer") {
     return <h1>Unauthorized Access</h1>;
   }
 

@@ -15,7 +15,7 @@ export default function Routes() {
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute isAllowed={role === "admin" || role === "dev"}>
+            <ProtectedRoute isAllowed={role === "admin" || role === "developer"}>
               <Dashboard userRole={role as string} />
             </ProtectedRoute>
           }

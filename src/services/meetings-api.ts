@@ -23,6 +23,29 @@ export async function getAllMeetings({
   return response.data;
 }
 
+export async function getAllDeveloperMeetings({
+  token,
+  developerId,
+  page = 0,
+  size = 10,
+}: {
+  token: string;
+  developerId: string;
+  page?: number;
+  size?: number;
+}) {
+  const response = await api.get<MeetingsApiResponse>(
+    `/api/developer/dashboard/meetings?developerId=${developerId}&page=${page}&size=${size}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  return response.data;
+}
+
 export async function updateMeetingStatus({
   meetingId,
   status,

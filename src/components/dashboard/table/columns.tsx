@@ -28,6 +28,7 @@ import { EditDeveloperModal } from "../modals/edit-developer-modal";
 import { Developer, Meeting, Project } from "@/types";
 import { MeetingManagementModal } from "../modals/meeting-management-modal/meeting-management-modal";
 import ProjectEditModal from "../modals/project-edit-modal/project-edit-modal";
+import useRole from "@/hooks/auth/use-role";
 
 export function columns<T extends Project | Developer | Meeting>(
   type: T extends Project
@@ -36,6 +37,9 @@ export function columns<T extends Project | Developer | Meeting>(
       ? "developer"
       : "meeting",
 ): ColumnDef<T>[] {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const role = useRole();
+
   return [
     ...(type === "project"
       ? [
@@ -208,12 +212,16 @@ export function columns<T extends Project | Developer | Meeting>(
                       Acompanhamento
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <TeamEditModal projectId={item.id} />
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <ProjectEditModal projectId={item.id} />
-                  </DropdownMenuItem>
+                  {role && role === "admin" && (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <TeamEditModal projectId={item.id} />
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <ProjectEditModal projectId={item.id} />
+                      </DropdownMenuItem>
+                    </>
+                  )}
                 </>
               ) : type === "developer" ? (
                 <>
@@ -224,11 +232,11 @@ export function columns<T extends Project | Developer | Meeting>(
                     <RemoveDeveloperModal developerId={item.id} />
                   </DropdownMenuItem>
                 </>
-              ) : (
+              ) : role === "admin" ? (
                 <DropdownMenuItem asChild>
                   <MeetingManagementModal event={item as Meeting} />
                 </DropdownMenuItem>
-              )}
+              ) : null}
             </DropdownMenuContent>
           </DropdownMenu>
         );

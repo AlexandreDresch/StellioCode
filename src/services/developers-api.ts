@@ -88,6 +88,47 @@ export async function getDeveloperById({
   return response.data;
 }
 
+export async function getProfileData({
+  token,
+  developerId,
+}: {
+  token: string;
+  developerId: string;
+}) {
+  const response = await api.get<IDeveloperById>(
+    `/api/developer/dashboard/profile/${developerId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  return response.data;
+}
+
+export async function editProfile({
+  token,
+  developerId,
+  data,
+}: {
+  token: string;
+  developerId: string;
+  data: IDeveloperById;
+}) {
+  const response = await api.patch<IDeveloper[]>(
+    `/api/developer/dashboard/profile/${developerId}`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  return response.data;
+}
+
 export async function editDeveloper({
   token,
   developerId,

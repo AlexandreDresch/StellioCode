@@ -97,6 +97,23 @@ interface ProjectsApiResponse {
   };
 }
 
+interface ProjectsByDeveloperApiResponse {
+  _embedded: {
+    developerProjectResponseDTOList: Project[];
+  };
+  _links: {
+    self: {
+      href: string;
+    };
+  };
+  page: {
+    size: number;
+    totalElements: number;
+    totalPages: number;
+    number: number;
+  };
+}
+
 interface DevelopersApiResponse {
   _embedded: {
     developerResponseDTOList: Developer[];
