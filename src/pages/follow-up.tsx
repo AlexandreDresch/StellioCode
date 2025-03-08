@@ -10,16 +10,34 @@ import {
   FileText,
   Link,
   Files,
+  CircleDollarSign,
+  AtSign,
 } from "lucide-react";
 
 import { MeetingCard } from "@/components/meeting-card";
 import { Separator } from "@/components/ui/separator";
 import { EmptyState } from "@/components/empty-state";
+import { useEffect } from "react";
+import useRole from "@/hooks/auth/use-role";
+import useGetProjectByIdClient from "@/hooks/api/useGetProjectByIdClient";
+import useUserId from "@/hooks/auth/use-user-id";
+import { translateProjectStatus } from "@/lib/utils";
+import { FollowUpGridSkeleton } from "@/components/skeletons/follow-up-grid-skeleton";
 
 export default function FollowUp() {
   const { id } = useParams();
-  console.log(id);
-  
+
+  const { getProjectByIdClient, project, getProjectLoading } =
+    useGetProjectByIdClient();
+
+  const role = useRole();
+  const userId = useUserId();
+
+  useEffect(() => {
+    getProjectByIdClient({ clientId: userId, projectId: id });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId, id]);
+
   const data = [
     {
       title: "20/12/2024",
@@ -165,24 +183,24 @@ export default function FollowUp() {
     },
   ];
 
-  const itemsSample = [
+  const followUpGridStructureData = [
     {
-      title: "Nome do Projeto",
-      type: "Desenvolvimento Web",
-      description:
-        "Real-time metrics with AI-powered insights and predictive analytics",
+      title: project?.title,
+      type: project?.serviceName,
+      description: project?.description,
       icon: <TrendingUp className="h-4 w-4 text-blue-500" />,
-      status: "Em andamento",
-      clientName: "John Doe",
+      status: translateProjectStatus(project?.status),
+      clientName: project?.clientName,
       colSpan: 2,
       hasPersistentHover: true,
     },
     {
       title: "Serviço",
-      type: "Desenvolvimento Web",
-      description: "Automated workflow management with priority scheduling",
+      id: project?.serviceId,
+      type: project?.serviceName,
+      description: project?.serviceDescription,
       icon: <CheckCircle className="h-4 w-4 text-emerald-500" />,
-      status: "R$ 1500",
+      status: project?.servicePrice,
     },
     {
       title: "Reuniões",
@@ -193,10 +211,11 @@ export default function FollowUp() {
     },
     {
       title: "Plano",
-      type: "BÁSICO",
-      description: "Multi-region deployment with edge computing",
+      id: project?.planId,
+      type: project?.planName,
+      description: project?.planDescription,
       icon: <Globe className="h-4 w-4 text-sky-500" />,
-      status: "Mensal",
+      status: project?.planPeriod,
     },
   ];
 
@@ -214,54 +233,69 @@ export default function FollowUp() {
 
   return (
     <div className="min-h-screen w-full">
-      <section className="p-4 pb-20">
-        <FollowUpGrid items={itemsSample} />
-      </section>
+      {role === null ? (
+        <section className="mx-auto max-w-7xl px-4 py-20">
+          <EmptyState
+            title="Entre na sua conta para continuar"
+            description="Precisamos confirmar sua identidade antes de mostrar informações do projeto."
+            icons={[FileText, AtSign, Files]}
+            action="login"
+          />
+        </section>
+      ) : (
+        <>
+          <section className="p-4 pb-20">
+            {getProjectLoading ? (
+              <FollowUpGridSkeleton />
+            ) : (
+              <FollowUpGrid items={followUpGridStructureData} />
+            )}
+          </section>
 
-      <Separator className="mx-auto w-full max-w-7xl" />
+          <Separator className="mx-auto w-full max-w-7xl" />
 
-      <section className="mx-auto max-w-7xl px-4 py-20">
-        <EmptyState
-          title="Reunião Inicial Pendente"
-          description="Após nossa conversa, é aqui onde você verá o progresso do desenvolvimento do seu projeto."
-          icons={[FileText, Link, Files]}
-        />
-      </section>
+          <section className="mx-auto max-w-7xl px-4 py-20">
+            <EmptyState
+              title="Reunião Inicial Pendente"
+              description="Após nossa conversa, é aqui onde você verá o progresso do desenvolvimento do seu projeto."
+              icons={[FileText, Link, Files]}
+              action="waiting"
+            />
+          </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-20">
-        <EmptyState
-          title="Pagamento Pendente"
-          description="Após o pagamento, é aqui onde você verá o progresso do desenvolvimento do seu projeto."
-          icons={[FileText, Link, Files]}
-          action={{
-            label: "Realizar Pagamento",
-            onClick: () => console.log("Create form clicked"),
-          }}
-        />
-      </section>
+          <section className="mx-auto max-w-7xl px-4 py-20">
+            <EmptyState
+              title="Pagamento Pendente"
+              description="Após o pagamento, é aqui onde você verá o progresso do desenvolvimento do seu projeto."
+              icons={[FileText, CircleDollarSign, Files]}
+              action="payment"
+            />
+          </section>
 
-      <Timeline data={data} />
+          <Timeline data={data} />
 
-      <Separator className="mx-auto w-full max-w-7xl px-4" />
+          <Separator className="mx-auto w-full max-w-7xl px-4" />
 
-      <section className="mx-auto max-w-7xl px-4 pt-20" id="meetings">
-        <div className="mx-auto mb-4 max-w-7xl">
-          <h2 className="mb-4 max-w-4xl text-2xl font-medium dark:text-white md:text-3xl">
-            Suas reuniões
-          </h2>
-          <p className="max-w-sm text-sm text-neutral-700 dark:text-neutral-300 md:text-base">
-            Veja seu histórico, ou solicite uma nova reunião.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 pt-4 md:grid-cols-2 lg:grid-cols-3">
-          <MeetingCard meeting={mockMeeting} />
-          <MeetingCard meeting={mockMeeting} />
-          <MeetingCard meeting={mockMeeting} />
-          <MeetingCard meeting={mockMeeting} />
-          <MeetingCard meeting={mockMeeting} />
-          <MeetingCard meeting={mockMeeting} />
-        </div>
-      </section>
+          <section className="mx-auto max-w-7xl px-4 pt-20" id="meetings">
+            <div className="mx-auto mb-4 max-w-7xl">
+              <h2 className="mb-4 max-w-4xl text-2xl font-medium dark:text-white md:text-3xl">
+                Suas reuniões
+              </h2>
+              <p className="max-w-sm text-sm text-neutral-700 dark:text-neutral-300 md:text-base">
+                Veja seu histórico, ou solicite uma nova reunião.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 pt-4 md:grid-cols-2 lg:grid-cols-3">
+              <MeetingCard meeting={mockMeeting} />
+              <MeetingCard meeting={mockMeeting} />
+              <MeetingCard meeting={mockMeeting} />
+              <MeetingCard meeting={mockMeeting} />
+              <MeetingCard meeting={mockMeeting} />
+              <MeetingCard meeting={mockMeeting} />
+            </div>
+          </section>
+        </>
+      )}
     </div>
   );
 }

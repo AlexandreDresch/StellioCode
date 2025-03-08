@@ -67,7 +67,7 @@ export function MeetingCard({ meeting }: MeetingCardProps) {
                 <div className="flex flex-col gap-4">
                   <Badge
                     variant="secondary"
-                    className={cn("max-w-max rounded-lg", badgeColor)}
+                    className={cn("max-w-max rounded-lg text-white hover:text-black", badgeColor)}
                   >
                     <span>
                       {translateEventStatus(

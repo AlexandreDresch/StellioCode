@@ -66,6 +66,20 @@ export async function getProjectByIdAdmin({
   return response.data;
 }
 
+export async function getProjectByIdClient({
+  clientId,
+  projectId,
+}: {
+  clientId: string;
+  projectId: string;
+}) {
+  const response = await api.get(
+    `/api/public/projects/${clientId}/${projectId}`,
+  );
+
+  return response.data;
+}
+
 export async function editProject({
   token,
   projectId,

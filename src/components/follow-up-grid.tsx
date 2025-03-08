@@ -10,6 +10,7 @@ export interface FollowUpGridItem {
   type?: string;
   cta?: string;
   colSpan?: number;
+  id?: string;
   hasPersistentHover?: boolean;
 }
 
@@ -99,8 +100,8 @@ export function FollowUpGrid({ items }: FollowUpGridProps) {
                     item.title === "Reuniões"
                       ? () => scrollTo("meetings")
                       : item.title === "Plano"
-                        ? () => navigate("/planos/:id")
-                        : () => navigate("/serviços/:id")
+                        ? () => navigate(`/planos/${item.id}`)
+                        : () => navigate(`/servicos/${item.id}`)
                   }
                 >
                   {item.cta || "Explorar →"}
