@@ -3,11 +3,11 @@ import { toast } from "sonner";
 import useLocalStorage from "@/hooks/auth/use-local-storage";
 
 interface UserData {
-  id: number;
+  id: string;
   fullName: string;
-  status: string;
-  role: string;
-  token: string;
+  status?: string;
+  role?: string;
+  token?: string;
 }
 
 interface UserContextType {

@@ -2,15 +2,17 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
 import { MovingBorderButton } from "./moving-border-button";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
+import { toast } from "sonner";
+import { DecodedGoogleToken } from "@/types";
+import UserContext from "@/context/user-context";
 
 interface EmptyStateProps {
   title: string;
   description: string;
   icons?: LucideIcon[];
-  action?: {
-    label: string;
-    onClick: () => void;
-  };
+  action: "payment" | "waiting" | "login";
   className?: string;
 }
 
@@ -21,6 +23,35 @@ export function EmptyState({
   action,
   className,
 }: EmptyStateProps) {
+  const context = React.useContext(UserContext);
+  const responseMessage = (credentialResponse: CredentialResponse) => {
+    try {
+      if (credentialResponse.credential) {
+        const decoded = jwtDecode<DecodedGoogleToken>(
+          credentialResponse.credential,
+        );
+
+        const clientData = {
+          id: decoded.sub,
+          fullName: decoded.name,
+        };
+
+        if (context && context.setUserData) {
+          context.setUserData(clientData);
+        } 
+      } else {
+        toast.error("Erro: Credential não encontrada.");
+      }
+    } catch (error) {
+      console.error("Erro ao decodificar o token:", error);
+      toast.error("Erro ao decodificar o token.");
+    }
+  };
+
+  const errorMessage = () => {
+    toast.error("Erro ao fazer login, tente novamente.");
+  };
+
   return (
     <div
       className={cn(
@@ -59,18 +90,26 @@ export function EmptyState({
         )}
       </div>
       <h2 className="mt-6 font-medium text-foreground">{title}</h2>
-      <p className="mt-1 whitespace-pre-line text-sm text-muted-foreground pb-3">
+      <p className="mt-1 whitespace-pre-line pb-3 text-sm text-muted-foreground">
         {description}
       </p>
-      {action && (
+      {action === "payment" ? (
         <MovingBorderButton
-          onClick={action.onClick}
           borderRadius="1rem"
           className="border-neutral-200 bg-white text-black dark:border-slate-800 dark:bg-slate-900 dark:text-white"
         >
-          {action.label}
+          Realizar Pagamento
         </MovingBorderButton>
-      )}
+      ) : action === "login" ? (
+        <div className="flex w-full items-center justify-center">
+          <GoogleLogin
+            onSuccess={responseMessage}
+            onError={errorMessage}
+            size="medium"
+            width={208}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }
