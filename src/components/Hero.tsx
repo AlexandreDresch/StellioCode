@@ -62,47 +62,51 @@ const AnimatedText = ({ text }: { text: string }) => {
 
 export default function Hero() {
   return (
-    <div className="my-10 flex min-h-screen flex-col items-center justify-center xl:min-h-lvh">
-      <main className="flex items-center justify-center xl:gap-24">
-        <div className="m-4 flex flex-col justify-center gap-5">
-          {/* <Section> */}
-          <div className="text-5xl md:text-7xl lg:text-7xl lg:font-semibold">
-            {/* <FadeInText text="Bem-vindo a" /> */}
+    <div className="flex-colitems-center relative -z-10 flex min-h-screen w-full justify-center">
+      <div className="hidden h-screen md:flex xl:flex">
+        <video
+          autoPlay
+          loop
+          muted
+          className="absolute z-[-1] h-full w-full object-cover"
+        >
+          <source src="/hero-bg5.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+      <main className="flex h-full w-full flex-col text-black md:text-white xl:gap-24 xl:text-white">
+        <div className="ml-24 mt-32 flex flex-col justify-center gap-5">
+          <div className="font-mono text-5xl md:text-7xl lg:text-5xl">
             <h2>Bem-vindo a</h2>
           </div>
           <div className="animate-gradient bg-[linear-gradient(to_right,theme(colors.indigo.400),theme(colors.indigo.100),theme(colors.sky.400),theme(colors.fuchsia.400),theme(colors.sky.400),theme(colors.indigo.100),theme(colors.indigo.400))] bg-[length:200%_auto] bg-clip-text text-6xl font-semibold text-transparent md:text-7xl">
             <AnimatedText text="StellioCode" />
           </div>
 
-          <p className="mt-4 p-4 text-left text-3xl text-slate-500 md:text-4xl xl:text-4xl">
-            Onde sonhos viram websites!
+          <p className="mt-2 text-left font-mono text-2xl md:text-3xl xl:text-2xl">
+            Inspiração que vira inovação.{" "}
           </p>
-          {/* </Section> */}
 
-          <div className="flex justify-center py-4">
-            <motion.div
-              whileHover={{
-                scale: 1.1,
-                transition: { duration: 0.2 },
-              }}
+          <motion.div
+            whileHover={{
+              scale: 1.02,
+              x: 13,
+              y: 3,
+              transition: { duration: 0.3, ease: "easeInOut" },
+            }}
+            whileTap={{
+              scale: 0.999,
+            }}
+          >
+            <Button
+              variant="secondary"
+              className="text-1xl relative overflow-hidden bg-gradient-to-r from-sky-500 to-fuchsia-400 text-white transition-all duration-300"
+              size="lg"
             >
-              <Button
-                variant="secondary"
-                className="text-1xl bg-gradient-to-r from-sky-500 to-fuchsia-400 text-white"
-                size="lg"
-              >
-                Marque sua reunião!
-              </Button>
-            </motion.div>
-          </div>
-        </div>
-
-        <div>
-          <img
-            src="/heroImage.png"
-            alt="Hero"
-            className="object-fit hidden h-96 w-full xl:flex"
-          />
+              <span className="bg-shine animate-shine absolute left-[-100%] top-0 h-full w-full font-mono"></span>
+              Marque uma reunião!
+            </Button>
+          </motion.div>
         </div>
       </main>
     </div>
