@@ -24,6 +24,7 @@ export default function Routes() {
           }
         />
         <Route element={<FollowUp />} path="/acompanhamento/:id" />
+        <Route element={<FollowUp />} path="/acompanhamento/:id/success" />
       </Switch>
     </BrowserRouter>
   );

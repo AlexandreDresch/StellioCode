@@ -1,12 +1,15 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
-import { MovingBorderButton } from "./moving-border-button";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "sonner";
 import { DecodedGoogleToken } from "@/types";
 import UserContext from "@/context/user-context";
+import {
+  PaymentModal,
+  PaymentModalProps,
+} from "./follow-up/modals/payment-modal";
 
 interface EmptyStateProps {
   title: string;
@@ -14,6 +17,8 @@ interface EmptyStateProps {
   icons?: LucideIcon[];
   action: "payment" | "waiting" | "login";
   className?: string;
+  project?: PaymentModalProps["project"];
+  plan?: PaymentModalProps["plan"];
 }
 
 export function EmptyState({
@@ -22,6 +27,8 @@ export function EmptyState({
   icons = [],
   action,
   className,
+  project,
+  plan,
 }: EmptyStateProps) {
   const context = React.useContext(UserContext);
   const responseMessage = (credentialResponse: CredentialResponse) => {
@@ -38,7 +45,7 @@ export function EmptyState({
 
         if (context && context.setUserData) {
           context.setUserData(clientData);
-        } 
+        }
       } else {
         toast.error("Erro: Credential não encontrada.");
       }
@@ -94,12 +101,10 @@ export function EmptyState({
         {description}
       </p>
       {action === "payment" ? (
-        <MovingBorderButton
-          borderRadius="1rem"
-          className="border-neutral-200 bg-white text-black dark:border-slate-800 dark:bg-slate-900 dark:text-white"
-        >
-          Realizar Pagamento
-        </MovingBorderButton>
+        <PaymentModal
+          plan={plan ? plan : ({} as PaymentModalProps["plan"])}
+          project={project ? project : ({} as PaymentModalProps["project"])}
+        />
       ) : action === "login" ? (
         <div className="flex w-full items-center justify-center">
           <GoogleLogin

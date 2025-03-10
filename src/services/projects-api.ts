@@ -80,6 +80,20 @@ export async function getProjectByIdClient({
   return response.data;
 }
 
+export async function getProjectFollowUpByIdClient({
+  clientId,
+  projectId,
+}: {
+  clientId: string;
+  projectId: string;
+}) {
+  const response = await api.get(
+    `/api/public/projects/${clientId}/${projectId}`,
+  );
+
+  return response.data;
+}
+
 export async function editProject({
   token,
   projectId,

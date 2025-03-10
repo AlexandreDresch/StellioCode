@@ -437,8 +437,8 @@ const ExpandableCard = React.forwardRef<HTMLDivElement, ExpandableCardProps>(
           )}
         >
           {/* Nested divs purely for styling and layout (the shadow ring around the card) */}
-          <div className="grid grid-cols-1 rounded-md p-1 sm:p-1.5 md:p-2 shadow-md shadow-black/5">
-            <div className="rounded-md bg-white p-2 sm:p-3 md:p-4 shadow-xl ring-1 ring-black/5">
+          <div className="grid grid-cols-1 rounded-sm p-1 sm:p-1 shadow-sm shadow-black/5">
+            <div className="rounded-sm bg-white p-2 sm:p-2 shadow-md ring-1 ring-black/5">
               <div className="w-full h-full overflow-hidden">
                 {/* Ref for measuring content dimensions (so we can let framer know to animate into the dimensions) */}
                 <div ref={measureRef} className="flex flex-col h-full">

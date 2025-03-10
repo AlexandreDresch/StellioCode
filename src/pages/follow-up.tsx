@@ -1,6 +1,6 @@
 import { FollowUpGrid } from "@/components/follow-up-grid";
 import { Timeline } from "@/components/timeline/timeline";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 
 import {
   CheckCircle,
@@ -23,20 +23,46 @@ import useGetProjectByIdClient from "@/hooks/api/useGetProjectByIdClient";
 import useUserId from "@/hooks/auth/use-user-id";
 import { translateProjectStatus } from "@/lib/utils";
 import { FollowUpGridSkeleton } from "@/components/skeletons/follow-up-grid-skeleton";
+import useGetPaymentByIdClient from "@/hooks/api/useGetPaymentByIdClient";
+import { EmptyStateSkeleton } from "@/components/skeletons/empty-state-skeleton";
+import useSetProjectAsPaid from "@/hooks/api/useSetProjectAsPaid";
+import { toast } from "sonner";
 
 export default function FollowUp() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const paymentId = searchParams.get("paymentId");
 
   const { getProjectByIdClient, project, getProjectLoading } =
     useGetProjectByIdClient();
+
+  const { getPaymentByIdClient, getPaymentLoading, payment } =
+    useGetPaymentByIdClient();
+
+  const { setProjectAsPaid } = useSetProjectAsPaid();
 
   const role = useRole();
   const userId = useUserId();
 
   useEffect(() => {
     getProjectByIdClient({ clientId: userId, projectId: id });
+    getPaymentByIdClient({ clientId: userId, projectId: id });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, id]);
+
+  useEffect(() => {
+    if (paymentId) {
+      setProjectAsPaid({ paymentId })
+        .then(() => {
+          getPaymentByIdClient({ clientId: userId, projectId: id });
+        })
+        .catch((error) => {
+          toast.error("Erro ao finalizar pagamento.");
+          console.error("Erro ao marcar pagamento como pago:", error);
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paymentId]);
 
   const data = [
     {
@@ -254,29 +280,60 @@ export default function FollowUp() {
 
           <Separator className="mx-auto w-full max-w-7xl" />
 
-          <section className="mx-auto max-w-7xl px-4 py-20">
-            <EmptyState
-              title="Reunião Inicial Pendente"
-              description="Após nossa conversa, é aqui onde você verá o progresso do desenvolvimento do seu projeto."
-              icons={[FileText, Link, Files]}
-              action="waiting"
-            />
-          </section>
+          {getPaymentLoading ? (
+            <section className="mx-auto max-w-7xl px-4 py-20">
+              <EmptyStateSkeleton className="" />
+            </section>
+          ) : (
+            <>
+              {payment && payment.paymentStatus === "pending" && (
+                <section className="mx-auto max-w-7xl px-4 py-20">
+                  <EmptyState
+                    title="Pagamento Pendente"
+                    description="Após o pagamento, é aqui onde você verá o progresso do desenvolvimento do seu projeto."
+                    icons={[FileText, CircleDollarSign, Files]}
+                    action="payment"
+                    project={{
+                      name: project?.title,
+                      id: project?.id,
+                      price: project?.price,
+                      paymentId: project?.paymentId,
+                    }}
+                    plan={{
+                      name: project?.planName,
+                      id: project?.planId,
+                      price: project?.planPrice,
+                      period: project?.planPeriod,
+                    }}
+                  />
+                </section>
+              )}
+            </>
+          )}
 
-          <section className="mx-auto max-w-7xl px-4 py-20">
-            <EmptyState
-              title="Pagamento Pendente"
-              description="Após o pagamento, é aqui onde você verá o progresso do desenvolvimento do seu projeto."
-              icons={[FileText, CircleDollarSign, Files]}
-              action="payment"
-            />
-          </section>
-
-          <Timeline data={data} />
+          {project && project?.status === "PENDING" ? (
+            <section className="mx-auto max-w-7xl px-4 py-20">
+              <EmptyState
+                title="Projeto Pendente"
+                description="Após nossa conversa, é aqui onde você verá o progresso do desenvolvimento do seu projeto."
+                icons={[FileText, Link, Files]}
+                action="waiting"
+              />
+            </section>
+          ) : (
+            <>
+              {payment && payment.paymentStatus === "paid" && (
+                <Timeline data={data} />
+              )}
+            </>
+          )}
 
           <Separator className="mx-auto w-full max-w-7xl px-4" />
 
-          <section className="mx-auto max-w-7xl px-4 pt-20" id="meetings">
+          <section
+            className="mx-auto max-w-7xl bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[length:4px_4px] px-4 pt-20 dark:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.02)_1px,transparent_1px)]"
+            id="meetings"
+          >
             <div className="mx-auto mb-4 max-w-7xl">
               <h2 className="mb-4 max-w-4xl text-2xl font-medium dark:text-white md:text-3xl">
                 Suas reuniões
