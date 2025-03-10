@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Plans() {
   return (
-    <div className="mb-24 mt-[60rem] block bg-[#5B1F83] lg:mt-64">
+    <div className="mb-24 mt-[40rem] block bg-[#5B1F83] lg:mt-64">
       <Tabs defaultValue="account" className="h-[500px] w-[1000px] py-20">
         <TabsList className="grid w-full grid-cols-2 bg-gradient-to-r from-pink-500 to-sky-300">
           <TabsTrigger value="account" className="text-white">

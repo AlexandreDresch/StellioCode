@@ -90,13 +90,21 @@ export default function Footer() {
 
         <div className="my-1 flex flex-col items-center justify-center gap-4 text-sm lg:py-0">
           <div className="flex gap-2">
-            <a href="#">Sobre</a>
+            <a href="#" className="transition-all hover:scale-x-110">
+              Sobre
+            </a>
             <Dot />
-            <a href="#">Porfólio</a>
+            <a href="#" className="transition-all hover:scale-x-110">
+              Porfólio
+            </a>
             <Dot />
-            <a href="#">Planos</a>
+            <a href="#" className="transition-all hover:scale-x-110">
+              Planos
+            </a>
             <Dot />
-            <a href="#">Entre em contato</a>
+            <a href="#" className="transition-all hover:scale-x-110">
+              Entre em contato
+            </a>
           </div>
           <div>
             <p className="flex items-center justify-center gap-2 p-2">
