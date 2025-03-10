@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useContext } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -6,14 +6,16 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import Modal from "../modal";
+import useLogin from "@/hooks/api/useLogin";
+import { useNavigate } from "react-router-dom";
+import UserContext from "@/context/user-context";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   email: z.string().min(2).max(50),
@@ -21,8 +23,6 @@ const formSchema = z.object({
 });
 
 export default function SignInForm() {
-  const [isModalOpen, setModalOpen] = useState(false);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -31,14 +31,43 @@ export default function SignInForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
+  const { login, useLoginError } = useLogin();
+  const navigate = useNavigate();
+  const userContext = useContext(UserContext);
 
-  function handleResetPassword(email: string) {
-    // Implmentar lógica de redefinição
-    console.log(`Redefinir senha para: ${email}`);
-    setModalOpen(false);
+  const { setUserData } = userContext;
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    login({
+      data: {
+        email: values.email,
+        password: values.password,
+      },
+    })
+      .then((response) => {
+        // Receber e armazenar o token JWT no localStorage
+        console.log(response);
+        if (
+          response &&
+          response.status !== "pending" &&
+          response.status !== "rejected"
+        ) {
+          setUserData(response);
+          localStorage.setItem("userData", JSON.stringify(response));
+          console.log(
+            "Usuário salvo no localStorage:",
+            localStorage.getItem("userData"),
+          );
+          // Redirecionar para o dashboard
+          navigate("/dashboard");
+        } else {
+          toast.error("Usuário com pendência de aprovação ou recusado.");
+        }
+      })
+      .catch(() => {
+        console.error("Erro: ", useLoginError);
+        toast.error("Erro ao autenticar. Verifique suas credenciais.");
+      });
   }
 
   return (
@@ -52,15 +81,8 @@ export default function SignInForm() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input
-                    className="border-customPurple"
-                    placeholder="shadcn"
-                    {...field}
-                  />
+                  <Input className="" {...field} />
                 </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -70,46 +92,44 @@ export default function SignInForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>Senha</FormLabel>
                 <FormControl>
-                  <Input
-                    className="border-customPurple"
-                    placeholder="shadcn"
-                    {...field}
-                  />
+                  <Input className="" {...field} />
                 </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit" className="bg-customPurple px-6 text-white">
-            Sign In
+          <Button type="submit" className="px-6">
+            Entrar
           </Button>
         </form>
       </Form>
-      <button
+
+      {/* Botão de esqueci a senha */}
+      {/* <button
         onClick={() => setModalOpen(true)}
-        className="mt-2 text-customPurple hover:underline"
+        className="mt-2 text-sm text-white hover:underline"
       >
         Esqueci minha senha
       </button>
       <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
-        <h2 className="mb-4 text-lg font-bold">Redefinir Senha</h2>
+        <h2 className="mb-2 text-lg font-bold">Redefinir Senha</h2>
+        <p className="mb-4 text-xs text-gray-400">Digite seu endereço de e-mail para receber instruções sobre como redefinir sua senha.</p>
         <Input
           placeholder="Digite seu e-mail"
-          className="mb-4 border-customPurple"
+          className="mb-4  rounded-sm"
           onChange={(e) => form.setValue("email", e.target.value)}
         />
-        <Button
-          onClick={() => handleResetPassword(form.getValues("email"))}
-          className="bg-customPurple px-6 text-white"
-        >
-          Redefinir Senha
-        </Button>
-      </Modal>
+        <div className="flex justify-end">
+          <Button
+            onClick={() => handleResetPassword(form.getValues("email"))}
+            className="bg-customPurple px-6 text-white mt-4 rounded-sm"
+          >
+            Redefinir Senha
+          </Button>
+        </div>
+      </Modal> */}
     </>
   );
 }
