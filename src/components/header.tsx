@@ -8,48 +8,57 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Menu, Ghost, MessageCircleMore, Sun, Moon } from "lucide-react";
+import { Menu, Ghost, MessageCircleMore } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { useState, useEffect } from "react";
 
 export default function Header() {
-  const [isChecked, setIsChecked] = useState(false);
+  {
+    /* 
+const [isChecked, setIsChecked] = useState(false);
+*/
+  }
+  {
+    /* 
+useEffect(() => {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "dark") {
+    setIsChecked(true);
+    document.body.classList.add("dark");
+  } else {
+    setIsChecked(false);
+    document.body.classList.remove("dark");
+  }
+}, []);
+*/
+  }
 
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark") {
-      setIsChecked(true);
+  {
+    /* 
+const handleSwitchChange = () => {
+  setIsChecked((prevState) => {
+    const newState = !prevState;
+    if (newState) {
       document.body.classList.add("dark");
+      localStorage.setItem("theme", "dark");
     } else {
-      setIsChecked(false);
       document.body.classList.remove("dark");
+      localStorage.setItem("theme", "light");
     }
-  }, []);
-
-  const handleSwitchChange = () => {
-    setIsChecked((prevState) => {
-      const newState = !prevState;
-      if (newState) {
-        document.body.classList.add("dark");
-        localStorage.setItem("theme", "dark");
-      } else {
-        document.body.classList.remove("dark");
-        localStorage.setItem("theme", "light");
-      }
-      return newState;
-    });
-  };
+    return newState;
+  });
+};
+*/
+  }
 
   return (
     <div>
-      <header className="absolute flex min-w-full items-center justify-between bg-white px-6 shadow-lg dark:bg-black xl:px-32">
-        <div className="flex items-center gap-4">
+      <header className="absolute flex min-w-full items-center justify-between bg-white px-6 py-3 shadow-lg dark:bg-black xl:px-32">
+        <div className="flex items-center gap-2">
           <svg
             version="1.0"
             xmlns="http://www.w3.org/2000/svg"
-            width="50pt"
-            height="60pt"
+            width="20pt"
+            height="30pt"
             viewBox="0 0 149 150"
             preserveAspectRatio="xMidYMid meet"
             className="group w-12 transition duration-300 ease-in-out hover:scale-110"
@@ -101,7 +110,7 @@ export default function Header() {
             </g>
           </svg>
 
-          <h1 className="text-2xl transition-all duration-300 hover:bg-gradient-to-r hover:from-sky-700 hover:to-sky-100 hover:bg-clip-text hover:text-transparent">
+          <h1 className="font-mono text-2xl transition-all duration-300 hover:bg-gradient-to-r hover:from-sky-700 hover:to-sky-100 hover:bg-clip-text hover:text-transparent">
             StellioCode
           </h1>
         </div>
@@ -122,22 +131,24 @@ export default function Header() {
           </ul>
         </ul>
 
-        <div className="relative hidden items-center justify-center font-semibold md:flex">
-          <div className="flex items-center space-x-2">
-            <Sun
-              className={`w-5 text-yellow-500 ${isChecked ? "opacity-40" : "opacity-100"}`}
-            />
+        {/* 
+<div className="relative hidden items-center justify-center font-semibold md:flex">
+  <div className="flex items-center space-x-2">
+    <Sun
+      className={`w-5 text-yellow-500 ${isChecked ? "opacity-40" : "opacity-100"}`}
+    />
 
-            <Switch
-              id="dark-mode"
-              checked={isChecked}
-              onCheckedChange={handleSwitchChange}
-            />
-            <Moon
-              className={`w-5 text-gray-500 ${isChecked ? "opacity-100" : "opacity-40"}`}
-            />
-          </div>
-        </div>
+    <Switch
+      id="dark-mode"
+      checked={isChecked}
+      onCheckedChange={handleSwitchChange}
+    />
+    <Moon
+      className={`w-5 text-gray-500 ${isChecked ? "opacity-100" : "opacity-40"}`}
+    />
+  </div>
+</div>
+*/}
 
         <Sheet>
           <SheetTrigger asChild>

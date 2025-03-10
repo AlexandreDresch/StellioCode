@@ -5,8 +5,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion"; // Importar o Framer Motion
 
 export default function Portfolio() {
   const words = ["seus clientes.", "sua marca.", "seu estilo."];
@@ -38,11 +38,23 @@ export default function Portfolio() {
     <div className="left-0 flex flex-col bg-[#151a42]">
       <div className="absolute z-10 ml-24 flex flex-col gap-10">
         <div className="flex flex-col items-center justify-center lg:flex-row lg:gap-32">
-          <h3 className="pb-20 pt-10 font-mono text-5xl font-semibold text-white lg:w-[400px]">
-            Projetos <br></br> desenvolvidos
-          </h3>
+          {/* Animação para o título */}
+          <motion.h3
+            className="pb-20 pt-10 font-mono text-5xl font-semibold text-white lg:w-[400px]"
+            initial={{ opacity: 0 }} // Começa invisível
+            animate={{ opacity: 1 }} // Fica visível
+            transition={{ duration: 1 }} // Animação por 1 segundo
+          >
+            Projetos <br /> desenvolvidos
+          </motion.h3>
 
-          <div className="flex flex-wrap items-center rounded-none">
+          {/* Animação para os cards */}
+          <motion.div
+            className="flex flex-wrap items-center rounded-none"
+            initial={{ opacity: 0 }} // Começa invisível
+            animate={{ opacity: 1 }} // Fica visível
+            transition={{ duration: 1, delay: 0.2 }} // Delay de 0.2s antes de começar
+          >
             <Card className="flex w-[40rem] items-center">
               <img
                 className="h-[270px] w-[300px] rounded-bl-xl rounded-tl-xl object-cover"
@@ -73,11 +85,17 @@ export default function Portfolio() {
                 </CardFooter>
               </div>
             </Card>
-          </div>
+          </motion.div>
         </div>
 
-        <div className="items-center justify-center gap-32 lg:flex lg:flex-col">
-          <div className="flex flex-wrap rounded-none">
+        <div className="flex-col items-center justify-center gap-32 lg:flex lg:flex-row">
+          {/* Animação para mais cards */}
+          <motion.div
+            className="flex flex-wrap rounded-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.4 }}
+          >
             <Card className="flex w-[40rem] items-center">
               <img
                 className="h-[270px] w-[300px] rounded-bl-xl rounded-tl-xl object-cover"
@@ -106,20 +124,35 @@ export default function Portfolio() {
                 </CardFooter>
               </div>
             </Card>
-          </div>
+          </motion.div>
 
-          <div className="w-[400px] text-3xl text-white">
+          <motion.div
+            className="w-[400px] text-3xl text-white"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.6 }}
+          >
             De acordo com{" "}
             <span className="text-purple-400">{displayedText}</span>|
-          </div>
+          </motion.div>
         </div>
 
-        <div className="items-center justify-center gap-5 lg:gap-32">
-          <h3 className="w-[400px] pb-20 pt-10 font-mono text-4xl font-semibold text-white">
-            Com o cuidado <br></br> que sua marca merece
-          </h3>
+        <div className="flex-col items-center justify-center gap-32 lg:flex lg:flex-row">
+          <motion.h3
+            className="w-[400px] pb-20 pt-10 font-mono text-4xl font-semibold text-white"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.8 }}
+          >
+            Com o cuidado <br /> que sua marca merece
+          </motion.h3>
 
-          <div className="flex flex-wrap items-center rounded-none">
+          <motion.div
+            className="flex flex-wrap items-center rounded-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 1 }}
+          >
             <Card className="flex w-[40rem] items-center">
               <img
                 className="h-[270px] w-full rounded-bl-xl rounded-tl-xl object-cover"
@@ -146,7 +179,7 @@ export default function Portfolio() {
                 </CardFooter>
               </div>
             </Card>
-          </div>
+          </motion.div>
         </div>
       </div>
 
