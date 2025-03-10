@@ -1,10 +1,8 @@
 import {
-  CallingState,
   StreamCall,
   StreamTheme,
   StreamVideo,
   StreamVideoClient,
-  //useCall,
   useCallStateHooks,
   User,
   ParticipantView,
@@ -14,69 +12,66 @@ import {
 } from "@stream-io/video-react-sdk";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import "./style.css";
+import { useNavigate } from "react-router-dom";
+import Header from "@/components/header";
 
+//create call
 const apiKey = import.meta.env.VITE_GETSTREAM_API_KEY;
 const token = import.meta.env.VITE_GETSTREAM_TOKEN;
 const userId = import.meta.env.VITE_GETSTREAM_USERID;
-const callId = "default_8f17f03d-a4e3-4044-95fc-48b1fd2cf018";
+const callId = "default";
+const callType = "default";
 
-// set up the user object
-
+//config users
 const user: User = {
   id: userId,
   name: "alvaropedrosa",
   image: "https://getstream.io/random_svg/?id=alvaro&name=alvaro",
 };
 
+//config call's
 const client = new StreamVideoClient({ apiKey, user, token });
+const call = client.call(callType, callId);
+await call.getOrCreate();
+await call.join({
+  create: true,
+});
+await call.camera.enable();
+await call.microphone.enable();
 
-const call = client.call("default", callId);
-call.join({ create: true });
+// set up the user object
 
 export default function Meeting() {
   console.log(apiKey);
   return (
-    <StreamVideo client={client}>
-      <StreamCall call={call}>
-        <MyUILayout />
-      </StreamCall>
-    </StreamVideo>
+    <>
+      <Header />
+      <StreamVideo client={client}>
+        <StreamCall call={call}>
+          <MyUILayout />
+        </StreamCall>
+      </StreamVideo>
+    </>
   );
 }
 
 export const MyUILayout = () => {
-  // const call = useCall();
+  const { useRemoteParticipants } = useCallStateHooks();
 
-  const {
-    useCallCallingState,
-    //useLocalParticipant,
-    useRemoteParticipants,
-    //useParticipantCount,
-  } = useCallStateHooks();
-
-  const callingState = useCallCallingState();
-  //const localParticipant = useLocalParticipant();
   const remoteParticipant = useRemoteParticipants();
-  //const participantCount = useParticipantCount();
 
   <MyParticipantList participants={remoteParticipant} />;
 
-  if (callingState !== CallingState.JOINED) {
-    return <div>Loading...</div>;
+  const navigate = useNavigate();
+  function handleLeave() {
+    navigate("/");
   }
-
   return (
     <StreamTheme>
       <SpeakerLayout participantsBarPosition="bottom" />
-      <CallControls />
+      <CallControls onLeave={handleLeave} />
     </StreamTheme>
   );
-  // return (
-  //     <StreamTheme style={{position: 'relative'}}>
-  //       <MyParticipantList participants={remoteParticipant}/>
-  //       <MyFloatingLocalParticipant participant={localParticipant}/>
-  //     </StreamTheme>
-  // );
 };
 
 export const MyParticipantList = (props: {
@@ -89,7 +84,6 @@ export const MyParticipantList = (props: {
         display: "flex",
         flexDirection: "row",
         gap: "8px",
-        //  width:  '100vw'
       }}
     >
       {participants.map((participant) => (
