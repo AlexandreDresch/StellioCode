@@ -3,11 +3,10 @@ export default function Team() {
     {
       name: "Alexandre Dresch",
       role: "Líder | Fullstack",
-      github: "#",
-      linkedin: "#",
+      github: "https://github.com/AlexandreDresch",
+      linkedin: "https://www.linkedin.com/in/alexandre-dresch/",
       email:
         "mailto:alexandre.dresch@stelliocode.com?subject=Quero%20conhecer%20mais%20sobre%20os%20planos%20da%20empresa&body=Olá%20Alexandre,%20gostaria%20de%20conhecer%20mais%20sobre%20os%20planos%20e%20como%20a%20stelliocode%20pode%20colaborar%20no%20desenvolvimento%20web%2Fmobile%20da%20minha%20empresa.%0A%0AAtenciosamente,%0A",
-      image: "https://source.unsplash.com/150x150/?portrait?1",
     },
     {
       name: "Alexandre Ferreira",
@@ -16,16 +15,14 @@ export default function Team() {
       linkedin: "#",
       email:
         "mailto:alexandre.ferreira@stelliocode.com?subject=Quero%20conhecer%20mais%20sobre%20os%20planos%20da%20empresa&body=Olá%20Alexandre,%20gostaria%20de%20conhecer%20mais%20sobre%20os%20planos%20e%20como%20a%20stelliocode%20pode%20colaborar%20no%20desenvolvimento%20web%2Fmobile%20da%20minha%20empresa.%0A%0AAtenciosamente,%0A",
-      image: "https://source.unsplash.com/150x150/?portrait?2",
     },
     {
       name: "Alvaro Pedrosa",
       role: "Fullstack",
-      github: "#",
+      github: "https://github.com/alvaropedrosa",
       linkedin: "#",
       email:
         "mailto:alvaro.pedrosa@stelliocode.com?subject=Quero%20conhecer%20mais%20sobre%20os%20planos%20da%20empresa&body=Olá%20Alvaro,%20gostaria%20de%20conhecer%20mais%20sobre%20os%20planos%20e%20como%20a%20stelliocode%20pode%20colaborar%20no%20desenvolvimento%20web%2Fmobile%20da%20minha%20empresa.%0A%0AAtenciosamente,%0A",
-      image: "https://source.unsplash.com/150x150/?portrait?3",
     },
     {
       name: "Carlos Eduardo",
@@ -34,61 +31,54 @@ export default function Team() {
       linkedin: "#",
       email:
         "mailto:carlos.eduardo@stelliocode.com?subject=Quero%20conhecer%20mais%20sobre%20os%20planos%20da%20empresa&body=Olá%20Carlos,%20gostaria%20de%20conhecer%20mais%20sobre%20os%20planos%20e%20como%20a%20stelliocode%20pode%20colaborar%20no%20desenvolvimento%20web%2Fmobile%20da%20minha%20empresa.%0A%0AAtenciosamente,%0A",
-      image: "https://source.unsplash.com/150x150/?portrait?4",
     },
     {
       name: "Filipe Ritter",
       role: "Fullstack",
-      github: "#",
-      linkedin: "#",
+      github: "https://github.com/filipeghilardi90",
+      linkedin: "https://www.linkedin.com/in/filipe-ghilardi-b1b0a3ab/",
       email:
         "mailto:filipe.ritter@stelliocode.com?subject=Quero%20conhecer%20mais%20sobre%20os%20planos%20da%20empresa&body=Olá%20Filipe,%20gostaria%20de%20conhecer%20mais%20sobre%20os%20planos%20e%20como%20a%20stelliocode%20pode%20colaborar%20no%20desenvolvimento%20web%2Fmobile%20da%20minha%20empresa.%0A%0AAtenciosamente,%0A",
-      image: "https://source.unsplash.com/150x150/?portrait?5",
     },
     {
       name: "Gabriel Coimbra",
       role: "Fullstack",
-      github: "#",
-      linkedin: "#",
+      github: "https://github.com/gscoimbra",
+      linkedin: "https://www.linkedin.com/in/gabriel-coimbra-8566051bb/",
       email:
         "mailto:gabriel.coimbra@stelliocode.com?subject=Quero%20conhecer%20mais%20sobre%20os%20planos%20da%20empresa&body=Olá%20Gabriel,%20gostaria%20de%20conhecer%20mais%20sobre%20os%20planos%20e%20como%20a%20stelliocode%20pode%20colaborar%20no%20desenvolvimento%20web%2Fmobile%20da%20minha%20empresa.%0A%0AAtenciosamente,%0A",
-      image: "https://source.unsplash.com/150x150/?portrait?6",
     },
     {
       name: "Julia Bueno",
       role: "Frontend",
-      github: "#",
-      linkedin: "#",
+      github: "https://github.com/jb-seganfredo",
+      linkedin: "https://www.linkedin.com/in/juliabuenoseganfredo/",
       email:
         "mailto:julia.bueno@stelliocode.com?subject=Quero%20conhecer%20mais%20sobre%20os%20planos%20da%20empresa&body=Olá%20Julia,%20gostaria%20de%20conhecer%20mais%20sobre%20os%20planos%20e%20como%20a%20stelliocode%20pode%20colaborar%20no%20desenvolvimento%20web%2Fmobile%20da%20minha%20empresa.%0A%0AAtenciosamente,%0A",
-      image: "https://source.unsplash.com/150x150/?portrait?7",
     },
     {
       name: "Neucielle Quadros",
       role: "Design | Frontend",
-      github: "#",
-      linkedin: "#",
+      github: "https://github.com/Neucielle",
+      linkedin: "https://www.linkedin.com/in/neucielle-quadros/",
       email:
         "mailto:neucielle.quadros@stelliocode.com?subject=Quero%20conhecer%20mais%20sobre%20os%20planos%20da%20empresa&body=Olá%20Neucielle,%20gostaria%20de%20conhecer%20mais%20sobre%20os%20planos%20e%20como%20a%20stelliocode%20pode%20colaborar%20no%20desenvolvimento%20web%2Fmobile%20da%20minha%20empresa.%0A%0AAtenciosamente,%0A",
-      image: "https://source.unsplash.com/150x150/?portrait?8",
     },
     {
       name: "Polliana Silva",
       role: "Frontend",
-      github: "#",
-      linkedin: "#",
+      github: "https://github.com/pollianasilva",
+      linkedin: "https://www.linkedin.com/in/polliana-silva/",
       email:
         "mailto:polliana.silva@stelliocode.com?subject=Quero%20conhecer%20mais%20sobre%20os%20planos%20da%20empresa&body=Olá%20Polliana,%20gostaria%20de%20conhecer%20mais%20sobre%20os%20planos%20e%20como%20a%20stelliocode%20pode%20colaborar%20no%20desenvolvimento%20web%2Fmobile%20da%20minha%20empresa.%0A%0AAtenciosamente,%0A",
-      image: "https://source.unsplash.com/150x150/?portrait?9",
     },
     {
       name: "Vanessa Coutinho",
       role: "Frontend",
-      github: "#",
-      linkedin: "#",
+      github: "https://github.com/vanmc",
+      linkedin: "https://www.linkedin.com/in/vanessamcgcoutinho",
       email:
         "mailto:vanessa.coutinho@stelliocode.com?subject=Quero%20conhecer%20mais%20sobre%20os%20planos%20da%20empresa&body=Olá%20Vanessa,%20gostaria%20de%20conhecer%20mais%20sobre%20os%20planos%20e%20como%20a%20stelliocode%20pode%20colaborar%20no%20desenvolvimento%20web%2Fmobile%20da%20minha%20empresa.%0A%0AAtenciosamente,%0A",
-      image: "https://source.unsplash.com/150x150/?portrait?10",
     },
   ];
 
@@ -97,19 +87,14 @@ export default function Team() {
       {members.map((member, index) => (
         <div
           key={index}
-          className="flex max-w-xs flex-col justify-center rounded-xl bg-gray-100 p-6 text-gray-800 opacity-100 shadow-md transition-opacity duration-500 hover:!opacity-100 group-hover:opacity-50 dark:bg-gray-900 dark:text-gray-200 sm:px-12"
+          className="flex max-w-sm flex-col justify-center rounded-xl bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 p-6 text-white opacity-100 shadow-md transition-opacity duration-500 hover:!opacity-100 group-hover:opacity-50 sm:px-12"
         >
-          <img
-            src={member.image}
-            alt={member.name}
-            className="mx-auto aspect-square h-32 w-32 rounded-full bg-gray-200 dark:bg-gray-700"
-          />
-          <div className="space-y-4 divide-y divide-gray-300 text-center dark:divide-gray-700">
+          <div className="space-y-4 divide-y divide-gray-300 text-center">
             <div className="my-2 space-y-1">
               <h2 className="text-xl font-semibold sm:text-2xl">
                 {member.name}
               </h2>
-              <p className="px-5 text-xs text-gray-600 dark:text-gray-400 sm:text-base">
+              <p className="px-5 text-xs text-gray-200 sm:text-base">
                 {member.role}
               </p>
             </div>
@@ -118,7 +103,7 @@ export default function Team() {
                 rel="noopener noreferrer"
                 href={member.github}
                 aria-label="GitHub"
-                className="rounded-md p-2 text-gray-700 transition-colors hover:text-blue-600 dark:text-gray-400 hover:dark:text-violet-400"
+                className="rounded-md p-2 text-white transition-colors hover:text-blue-200"
               >
                 <svg
                   viewBox="0 0 496 512"
@@ -132,7 +117,7 @@ export default function Team() {
                 rel="noopener noreferrer"
                 href={member.linkedin}
                 aria-label="LinkedIn"
-                className="rounded-md p-2 text-gray-700 transition-colors hover:text-blue-600 dark:text-gray-400 hover:dark:text-violet-400"
+                className="rounded-md p-2 text-white transition-colors hover:text-blue-200"
               >
                 <svg
                   viewBox="0 0 512 512"
@@ -146,7 +131,7 @@ export default function Team() {
                 rel="noopener noreferrer"
                 href={member.email}
                 aria-label="Email"
-                className="rounded-md p-2 text-gray-700 transition-colors hover:text-blue-600 dark:text-gray-400 hover:dark:text-violet-400"
+                className="rounded-md p-2 text-white transition-colors hover:text-blue-200"
               >
                 <svg
                   viewBox="0 0 512 512"
