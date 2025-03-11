@@ -21,7 +21,7 @@ import { cn, getEventStatusColor, translateEventStatus } from "@/lib/utils";
 import { Meeting } from "@/types";
 import { useWindowDimensions } from "@/hooks/use-window-dimensions";
 
-interface MeetingData {
+export interface MeetingData {
   id: string;
   status: string;
   clientName: string;
@@ -139,7 +139,7 @@ export function MeetingCard({ meeting }: MeetingCardProps) {
             </ExpandableCardContent>
             <ExpandableContent preset="slide-up">
               <ExpandableCardFooter>
-                <div className="flex w-full items-center justify-between text-sm text-gray-600 dark:text-gray-300">
+                <div className="flex w-full items-center justify-between text-sm text-gray-600 dark:text-gray-300 pt-6">
                   <span>{meeting.clientName}</span>
                 </div>
               </ExpandableCardFooter>

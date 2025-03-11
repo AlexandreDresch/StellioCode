@@ -146,3 +146,13 @@ export function setTimeInISODate(isoDate: string, newTime: string): string {
 
   return formatDateToISO(date);
 }
+
+export function formatDate(dateString: string) {
+  const data = new Date(dateString);
+
+  const day = String(data.getDate()).padStart(2, "0");
+  const month = String(data.getMonth() + 1).padStart(2, "0");
+  const year = data.getFullYear();
+
+  return `${day}/${month}/${year}`;
+}

@@ -217,7 +217,7 @@ export interface FeaturedProject {
   updatedAt: string;
 }
 
-interface DecodedGoogleToken {
+export interface DecodedGoogleToken {
   iss: string;
   azp: string;
   aud: string;
@@ -233,3 +233,11 @@ interface DecodedGoogleToken {
   nbf: number;
   picture: string;
 }
+
+export interface Progress {
+  id: string;
+  title: string;
+  descriptions: string[];
+  imageUrls: string[];
+  progress: number;
+} 

@@ -14,47 +14,91 @@ import {
   AtSign,
 } from "lucide-react";
 
-import { MeetingCard } from "@/components/meeting-card";
+import { MeetingCard, MeetingData } from "@/components/meeting-card";
 import { Separator } from "@/components/ui/separator";
 import { EmptyState } from "@/components/empty-state";
 import { useEffect } from "react";
 import useRole from "@/hooks/auth/use-role";
-import useGetProjectByIdClient from "@/hooks/api/useGetProjectByIdClient";
 import useUserId from "@/hooks/auth/use-user-id";
-import { translateProjectStatus } from "@/lib/utils";
+import { formatDate, translateProjectStatus } from "@/lib/utils";
 import { FollowUpGridSkeleton } from "@/components/skeletons/follow-up-grid-skeleton";
-import useGetPaymentByIdClient from "@/hooks/api/useGetPaymentByIdClient";
 import { EmptyStateSkeleton } from "@/components/skeletons/empty-state-skeleton";
 import useSetProjectAsPaid from "@/hooks/api/useSetProjectAsPaid";
 import { toast } from "sonner";
+import Header from "@/components/header";
+import useGetProjectFollowUp from "@/hooks/api/useGetProjectFollowUp";
+import { Progress } from "@/types";
+import { TimelineSkeleton } from "@/components/skeletons/timeline-skeleton";
+import { RemoveFollowUpModal } from "@/components/follow-up/modals/remove-follow-up-modal";
+import useGetProjectById from "@/hooks/api/useGetProjectById";
+import useToken from "@/hooks/auth/use-token";
+import useGetPaymentById from "@/hooks/api/useGetPaymentById";
+import useGetAllMeetingsByProjectId from "@/hooks/api/useGetAllMeetingsByProjectId";
 
 export default function FollowUp() {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const paymentId = searchParams.get("paymentId");
 
-  const { getProjectByIdClient, project, getProjectLoading } =
-    useGetProjectByIdClient();
-
-  const { getPaymentByIdClient, getPaymentLoading, payment } =
-    useGetPaymentByIdClient();
-
   const { setProjectAsPaid } = useSetProjectAsPaid();
 
   const role = useRole();
+  const token = useToken();
   const userId = useUserId();
 
+  const { project, getProjectLoading, getProjectById } = useGetProjectById({
+    userType: role === "client" || role === "developer" ? role : "client",
+  });
+
+  const { followUp, getFollowUp, getFollowUpLoading } = useGetProjectFollowUp({
+    userType: role === "client" || role === "developer" ? role : "client",
+  });
+
+  const { getPaymentById, getPaymentLoading, payment } = useGetPaymentById({
+    userType: role === "client" || role === "developer" ? role : "client",
+  });
+
+  const { getMeetingsById, meetings } =
+    useGetAllMeetingsByProjectId({
+      userType: role === "client" || role === "developer" ? role : "client",
+    });
+
   useEffect(() => {
-    getProjectByIdClient({ clientId: userId, projectId: id });
-    getPaymentByIdClient({ clientId: userId, projectId: id });
+    if (!userId || !id) return;
+
+    if (role === "client") {
+      getProjectById(userId, id);
+    } else if (role === "developer" && token) {
+      getProjectById(userId, id, token);
+    }
+
+    if (role === "client") {
+      getPaymentById(userId, id);
+    } else if (role === "developer" && token) {
+      getPaymentById(userId, id, token);
+    }
+
+    if (role === "client") {
+      getFollowUp(userId, id);
+    } else if (role === "developer" && token) {
+      getFollowUp(userId, id, token);
+    }
+
+    if (role === "client") {
+      getMeetingsById(userId, id);
+    } else if (role === "developer" && token) {
+      getMeetingsById(userId, id, token);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, id]);
 
   useEffect(() => {
+    if (!userId || !id) return;
+
     if (paymentId) {
       setProjectAsPaid({ paymentId })
         .then(() => {
-          getPaymentByIdClient({ clientId: userId, projectId: id });
+          getPaymentById(userId, id);
         })
         .catch((error) => {
           toast.error("Erro ao finalizar pagamento.");
@@ -63,151 +107,6 @@ export default function FollowUp() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paymentId]);
-
-  const data = [
-    {
-      title: "20/12/2024",
-      content: (
-        <div>
-          <p className="mb-8 text-xs font-normal text-neutral-800 dark:text-neutral-200 md:text-sm">
-            Criada estrutura inicial do projeto
-          </p>
-          <div className="grid grid-cols-2 gap-4">
-            <img
-              src="https://assets.aceternity.com/templates/startup-1.webp"
-              alt="startup template"
-              width={500}
-              height={500}
-              className="h-20 w-full rounded-lg object-cover shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] md:h-44 lg:h-60"
-            />
-            <img
-              src="https://assets.aceternity.com/templates/startup-2.webp"
-              alt="startup template"
-              width={500}
-              height={500}
-              className="h-20 w-full rounded-lg object-cover shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] md:h-44 lg:h-60"
-            />
-            <img
-              src="https://assets.aceternity.com/templates/startup-3.webp"
-              alt="startup template"
-              width={500}
-              height={500}
-              className="h-20 w-full rounded-lg object-cover shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] md:h-44 lg:h-60"
-            />
-            <img
-              src="https://assets.aceternity.com/templates/startup-4.webp"
-              alt="startup template"
-              width={500}
-              height={500}
-              className="h-20 w-full rounded-lg object-cover shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] md:h-44 lg:h-60"
-            />
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: "20/12/2024",
-      content: (
-        <div>
-          <p className="mb-8 text-xs font-normal text-neutral-800 dark:text-neutral-200 md:text-sm">
-            I usually run out of copy, but when I see content this big, I try to
-            integrate lorem ipsum.
-          </p>
-          <p className="mb-8 text-xs font-normal text-neutral-800 dark:text-neutral-200 md:text-sm">
-            Lorem ipsum is for people who are too lazy to write copy. But we are
-            not. Here are some more example of beautiful designs I built.
-          </p>
-          <div className="grid grid-cols-2 gap-4">
-            <img
-              src="https://assets.aceternity.com/pro/hero-sections.png"
-              alt="hero template"
-              width={500}
-              height={500}
-              className="h-20 w-full rounded-lg object-cover shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] md:h-44 lg:h-60"
-            />
-            <img
-              src="https://assets.aceternity.com/features-section.png"
-              alt="feature template"
-              width={500}
-              height={500}
-              className="h-20 w-full rounded-lg object-cover shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] md:h-44 lg:h-60"
-            />
-            <img
-              src="https://assets.aceternity.com/pro/bento-grids.png"
-              alt="bento template"
-              width={500}
-              height={500}
-              className="h-20 w-full rounded-lg object-cover shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] md:h-44 lg:h-60"
-            />
-            <img
-              src="https://assets.aceternity.com/cards.png"
-              alt="cards template"
-              width={500}
-              height={500}
-              className="h-20 w-full rounded-lg object-cover shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] md:h-44 lg:h-60"
-            />
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: "20/12/2024",
-      content: (
-        <div>
-          <p className="mb-4 text-xs font-normal text-neutral-800 dark:text-neutral-200 md:text-sm">
-            Deployed 5 new components today
-          </p>
-          <div className="mb-8">
-            <div className="flex items-center gap-2 text-xs text-neutral-700 dark:text-neutral-300 md:text-sm">
-              ✅ Card grid component
-            </div>
-            <div className="flex items-center gap-2 text-xs text-neutral-700 dark:text-neutral-300 md:text-sm">
-              ✅ Startup template Aceternity
-            </div>
-            <div className="flex items-center gap-2 text-xs text-neutral-700 dark:text-neutral-300 md:text-sm">
-              ✅ Random file upload lol
-            </div>
-            <div className="flex items-center gap-2 text-xs text-neutral-700 dark:text-neutral-300 md:text-sm">
-              ✅ Himesh Reshammiya Music CD
-            </div>
-            <div className="flex items-center gap-2 text-xs text-neutral-700 dark:text-neutral-300 md:text-sm">
-              ✅ Salman Bhai Fan Club registrations open
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <img
-              src="https://assets.aceternity.com/pro/hero-sections.png"
-              alt="hero template"
-              width={500}
-              height={500}
-              className="h-20 w-full rounded-lg object-cover shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] md:h-44 lg:h-60"
-            />
-            <img
-              src="https://assets.aceternity.com/features-section.png"
-              alt="feature template"
-              width={500}
-              height={500}
-              className="h-20 w-full rounded-lg object-cover shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] md:h-44 lg:h-60"
-            />
-            <img
-              src="https://assets.aceternity.com/pro/bento-grids.png"
-              alt="bento template"
-              width={500}
-              height={500}
-              className="h-20 w-full rounded-lg object-cover shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] md:h-44 lg:h-60"
-            />
-            <img
-              src="https://assets.aceternity.com/cards.png"
-              alt="cards template"
-              width={500}
-              height={500}
-              className="h-20 w-full rounded-lg object-cover shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] md:h-44 lg:h-60"
-            />
-          </div>
-        </div>
-      ),
-    },
-  ];
 
   const followUpGridStructureData = [
     {
@@ -230,9 +129,11 @@ export default function FollowUp() {
     },
     {
       title: "Reuniões",
-      description: "Cloud storage with intelligent content processing",
+      description: "Veja sua lista de reuniões e participantes",
       icon: <Video className="h-4 w-4 text-purple-500" />,
-      status: "Próxima: 12/04/2025",
+      status: meetings
+        ? `Mais recente: ${formatDate(meetings[meetings.length - 1].scheduledAt)}`
+        : "",
       colSpan: 2,
     },
     {
@@ -245,22 +146,48 @@ export default function FollowUp() {
     },
   ];
 
-  const mockMeeting = {
-    id: "0f86773e-02f1-41c6-9bec-1e1d8686f948",
-    status: "ACCEPTED",
-    clientId: "2bf1653e-889d-4ace-bbbd-d4756dd39192",
-    clientName: "John Client",
-    projectId: "20c0158f-4263-4da6-bd75-397d5cdeaf71",
-    projectName: "Website Development 5",
-    projectDescription: "A website project with e-commerce functionality.",
-    scheduledAt: "2025-02-01T14:00",
-    participants: ["Alan", "Jose", "Cleber"],
-  };
+  const formattedData =
+    followUp && followUp.length > 0
+      ? followUp.map((progress: Progress) => ({
+          title: progress.title,
+          content: (
+            <div>
+              {progress.descriptions.map((description, index) => (
+                <p
+                  key={index}
+                  className="mb-8 text-xs font-normal text-neutral-800 dark:text-neutral-200 md:text-sm"
+                >
+                  {description}
+                </p>
+              ))}
+              <div className="grid grid-cols-2 gap-4">
+                {progress.imageUrls.map((imageUrl, index) => (
+                  <img
+                    key={index}
+                    src={imageUrl}
+                    alt={`Progress image ${index}`}
+                    width={500}
+                    height={500}
+                    className="h-20 w-full rounded-lg object-cover shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] md:h-44 lg:h-60"
+                  />
+                ))}
+              </div>
+
+              <div className="absolute right-0 top-0">
+                {role === "developer" && (
+                  <RemoveFollowUpModal followUp={progress} key={progress.id} />
+                )}
+              </div>
+            </div>
+          ),
+        }))
+      : [];
 
   return (
     <div className="min-h-screen w-full">
+      <Header />
       {role === null ? (
-        <section className="mx-auto max-w-7xl px-4 py-20">
+        <section className="mx-auto max-w-7xl px-4 py-20 pt-28">
           <EmptyState
             title="Entre na sua conta para continuar"
             description="Precisamos confirmar sua identidade antes de mostrar informações do projeto."
@@ -270,7 +197,7 @@ export default function FollowUp() {
         </section>
       ) : (
         <>
-          <section className="p-4 pb-20">
+          <section className="p-4 pb-20 pt-28">
             {getProjectLoading ? (
               <FollowUpGridSkeleton />
             ) : (
@@ -323,7 +250,13 @@ export default function FollowUp() {
           ) : (
             <>
               {payment && payment.paymentStatus === "paid" && (
-                <Timeline data={data} />
+                <>
+                  {getFollowUpLoading ? (
+                    <TimelineSkeleton />
+                  ) : (
+                    <Timeline data={formattedData} projectId={id as string} />
+                  )}
+                </>
               )}
             </>
           )}
@@ -343,12 +276,10 @@ export default function FollowUp() {
               </p>
             </div>
             <div className="grid grid-cols-1 pt-4 md:grid-cols-2 lg:grid-cols-3">
-              <MeetingCard meeting={mockMeeting} />
-              <MeetingCard meeting={mockMeeting} />
-              <MeetingCard meeting={mockMeeting} />
-              <MeetingCard meeting={mockMeeting} />
-              <MeetingCard meeting={mockMeeting} />
-              <MeetingCard meeting={mockMeeting} />
+              {meetings &&
+                meetings.map((meeting: MeetingData) => {
+                  return <MeetingCard key={meeting.id} meeting={meeting} />;
+                })}
             </div>
           </section>
         </>
