@@ -95,12 +95,12 @@ export default function Hero() {
               transition: { duration: 0.3, ease: "easeInOut" },
             }}
             whileTap={{
-              scale: 0.999,
+              scale: 1.1,
             }}
           >
             <Button
               variant="secondary"
-              className="text-1xl relative overflow-hidden bg-gradient-to-r from-sky-500 to-fuchsia-400 text-white transition-all duration-300"
+              className="text-1xl z-50 overflow-hidden bg-gradient-to-r from-sky-500 to-fuchsia-400 text-white transition-all duration-300 hover:scale-105"
               size="lg"
             >
               <span className="bg-shine animate-shine absolute left-[-100%] top-0 h-full w-full font-mono"></span>

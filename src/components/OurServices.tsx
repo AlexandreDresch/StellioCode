@@ -9,6 +9,7 @@ import {
   ArrowRight,
   BotMessageSquare,
   Monitor,
+  MonitorCog,
   TabletSmartphone,
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -18,39 +19,36 @@ const cardVariants = {
   visible: (index: number) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 1, ease: "easeOut", delay: index * 0.4 }, // Atraso mais longo
+    transition: { duration: 1, ease: "easeOut", delay: index * 0.4 },
   }),
 };
 
 export default function NossosServicos() {
   return (
-    <div className="dark:bg-stone flex flex-col items-center bg-[#151a42] py-28 pb-32 text-white lg:items-start xl:flex-row xl:px-32">
-      {/* Seção de Título e Texto com animação de Fade-in mais lenta */}
+    <div className="flex flex-col items-center justify-center bg-[#3d2171] py-10 pb-32 text-white lg:items-start">
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        transition={{ duration: 1.5 }} // Duração maior para o fade-in
-        className="flex w-full max-w-[18rem] flex-col justify-center self-center p-4 pb-10 text-center md:max-w-xl lg:flex lg:max-w-[400px] lg:text-start"
+        transition={{ duration: 1.5 }}
+        className="flex w-full max-w-[35rem] flex-col justify-center self-center p-4 pb-10 text-center"
       >
-        <h3 className="py-3 text-4xl font-semibold">
-          O QUE{" "}
-          <span className="bg-gradient-to-r from-sky-500 to-fuchsia-400 bg-clip-text text-transparent">
-            FAZEMOS
-          </span>
-          :
+        <h3 className="items-center justify-center self-center py-3 font-mono text-5xl font-semibold">
+          Nossos{" "}
+          <div className="bg-gradient-to-r from-sky-500 to-fuchsia-400 bg-clip-text text-transparent">
+            SERVIÇOS:
+          </div>
         </h3>
-        <p>
+        <p className="p-4">
           Somos o seu parceiro na transformação digital. Entregamos projetos
           customizados de acordo com as necessidades do seu negócio.
         </p>
       </motion.div>
 
-      {/* Cards de Serviços com animação ao rolar para a tela e transição mais lenta */}
       <motion.div
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
-        className="flex flex-col gap-4 lg:flex-row"
+        className="flex items-center justify-center gap-10 lg:flex-row"
       >
         {[
           {
@@ -71,15 +69,21 @@ export default function NossosServicos() {
             content:
               "Oferecemos um chatbot para atender seus clientes de forma automática 24/7, resolvendo dúvidas e oferecendo respostas rápidas, melhorando a experiência do usuário e economizando tempo.",
           },
+          {
+            title: "Manutenção",
+            icon: <MonitorCog />,
+            content:
+              "Oferecemos um chatbot para atender seus clientes de forma automática 24/7, resolvendo dúvidas e oferecendo respostas rápidas, melhorando a experiência do usuário e economizando tempo.",
+          },
         ].map((service, index) => (
           <motion.div
             key={index}
             custom={index}
             variants={cardVariants}
-            className="flex flex-col items-center justify-center"
+            className="flex flex-col items-center justify-center self-center"
           >
-            <a className="rounded-md bg-gradient-to-r from-[#6a2e71] via-[#72019f] to-[#84009b] bg-[length:200%_200%] bg-left p-1 transition-all duration-500 hover:bg-right">
-              <Card className="duration-900 relative max-h-[540px] min-h-[280px] w-[350px] cursor-pointer rounded border-0 bg-gradient-to-r from-[#692970] via-[#72019f] to-[#84009b] bg-[length:200%_200%] bg-left p-1 text-white shadow-lg transition-all ease-in-out hover:bg-right lg:w-[250px]">
+            <a className="rounded-md bg-gradient-to-r from-[#9b68d6] via-[#72019f] to-[#84009b] bg-[length:200%_200%] bg-left p-1 transition-all duration-500 hover:bg-right">
+              <Card className="duration-900 relative max-h-[540px] min-h-[280px] w-[350px] cursor-pointer rounded border-0 bg-gradient-to-r from-[#812d92] via-[#72019f] to-[#480785] bg-[length:200%_200%] bg-left p-1 text-white shadow-lg transition-all ease-in-out hover:bg-right lg:w-[250px]">
                 <CardHeader className="pb-2">
                   <div className="flex gap-20">
                     <CardTitle className="font-mono text-[18px]">

@@ -1,9 +1,10 @@
 import Footer from "@/components/Footer";
-import Header from "../components/Header";
+import Header from "../components/header";
 import Hero from "../components/Hero";
 import OurServices from "../components/OurServices";
 import Portfolio from "@/components/Portfolio";
 import Plans from "@/components/Plans";
+import { plans } from "@/constants/plans";
 
 export default function Home() {
   return (
@@ -14,16 +15,13 @@ export default function Home() {
       <Header />
       <Hero />
 
-      <main className="flex flex-col items-center justify-center bg-[#5B1F83]">
-        <div className="bg-[#151a42]">
-          <div className="w-full">
-            <OurServices />
-          </div>
+      <main className="flex flex-col items-center justify-center bg-[#3d2171]">
+        <OurServices />
 
-          <Portfolio />
-        </div>
-        <div className="bg-[#5B1F83]">
-          <Plans />
+        <Portfolio />
+
+        <div className="min-w-full bg-[#bba4ff] pt-52">
+          <Plans plans={plans} view={"client"} />
         </div>
       </main>
 
