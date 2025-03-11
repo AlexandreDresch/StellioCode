@@ -54,6 +54,16 @@ const formSchema = z.object({
     .nonempty("É necessário incluir pelo menos uma tecnologia."),
 });
 
+export const translateLevel = (level: "junior" | "mid_level" | "senior") => {
+  const levelTranslations = {
+    junior: "Júnior",
+    mid_level: "Pleno",
+    senior: "Sênior",
+  };
+
+  return levelTranslations[level] || "Selecione um nível";
+};
+
 export default function SignUpForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -171,9 +181,7 @@ export default function SignUpForm() {
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
-                    <SelectTrigger className="">
-                      {field.value || "level"}
-                    </SelectTrigger>
+                    <SelectTrigger>{translateLevel(field.value)}</SelectTrigger>
                     <SelectContent>
                       <SelectItem value="junior">Júnior</SelectItem>
                       <SelectItem value="mid_level">Pleno</SelectItem>

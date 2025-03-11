@@ -48,10 +48,10 @@ const Login = () => {
       <div className="flex w-full items-center justify-center md:w-1/2">
         <Tabs
           defaultValue="login"
-          className="w-full max-w-md border border-gray-300 p-4"
+          className="w-full max-w-md rounded-lg border border-gray-300 p-4"
         >
           {/* Logo StellioCode */}
-          <img src="public\logo.png" alt="logo" className="mx-auto mb-4 w-20" />
+          <img src="logo.png" alt="logo" className="mx-auto mb-4 w-20" />
 
           {/* Abas de Login e Cadastro */}
           <div className="flex justify-center">
