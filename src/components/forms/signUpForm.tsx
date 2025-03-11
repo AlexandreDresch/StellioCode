@@ -197,7 +197,7 @@ export default function SignUpForm() {
                   {...field}
                   value={field.value.join("\n")}
                   onChange={(e) => field.onChange(e.target.value.split("\n"))}
-                  className="min-h-40"
+                  className="min-h-30"
                   placeholder="Adicione as tecnologias que domina, separadas por uma nova linha."
                 />
               </FormControl>
