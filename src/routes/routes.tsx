@@ -5,6 +5,7 @@ import ProtectedRoute from "@/components/protected-route";
 import Dashboard from "@/pages/dashboard";
 import useRole from "@/hooks/auth/use-role";
 import FollowUp from "@/pages/follow-up";
+import InitialMeeting from "@/pages/initial-meeting";
 
 export default function Routes() {
   const role = useRole();
@@ -25,6 +26,7 @@ export default function Routes() {
         />
         <Route element={<FollowUp />} path="/acompanhamento/:id" />
         <Route element={<FollowUp />} path="/acompanhamento/:id/success" />
+        <Route element={<InitialMeeting />} path="/agendamento" />
       </Switch>
     </BrowserRouter>
   );
