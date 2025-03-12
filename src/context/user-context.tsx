@@ -1,9 +1,8 @@
-import { createContext, ReactNode } from "react";
+import { createContext, ReactNode, useEffect, useState } from "react";
 import { toast } from "sonner";
-import useLocalStorage from "@/hooks/auth/use-local-storage";
 
 interface UserData {
-  id: number;
+  id: string;
   fullName: string;
   status: string;
   role: string;
@@ -16,7 +15,12 @@ interface UserContextType {
   logout: () => void;
 }
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
+const UserContext = createContext<UserContextType>({
+  userData: null,
+  setUserData: () => {},
+  logout: () => {},
+});
+
 export default UserContext;
 
 interface UserProviderProps {
@@ -24,16 +28,25 @@ interface UserProviderProps {
 }
 
 export function UserProvider({ children }: UserProviderProps) {
-  const [userData, setUserData] = useLocalStorage<UserData | null>(
-    "userData",
-    null,
-  );
+  const [userData, setUserData] = useState<UserData | null>(() => {
+    try {
+      const storedUser = localStorage.getItem("userData");
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.error("Erro ao recuperar usuário do localStorage:", error);
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    if (userData) {
+      localStorage.setItem("userData", JSON.stringify(userData));
+    }
+  }, [userData]);
 
   const logout = () => {
     localStorage.removeItem("userData");
-
     setUserData(null);
-
     toast.success("Logout realizado com sucesso!");
   };
 

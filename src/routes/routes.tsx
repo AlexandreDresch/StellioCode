@@ -4,6 +4,8 @@ import Home from "@/pages/home";
 import ProtectedRoute from "@/components/protected-route";
 import Dashboard from "@/pages/dashboard";
 import useRole from "@/hooks/auth/use-role";
+import Login from "@/pages/login";
+import About from "@/pages/about";
 
 export default function Routes() {
   const role = useRole();
@@ -20,6 +22,8 @@ export default function Routes() {
             </ProtectedRoute>
           }
         />
+        <Route element={<Login />} path="/auth" />
+        <Route element={<About />} path="/about" />
       </Switch>
     </BrowserRouter>
   );
