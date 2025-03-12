@@ -66,6 +66,122 @@ export async function getProjectByIdAdmin({
   return response.data;
 }
 
+export async function getProjectById({
+  userId,
+  projectId,
+  token,
+  userType,
+}: {
+  userId: string;
+  projectId: string;
+  token?: string;
+  userType: "client" | "developer";
+}) {
+  let url: string;
+  let headers: Record<string, string> = {};
+
+  if (userType === "client") {
+    url = `/api/public/projects/${userId}/${projectId}`;
+  } else if (userType === "developer") {
+    url = `/api/developer/dashboard/projects/${userId}/${projectId}`;
+    headers = {
+      Authorization: `Bearer ${token}`,
+    };
+  } else {
+    throw new Error("Tipo de usuário inválido. Use 'client' ou 'developer'.");
+  }
+
+  const response = await api.get(url, { headers });
+  return response.data;
+}
+
+export async function getProjectFollowUpById({
+  userId,
+  projectId,
+  token,
+  userType,
+}: {
+  userId: string;
+  projectId: string;
+  token?: string;
+  userType: "client" | "developer";
+}) {
+  let url: string;
+  let headers: Record<string, string> = {};
+
+  if (userType === "client") {
+    url = `/api/public/projects/${userId}/progress/${projectId}`;
+  } else if (userType === "developer") {
+    url = `/api/developer/dashboard/${userId}/projects/${projectId}/follow-up`;
+    headers = {
+      Authorization: `Bearer ${token}`,
+    };
+  } else {
+    throw new Error("Tipo de usuário inválido. Use 'client' ou 'developer'.");
+  }
+
+  const response = await api.get(url, { headers });
+  return response.data;
+}
+
+export async function addFollowUp({
+  token,
+  data,
+}: {
+  token: string;
+  data: {
+    description: string;
+    image: File;
+    developerId: string;
+    projectId: string;
+    progressPercentage: string;
+  };
+}) {
+  const formData = new FormData();
+
+  formData.append("progressPercentage", data.progressPercentage);
+
+  formData.append("developerId", data.developerId);
+
+  formData.append("projectId", data.projectId);
+
+  formData.append("description", data.description);
+
+  formData.append("image", data.image);
+
+  const response = await api.post(
+    "/api/developer/dashboard/project-progress",
+    formData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  return response.data;
+}
+
+export async function deleteFollowUp({
+  token,
+  followUpId,
+  developerId,
+}: {
+  token: string;
+  followUpId: string;
+  developerId: string;
+}) {
+  const response = await api.delete(
+    `/api/developer/dashboard/project-progress/${followUpId}?developerId=${developerId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  return response.data;
+}
+
 export async function editProject({
   token,
   projectId,

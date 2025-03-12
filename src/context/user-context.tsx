@@ -4,9 +4,9 @@ import { toast } from "sonner";
 interface UserData {
   id: string;
   fullName: string;
-  status: string;
-  role: string;
-  token: string;
+  status?: string;
+  role?: string;
+  token?: string;
 }
 
 interface UserContextType {

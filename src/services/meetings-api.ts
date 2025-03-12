@@ -46,6 +46,35 @@ export async function getAllDeveloperMeetings({
   return response.data;
 }
 
+export async function getAllMeetingsByProjectId({
+  userId,
+  projectId,
+  token,
+  userType,
+}: {
+  userId: string;
+  projectId: string;
+  token?: string;
+  userType: "client" | "developer";
+}) {
+  let url: string;
+  let headers: Record<string, string> = {};
+
+  if (userType === "client") {
+    url = `/api/public/projects/${userId}/meetings/${projectId}`;
+  } else if (userType === "developer") {
+    url = `/api/developer/dashboard/${userId}/meetings/${projectId}`;
+    headers = {
+      Authorization: `Bearer ${token}`,
+    };
+  } else {
+    throw new Error("Tipo de usuário inválido. Use 'client' ou 'developer'.");
+  }
+
+  const response = await api.get(url, { headers });
+  return response.data;
+}
+
 export async function updateMeetingStatus({
   meetingId,
   status,
