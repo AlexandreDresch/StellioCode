@@ -20,7 +20,6 @@ export default function useLocalStorage<T>(
         value instanceof Function ? value(storedValue) : value;
       setStoredValue(valueToStore);
       window.localStorage.setItem(key, JSON.stringify(valueToStore));
-      console.log(`Valor salvo no localStorage [${key}]:`, valueToStore); // Log para depuração
     } catch (error) {
       console.log(error);
     }

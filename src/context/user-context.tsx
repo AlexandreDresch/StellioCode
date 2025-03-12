@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { toast } from "sonner";
 
-export interface UserData {
+interface UserData {
   id: string;
   fullName: string;
   status: string;
