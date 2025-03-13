@@ -66,11 +66,14 @@ export async function deleteService({
   token: string;
   serviceId: string;
 }) {
-  const response = await api.delete(`/api/admin/dashboard/services/${serviceId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
+  const response = await api.delete(
+    `/api/admin/dashboard/services/${serviceId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     },
-  });
+  );
 
   return response.data;
 }

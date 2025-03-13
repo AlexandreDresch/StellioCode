@@ -14,13 +14,14 @@ export default function useGetAllProjectsAdmin() {
     loading: getProjectsLoading,
     error: getProjectsError,
     act: getAllProjectsAdmin,
-  } = useAsync((params) =>
-    projectApi.getAllProjectsAdmin({
-      ...params,
-      page: pagination.pageIndex,
-      pageSize: pagination.pageSize,
-    }),
-    false
+  } = useAsync(
+    (params) =>
+      projectApi.getAllProjectsAdmin({
+        ...params,
+        page: pagination.pageIndex,
+        pageSize: pagination.pageSize,
+      }),
+    false,
   );
 
   return {

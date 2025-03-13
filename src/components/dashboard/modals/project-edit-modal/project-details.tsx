@@ -1,9 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import {
-  cn,
-  getProjectStatusColor,
-  translateProjectStatus,
-} from "@/lib/utils";
+import { cn, getProjectStatusColor, translateProjectStatus } from "@/lib/utils";
 import { Project } from "@/types";
 import {
   HandCoinsIcon,

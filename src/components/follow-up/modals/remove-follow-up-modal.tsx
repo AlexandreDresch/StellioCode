@@ -25,9 +25,8 @@ export function RemoveFollowUpModal({
     imageUrls: string[];
   };
 }) {
-  const {
-    deleteFollowUp, deleteFollowUpError, deleteFollowUpLoading
-  } = useDeleteFollowUp();
+  const { deleteFollowUp, deleteFollowUpError, deleteFollowUpLoading } =
+    useDeleteFollowUp();
 
   const token = useToken();
 
@@ -52,7 +51,7 @@ export function RemoveFollowUpModal({
       <AlertDialogTrigger className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm outline-none transition-colors">
         <span>
           <Badge variant="outline" className="py-1">
-            <TrashIcon size={16}/>
+            <TrashIcon size={16} />
           </Badge>
         </span>
       </AlertDialogTrigger>

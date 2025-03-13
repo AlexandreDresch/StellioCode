@@ -69,8 +69,8 @@ export function MeetingCard({ meeting }: MeetingCardProps) {
             collapseDelay={500}
           >
             <ExpandableCardHeader className="p-1">
-              <div className="flex-cw-full flex-col w-full justify-between">
-                <div className="flex justify-between w-full">
+              <div className="flex-cw-full w-full flex-col justify-between">
+                <div className="flex w-full justify-between">
                   <h3 className="text-lg font-medium tracking-wider dark:text-white">
                     {meeting.projectName}
                   </h3>
@@ -139,7 +139,7 @@ export function MeetingCard({ meeting }: MeetingCardProps) {
             </ExpandableCardContent>
             <ExpandableContent preset="slide-up">
               <ExpandableCardFooter>
-                <div className="flex w-full items-center justify-between text-sm text-gray-600 dark:text-gray-300 pt-6">
+                <div className="flex w-full items-center justify-between pt-6 text-sm text-gray-600 dark:text-gray-300">
                   <span>{meeting.clientName}</span>
                 </div>
               </ExpandableCardFooter>

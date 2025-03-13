@@ -44,24 +44,21 @@ export function PaymentModal({ project, plan }: PaymentModalProps) {
   const [selectedPaymentCategory, setSelectedPaymentCategory] =
     useState("project");
 
-  const {
-    createProjectPaymentLoading,
-    createProjectPayment,
-  } = useCheckoutForProject();
+  const { createProjectPaymentLoading, createProjectPayment } =
+    useCheckoutForProject();
 
   function handleCreateProjectPayment() {
     createProjectPayment({
       paymentId: project.paymentId,
       projectId: project.id,
-    })
-    .then((url) => {
-        if (url) {
-            toast.success("Redirecionando para o checkout...");
-            window.location.href = url;
-        } else {
-            toast.error("URL de pagamento não disponível.");
-        }
-    })
+    }).then((url) => {
+      if (url) {
+        toast.success("Redirecionando para o checkout...");
+        window.location.href = url;
+      } else {
+        toast.error("URL de pagamento não disponível.");
+      }
+    });
   }
 
   return (

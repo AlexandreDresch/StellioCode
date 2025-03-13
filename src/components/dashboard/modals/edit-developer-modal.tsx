@@ -36,7 +36,7 @@ import useUpdateDeveloper from "@/hooks/api/useUpdateDeveloper";
 import useToken from "@/hooks/auth/use-token";
 
 export function EditDeveloperModal({ developerId }: { developerId: string }) {
-   const token = useToken();
+  const token = useToken();
 
   const { developer, getDeveloperById, getDeveloperLoading } =
     useGetDeveloperById();
@@ -211,7 +211,6 @@ export function EditDeveloperModal({ developerId }: { developerId: string }) {
                   ) : (
                     <span>Salvar Alterações</span>
                   )}
-                  
                 </Button>
               </DialogFooter>
             </form>

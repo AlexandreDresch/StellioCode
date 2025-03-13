@@ -58,10 +58,9 @@ export default function FollowUp() {
     userType: role === "client" || role === "developer" ? role : "client",
   });
 
-  const { getMeetingsById, meetings } =
-    useGetAllMeetingsByProjectId({
-      userType: role === "client" || role === "developer" ? role : "client",
-    });
+  const { getMeetingsById, meetings } = useGetAllMeetingsByProjectId({
+    userType: role === "client" || role === "developer" ? role : "client",
+  });
 
   useEffect(() => {
     if (!userId || !id) return;

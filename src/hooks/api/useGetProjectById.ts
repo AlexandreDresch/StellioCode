@@ -17,10 +17,7 @@ export default function useGetProjectById({
     project,
     getProjectLoading,
     getProjectError,
-    getProjectById: (
-      userId: string,
-      projectId: string,
-      token?: string
-    ) => getProjectById({ userId, projectId, token, userType }),
+    getProjectById: (userId: string, projectId: string, token?: string) =>
+      getProjectById({ userId, projectId, token, userType }),
   };
 }

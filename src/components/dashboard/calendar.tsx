@@ -46,7 +46,7 @@ export default function Calendar({ events }: { events: Meeting[] }) {
       createViewMonthGrid(),
       createViewMonthAgenda(),
     ],
-    theme: 'shadcn',
+    theme: "shadcn",
     events: calendarEvents,
     plugins: [eventsService, createEventModalPlugin()],
     locale: "pt-BR",

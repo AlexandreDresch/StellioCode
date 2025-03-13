@@ -59,7 +59,7 @@ export function AddFeaturedProjectModal() {
       toast.error("Por favor, escreva uma descrição para o Projeto Destacado.");
       return;
     }
-    
+
     addFeaturedProject({
       token,
       data: {

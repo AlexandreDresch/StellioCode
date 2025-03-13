@@ -83,7 +83,7 @@ export const MultipleFilesUpload = ({
             Arraste as imagens aqui, ou clique para fazer upload.
           </p>
           <div className="relative mx-auto mt-10 w-full max-w-xl">
-            {files.length > 0 && ( 
+            {files.length > 0 && (
               <motion.div
                 layoutId="file-upload"
                 className={cn(

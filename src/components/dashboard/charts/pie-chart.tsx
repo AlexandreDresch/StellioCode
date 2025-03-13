@@ -1,5 +1,5 @@
-import * as React from "react"
-import { Label, Pie, PieChart } from "recharts"
+import * as React from "react";
+import { Label, Pie, PieChart } from "recharts";
 
 import {
   Card,
@@ -7,30 +7,42 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
-import { DevelopersStats } from "@/types"
+} from "@/components/ui/chart";
+import { DevelopersStats } from "@/types";
 
 interface PieChartProps {
-  developersStats: DevelopersStats
+  developersStats: DevelopersStats;
 }
 
 export function PieChartComponent({ developersStats }: PieChartProps) {
   const chartData = React.useMemo(() => {
-    if (!developersStats) return []
+    if (!developersStats) return [];
 
     return [
-      { status: "Pendente", count: developersStats.developersByStatus.pending, fill: "#facc15" },
-      { status: "Aprovado", count: developersStats.developersByStatus.approved, fill: "#4ade80" },
-      { status: "Rejeitado", count: developersStats.developersByStatus.rejected, fill: "#f87171" },
-    ]
-  }, [developersStats])
+      {
+        status: "Pendente",
+        count: developersStats.developersByStatus.pending,
+        fill: "#facc15",
+      },
+      {
+        status: "Aprovado",
+        count: developersStats.developersByStatus.approved,
+        fill: "#4ade80",
+      },
+      {
+        status: "Rejeitado",
+        count: developersStats.developersByStatus.rejected,
+        fill: "#f87171",
+      },
+    ];
+  }, [developersStats]);
 
-  const totalDevelopers = developersStats?.totalDevelopers || 0
+  const totalDevelopers = developersStats?.totalDevelopers || 0;
 
   return (
     <Card className="flex flex-col">
@@ -80,7 +92,7 @@ export function PieChartComponent({ developersStats }: PieChartProps) {
                           Desenvolvedor(es)
                         </tspan>
                       </text>
-                    )
+                    );
                   }
                 }}
               />
@@ -89,5 +101,5 @@ export function PieChartComponent({ developersStats }: PieChartProps) {
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

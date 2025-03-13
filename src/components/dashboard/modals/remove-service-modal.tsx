@@ -17,7 +17,8 @@ import { LoaderCircleIcon } from "lucide-react";
 import { toast } from "sonner";
 
 export function RemoveServiceModal({ service }: { service: Service }) {
-  const { deleteService, deleteServiceError, deleteServiceLoading } = useDeleteService();
+  const { deleteService, deleteServiceError, deleteServiceLoading } =
+    useDeleteService();
 
   const token = useToken();
 

@@ -529,7 +529,10 @@ export default function AdminDashboard() {
         </Card>
       </section>
 
-      <section className="mt-4 flex gap-4 max-[1370px]:flex-col" id="featured-projects">
+      <section
+        className="mt-4 flex gap-4 max-[1370px]:flex-col"
+        id="featured-projects"
+      >
         <Card className="flex-1">
           <CardHeader>
             <div className="flex items-center justify-between">

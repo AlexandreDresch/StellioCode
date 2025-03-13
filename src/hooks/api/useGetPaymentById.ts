@@ -17,10 +17,7 @@ export default function useGetPaymentById({
     payment,
     getPaymentLoading,
     getPaymentError,
-    getPaymentById: (
-      userId: string,
-      projectId: string,
-      token?: string
-    ) => getPaymentById({ userId, projectId, token, userType }),
+    getPaymentById: (userId: string, projectId: string, token?: string) =>
+      getPaymentById({ userId, projectId, token, userType }),
   };
 }

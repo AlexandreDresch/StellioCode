@@ -44,7 +44,7 @@ export async function createCheckoutForProject({
 }
 
 export async function createProjectPayment({
-  paymentId
+  paymentId,
 }: {
   paymentId: string;
 }) {

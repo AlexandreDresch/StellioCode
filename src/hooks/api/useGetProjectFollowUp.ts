@@ -17,10 +17,7 @@ export default function useGetProjectFollowUp({
     followUp,
     getFollowUpLoading,
     getFollowUpError,
-    getFollowUp: (
-      userId: string,
-      projectId: string,
-      token?: string
-    ) => getFollowUp({ userId, projectId, token, userType }),
+    getFollowUp: (userId: string, projectId: string, token?: string) =>
+      getFollowUp({ userId, projectId, token, userType }),
   };
 }

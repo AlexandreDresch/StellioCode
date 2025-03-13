@@ -183,7 +183,7 @@ export function PieChartInteractive({
           </ChartContainer>
         ) : (
           <div className="flex h-full items-center justify-center">
-            <p className="text-muted-foreground py-20">
+            <p className="py-20 text-muted-foreground">
               Nenhuma entrada encontrada para o plano selecionado.
             </p>
           </div>

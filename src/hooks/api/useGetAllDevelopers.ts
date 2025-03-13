@@ -14,13 +14,14 @@ export default function useGetAllDevelopers() {
     loading: getDevelopersLoading,
     error: getDevelopersError,
     act: getAllDevelopers,
-  } = useAsync((params) =>
-    developersApi.getAllDevelopers({
-      ...params,
-      page: devPagination.pageIndex,
-      pageSize: devPagination.pageSize,
-    }),
-    false
+  } = useAsync(
+    (params) =>
+      developersApi.getAllDevelopers({
+        ...params,
+        page: devPagination.pageIndex,
+        pageSize: devPagination.pageSize,
+      }),
+    false,
   );
 
   return {
