@@ -1,45 +1,53 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import { z } from "zod";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { toast } from "sonner";
 import { jwtDecode } from "jwt-decode";
 import { DecodedGoogleToken } from "@/types";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import useGetAllPlans from "@/hooks/api/useGetAllPlans";
+import useGetAllServices from "@/hooks/api/useGetAllServices";
+import { InitialMeetingSchema } from "@/schemas/event-schemas";
+import { Textarea } from "../ui/textarea";
 
-export const FormDataSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  email: z.string().min(1, "Email is required").email("Invalid email address"),
-  country: z.string().min(1, "Country is required"),
-  street: z.string().min(1, "Street is required"),
-  city: z.string().min(1, "City is required"),
-  state: z.string().min(1, "State is required"),
-  zip: z.string().min(1, "Zip is required"),
-});
-
-type Inputs = z.infer<typeof FormDataSchema>;
+type Inputs = z.infer<typeof InitialMeetingSchema>;
 
 const steps = [
   {
     id: "Passo 1",
     name: "Informações Pessoais",
-    fields: ["firstName", "lastName", "email"],
+    fields: ["name", "email", "googleId", "profilePicture"],
   },
   {
     id: "Passo 2",
     name: "Sobre o Projeto",
-    fields: ["country", "state", "city", "street", "zip"],
+    fields: ["planId", "serviceId", "title", "description", "phone"],
   },
   {
     id: "Passo 3",
     name: "Escolha de Horário",
-    fields: ["country", "state", "city", "street", "zip"],
+    fields: ["meetingDate"],
   },
   { id: "Passo 4", name: "Finalizado 🎉" },
 ];
@@ -49,32 +57,53 @@ export default function InitialMeetingForm() {
   const [currentStep, setCurrentStep] = useState(0);
   const delta = currentStep - previousStep;
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    trigger,
-    formState: { errors },
-  } = useForm<Inputs>({
-    resolver: zodResolver(FormDataSchema),
+  const { getPlans, plans } = useGetAllPlans();
+  const { getAllServices, services } = useGetAllServices();
+
+  useEffect(() => {
+    getPlans();
+    getAllServices();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const form = useForm<Inputs>({
+    resolver: zodResolver(InitialMeetingSchema),
   });
 
   const processForm: SubmitHandler<Inputs> = (data) => {
     console.log(data);
-    reset();
+    form.reset();
   };
 
   type FieldName = keyof Inputs;
 
   const next = async () => {
+    if (currentStep === 0) {
+      const requiredFields = ["name", "email", "profilePicture", "googleId"];
+      const hasAllFields = requiredFields.every((field) =>
+        form.getValues(field as FieldName),
+      );
+
+      if (!hasAllFields) {
+        toast.error("Por favor, faça login com o Google para continuar.");
+        return;
+      }
+
+      setPreviousStep(currentStep);
+      setCurrentStep((step) => step + 1);
+      return;
+    }
+
     const fields = steps[currentStep].fields;
-    const output = await trigger(fields as FieldName[], { shouldFocus: true });
+    const output = await form.trigger(fields as FieldName[], {
+      shouldFocus: true,
+    });
 
     if (!output) return;
 
     if (currentStep < steps.length - 1) {
       if (currentStep === steps.length - 2) {
-        await handleSubmit(processForm)();
+        await form.handleSubmit(processForm)();
       }
       setPreviousStep(currentStep);
       setCurrentStep((step) => step + 1);
@@ -95,12 +124,14 @@ export default function InitialMeetingForm() {
           credentialResponse.credential,
         );
 
-        const clientData = {
-          id: decoded.sub,
-          fullName: decoded.name,
-        };
+        form.setValue("name", decoded.name || "");
+        form.setValue("email", decoded.email || "");
+        form.setValue("profilePicture", decoded.picture || "");
+        form.setValue("googleId", decoded.sub || "");
 
-        console.log(clientData);
+        toast.success("Login com Google realizado com sucesso!");
+
+        next();
       } else {
         toast.error("Erro: Credential não encontrada.");
       }
@@ -116,7 +147,6 @@ export default function InitialMeetingForm() {
 
   return (
     <section className="absolute inset-0 mx-auto flex max-w-7xl flex-col justify-between p-24 pt-40">
-      {/* steps */}
       <nav aria-label="Progress">
         <ol role="list" className="space-y-4 md:flex md:space-x-8 md:space-y-0">
           {steps.map((step, index) => (
@@ -151,223 +181,211 @@ export default function InitialMeetingForm() {
         </ol>
       </nav>
 
-      {/* Form */}
-      <form className="mt-12 py-12" onSubmit={handleSubmit(processForm)}>
-        {currentStep === 0 && (
-          <motion.div
-            initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-          >
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Entre com o Google
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              Para que possamos preencher suas informações pessoais
-            </p>
-            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <GoogleLogin
-                onSuccess={responseMessage}
-                onError={errorMessage}
-                size="medium"
-                width={208}
-              />
-            </div>
-          </motion.div>
-        )}
-
-        {currentStep === 1 && (
-          <motion.div
-            initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-          >
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Address
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              Address where you can receive mail.
-            </p>
-
-            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div className="sm:col-span-3">
-                <label
-                  htmlFor="country"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Country
-                </label>
-                <div className="mt-2">
-                  <select
-                    id="country"
-                    {...register("country")}
-                    autoComplete="country-name"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                  >
-                    <option>United States</option>
-                    <option>Canada</option>
-                    <option>Mexico</option>
-                  </select>
-                  {errors.country?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.country.message}
-                    </p>
-                  )}
-                </div>
+      <Form {...form}>
+        <form className="mt-12 py-12" onSubmit={form.handleSubmit(processForm)}>
+          {currentStep === 0 && (
+            <motion.div
+              initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <h2 className="text-base font-semibold leading-7 text-gray-900">
+                Entre com o Google
+              </h2>
+              <p className="mt-1 text-sm leading-6 text-gray-600">
+                Para que possamos preencher suas informações pessoais
+              </p>
+              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <GoogleLogin
+                  onSuccess={responseMessage}
+                  onError={errorMessage}
+                  size="medium"
+                  width={208}
+                />
               </div>
+            </motion.div>
+          )}
 
-              <div className="col-span-full">
-                <label
-                  htmlFor="street"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Street address
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    id="street"
-                    {...register("street")}
-                    autoComplete="street-address"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                  />
-                  {errors.street?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.street.message}
-                    </p>
+          {currentStep === 1 && (
+            <motion.div
+              initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <h2 className="text-base font-semibold leading-7 text-gray-900">
+                Seu Projeto
+              </h2>
+              <p className="mt-1 text-sm leading-6 text-gray-600">
+                Algumas informações iniciais. Não se preocupe, podemos mudar
+                depois.
+              </p>
+
+              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <FormField
+                  control={form.control}
+                  name="planId"
+                  render={({ field }) => (
+                    <FormItem className="sm:col-span-3">
+                      <FormLabel>Plano</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione um plano" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {plans &&
+                            plans.map((plan) => (
+                              <SelectItem key={plan.id} value={plan.id}>
+                                {plan.name}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                </div>
-              </div>
+                />
 
-              <div className="sm:col-span-2 sm:col-start-1">
-                <label
-                  htmlFor="city"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  City
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    id="city"
-                    {...register("city")}
-                    autoComplete="address-level2"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                  />
-                  {errors.city?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.city.message}
-                    </p>
+                <FormField
+                  control={form.control}
+                  name="serviceId"
+                  render={({ field }) => (
+                    <FormItem className="sm:col-span-3">
+                      <FormLabel>Serviço</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione um serviço" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {services &&
+                            services.map((service) => (
+                              <SelectItem key={service.id} value={service.id}>
+                                {service.title}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                </div>
-              </div>
+                />
 
-              <div className="sm:col-span-2">
-                <label
-                  htmlFor="state"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  State / Province
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    id="state"
-                    {...register("state")}
-                    autoComplete="address-level1"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                  />
-                  {errors.state?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.state.message}
-                    </p>
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem className="col-span-full">
+                      <FormLabel>Título</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                </div>
-              </div>
+                />
 
-              <div className="sm:col-span-2">
-                <label
-                  htmlFor="zip"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  ZIP / Postal code
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    id="zip"
-                    {...register("zip")}
-                    autoComplete="postal-code"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                  />
-                  {errors.zip?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.zip.message}
-                    </p>
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem className="col-span-full">
+                      <FormLabel>Descrição</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                </div>
+                />
+
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem className="col-span-full">
+                      <FormLabel>Telefone</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="+55 (11) 99999-9999" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
-            </div>
-          </motion.div>
-        )}
+            </motion.div>
+          )}
 
-        {currentStep === 2 && (
-          <>
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Complete
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              Thank you for your submission.
-            </p>
-          </>
-        )}
-      </form>
+          {currentStep === 2 && (
+            <motion.div
+              initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <h2 className="text-base font-semibold leading-7 text-gray-900">
+                Escolha de Horário
+              </h2>
+              <p className="mt-1 text-sm leading-6 text-gray-600">
+                Selecione uma data e horário para a reunião.
+              </p>
 
-      {/* Navigation */}
+              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <FormField
+                  control={form.control}
+                  name="meetingDate"
+                  render={({ field }) => (
+                    <FormItem className="col-span-full">
+                      <FormLabel>Data e Horário</FormLabel>
+                      <FormControl>
+                        <Input type="datetime-local" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </motion.div>
+          )}
+
+          {currentStep === 3 && (
+            <>
+              <h2 className="text-base font-semibold leading-7 text-gray-900">
+                Finalizado 🎉
+              </h2>
+              <p className="mt-1 text-sm leading-6 text-gray-600">
+                Obrigado por enviar suas informações!
+              </p>
+            </>
+          )}
+        </form>
+      </Form>
+
       <div className="mt-8 pt-5">
         <div className="flex justify-between">
-          <button
+          <Button
             type="button"
             onClick={prev}
             disabled={currentStep === 0}
-            className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
+            variant="outline"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="h-6 w-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 19.5L8.25 12l7.5-7.5"
-              />
-            </svg>
-          </button>
-          <button
+            Anterior
+          </Button>
+          <Button
             type="button"
             onClick={next}
             disabled={currentStep === steps.length - 1}
-            className="rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 shadow-sm ring-1 ring-inset ring-sky-300 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
+            variant="outline"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="h-6 w-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M8.25 4.5l7.5 7.5-7.5 7.5"
-              />
-            </svg>
-          </button>
+            Próximo
+          </Button>
         </div>
       </div>
     </section>
