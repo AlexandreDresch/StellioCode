@@ -55,19 +55,20 @@ export const InitialMeetingSchema = z.object({
     .string()
     .min(1, { message: "A descrição é obrigatória." })
     .max(500, { message: "A descrição não pode ter mais de 500 caracteres." }),
-  meetingDate: z
-    .string()
-    .min(1, { message: "A data da reunião é obrigatória." })
-    .refine(
-      (value) => {
-        const date = new Date(value);
-        return !isNaN(date.getTime()) && date >= new Date();
-      },
-      {
-        message:
-          "A data da reunião deve ser uma data futura ou presente válida.",
-      },
-    ),
+  date: z
+    .union([
+      z.date(),
+      z
+        .string()
+        .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, "Data inválida.")
+        .transform((val) => new Date(val + ":00")),
+    ])
+    .refine((val) => val instanceof Date && !isNaN(val.getTime()), {
+      message: "Data inválida.",
+    }),
+  time: z.string().regex(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/, {
+    message: "Hora inválida. Deve seguir o formato HH:MM.",
+  }),
   phone: z
     .string()
     .min(1, { message: "O telefone é obrigatório." })

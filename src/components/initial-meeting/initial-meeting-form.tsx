@@ -30,6 +30,13 @@ import useGetAllPlans from "@/hooks/api/useGetAllPlans";
 import useGetAllServices from "@/hooks/api/useGetAllServices";
 import { InitialMeetingSchema } from "@/schemas/event-schemas";
 import { Textarea } from "../ui/textarea";
+import { Calendar } from "../ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { addDays, format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { CalendarIcon } from "lucide-react";
+import { ptBR } from "date-fns/locale";
+import { BackgroundPaths } from "../background-paths";
 
 type Inputs = z.infer<typeof InitialMeetingSchema>;
 
@@ -47,7 +54,7 @@ const steps = [
   {
     id: "Passo 3",
     name: "Escolha de Horário",
-    fields: ["meetingDate"],
+    fields: ["date", "time"],
   },
   { id: "Passo 4", name: "Finalizado 🎉" },
 ];
@@ -146,7 +153,7 @@ export default function InitialMeetingForm() {
   };
 
   return (
-    <section className="absolute inset-0 mx-auto flex max-w-7xl flex-col justify-between p-24 pt-40">
+    <section className="absolute inset-0 mx-auto flex max-w-7xl flex-col justify-between p-24">
       <nav aria-label="Progress">
         <ol role="list" className="space-y-4 md:flex md:space-x-8 md:space-y-0">
           {steps.map((step, index) => (
@@ -182,7 +189,7 @@ export default function InitialMeetingForm() {
       </nav>
 
       <Form {...form}>
-        <form className="mt-12 py-12" onSubmit={form.handleSubmit(processForm)}>
+        <form className="py-12" onSubmit={form.handleSubmit(processForm)}>
           {currentStep === 0 && (
             <motion.div
               initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
@@ -221,6 +228,51 @@ export default function InitialMeetingForm() {
               </p>
 
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem className="col-span-full">
+                      <FormLabel>Título</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Ex. Lojinha Virtual" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem className="col-span-full">
+                      <FormLabel>Descrição</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          placeholder="Uma breve descrição do seu projeto..."
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem className="col-span-full">
+                      <FormLabel>Telefone</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="+55 (11) 99999-9999" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="planId"
@@ -278,48 +330,6 @@ export default function InitialMeetingForm() {
                     </FormItem>
                   )}
                 />
-
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem className="col-span-full">
-                      <FormLabel>Título</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem className="col-span-full">
-                      <FormLabel>Descrição</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem className="col-span-full">
-                      <FormLabel>Telefone</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="+55 (11) 99999-9999" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
             </motion.div>
           )}
@@ -337,16 +347,88 @@ export default function InitialMeetingForm() {
                 Selecione uma data e horário para a reunião.
               </p>
 
-              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2">
                 <FormField
                   control={form.control}
-                  name="meetingDate"
+                  name="date"
                   render={({ field }) => (
-                    <FormItem className="col-span-full">
-                      <FormLabel>Data e Horário</FormLabel>
-                      <FormControl>
-                        <Input type="datetime-local" {...field} />
-                      </FormControl>
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Dia da Reunião</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !field.value && "text-muted-foreground",
+                            )}
+                          >
+                            <CalendarIcon className="mr-2" />
+                            {field.value ? (
+                              format(field.value.toString(), "PPP", {
+                                locale: ptBR,
+                              })
+                            ) : (
+                              <span>Selecione um dia</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="flex w-full flex-col space-y-2 p-2">
+                          <Select
+                            onValueChange={(value) => {
+                              const newDate =
+                                value === "today"
+                                  ? new Date()
+                                  : value === "tomorrow"
+                                    ? addDays(new Date(), 1)
+                                    : value === "in_3_days"
+                                      ? addDays(new Date(), 3)
+                                      : value === "in_7_days"
+                                        ? addDays(new Date(), 7)
+                                        : null;
+                              if (newDate) {
+                                field.onChange(newDate);
+                              }
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Atalhos" />
+                            </SelectTrigger>
+                            <SelectContent position="popper">
+                              <SelectItem value="today">Hoje</SelectItem>
+                              <SelectItem value="tomorrow">Amanhã</SelectItem>
+                              <SelectItem value="in_3_days">
+                                Em 3 dias
+                              </SelectItem>
+                              <SelectItem value="in_7_days">
+                                Em uma semana
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <div className="rounded-md border">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              disabled={(date) => date < new Date()}
+                              initialFocus
+                              locale={ptBR}
+                            />
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="time"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Hora da Reunião</FormLabel>
+                      <Input aria-label="Time" type="time" {...field} />
                       <FormMessage />
                     </FormItem>
                   )}
@@ -356,38 +438,45 @@ export default function InitialMeetingForm() {
           )}
 
           {currentStep === 3 && (
-            <>
+            <motion.div
+              initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
               <h2 className="text-base font-semibold leading-7 text-gray-900">
                 Finalizado 🎉
               </h2>
               <p className="mt-1 text-sm leading-6 text-gray-600">
                 Obrigado por enviar suas informações!
               </p>
-            </>
+              <BackgroundPaths />
+            </motion.div>
           )}
         </form>
       </Form>
 
-      <div className="mt-8 pt-5">
-        <div className="flex justify-between">
-          <Button
-            type="button"
-            onClick={prev}
-            disabled={currentStep === 0}
-            variant="outline"
-          >
-            Anterior
-          </Button>
-          <Button
-            type="button"
-            onClick={next}
-            disabled={currentStep === steps.length - 1}
-            variant="outline"
-          >
-            Próximo
-          </Button>
+      {currentStep !== steps.length - 1 && (
+        <div className="pt-5">
+          <div className="flex justify-between">
+            <Button
+              type="button"
+              onClick={prev}
+              disabled={currentStep === 0}
+              variant="outline"
+            >
+              Anterior
+            </Button>
+            <Button
+              type="button"
+              onClick={next}
+              disabled={currentStep === steps.length - 1}
+              variant="outline"
+            >
+              {currentStep === steps.length - 2 ? "Enviar" : "Próximo"}
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }
