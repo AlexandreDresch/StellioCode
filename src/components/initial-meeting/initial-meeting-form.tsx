@@ -36,7 +36,8 @@ import { addDays, format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { ptBR } from "date-fns/locale";
-import { BackgroundPaths } from "../background-paths";
+import { BackgroundBeams } from "../background-beams";
+import { useNavigate } from "react-router-dom";
 
 type Inputs = z.infer<typeof InitialMeetingSchema>;
 
@@ -66,6 +67,8 @@ export default function InitialMeetingForm() {
 
   const { getPlans, plans } = useGetAllPlans();
   const { getAllServices, services } = useGetAllServices();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     getPlans();
@@ -151,6 +154,10 @@ export default function InitialMeetingForm() {
   const errorMessage = () => {
     toast.error("Erro ao fazer login, tente novamente.");
   };
+
+  function handleFollowUpNavigation(id: string) {
+    navigate(`/acompanhamento/${id}`);
+  }
 
   return (
     <section className="absolute inset-0 mx-auto flex max-w-7xl flex-col justify-between p-24">
@@ -443,13 +450,28 @@ export default function InitialMeetingForm() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <h2 className="text-base font-semibold leading-7 text-gray-900">
-                Finalizado 🎉
-              </h2>
-              <p className="mt-1 text-sm leading-6 text-gray-600">
-                Obrigado por enviar suas informações!
-              </p>
-              <BackgroundPaths />
+              <BackgroundBeams>
+                <div className="flex w-full items-center justify-between px-10">
+                  <div>
+                    <h2 className="text-base font-semibold leading-7 text-gray-900">
+                      Reunião agendada
+                    </h2>
+                    <p className="mt-1 max-w-xs text-sm leading-6 text-gray-600">
+                      Obrigado por enviar suas informações! Você já pode acessar
+                      a página de acompanhamento do seu projeto.
+                    </p>
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      handleFollowUpNavigation("1");
+                    }}
+                  >
+                    Acompanhar Projeto
+                  </Button>
+                </div>
+              </BackgroundBeams>
             </motion.div>
           )}
         </form>
