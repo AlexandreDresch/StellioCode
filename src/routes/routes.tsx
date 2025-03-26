@@ -1,6 +1,8 @@
 import { BrowserRouter, Route, Routes as Switch } from "react-router-dom";
 
 import Home from "@/pages/home";
+import Meeting from "@/pages/meeting";
+import WhatWeDo from "@/pages/whatwedo";
 import ProtectedRoute from "@/components/protected-route";
 import Dashboard from "@/pages/dashboard";
 import useRole from "@/hooks/auth/use-role";
@@ -16,6 +18,7 @@ export default function Routes() {
     <BrowserRouter>
       <Switch>
         <Route element={<Home />} path="/" />
+        <Route element={<Meeting />} path="/reuniao" />
         <Route
           path="/dashboard"
           element={
@@ -30,7 +33,8 @@ export default function Routes() {
         <Route element={<FollowUp />} path="/acompanhamento/:id/success" />
         <Route element={<InitialMeeting />} path="/agendamento" />
         <Route element={<Login />} path="/auth" />
-        <Route element={<About />} path="/about" />
+        <Route element={<About />} path="/sobre-nos" />
+        <Route element={<WhatWeDo />} path="/o-que-fazemos"></Route>
       </Switch>
     </BrowserRouter>
   );

@@ -34,6 +34,7 @@ import useGetProjectById from "@/hooks/api/useGetProjectById";
 import useToken from "@/hooks/auth/use-token";
 import useGetPaymentById from "@/hooks/api/useGetPaymentById";
 import useGetAllMeetingsByProjectId from "@/hooks/api/useGetAllMeetingsByProjectId";
+import Footer from "@/components/Footer";
 
 export default function FollowUp() {
   const { id } = useParams();
@@ -283,6 +284,8 @@ export default function FollowUp() {
           </section>
         </>
       )}
+
+      <Footer />
     </div>
   );
 }

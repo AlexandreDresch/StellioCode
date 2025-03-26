@@ -119,9 +119,12 @@ export default function Sidebar() {
               <TooltipTrigger asChild>
                 <Link
                   to={"/"}
-                  className="flex size-10 items-center justify-center gap-2 rounded-full bg-primary text-lg text-primary-foreground md:text-base"
+                  className="flex size-10 items-center justify-center gap-2 rounded-full bg-white text-lg text-primary-foreground md:text-base"
                 >
-                  <GhostIcon className="size-5 transition-all" />
+                  <img
+                    src="ovelhaNegra.svg"
+                    className="size-6 transition-all"
+                  />
                   <span className="sr-only">StellioCode</span>
                 </Link>
               </TooltipTrigger>
