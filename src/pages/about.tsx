@@ -7,6 +7,8 @@ import Approach from "@/components/aboutpage/approach";
 import Stacks from "@/components/aboutpage/stacks";
 import Roadmap from "@/components/aboutpage/roadmap";
 import Testimonials from "@/components/aboutpage/testimonials";
+import Header from "@/components/header";
+import Footer from "@/components/Footer";
 
 export default function About() {
   useEffect(() => {
@@ -15,10 +17,8 @@ export default function About() {
 
   return (
     <div className="h-full w-full scroll-smooth bg-white transition-colors duration-500 dark:bg-gray-900">
-      <header>
-        <div className="fixed z-50 flex min-h-16 min-w-full flex-col items-center justify-center bg-gray-100 dark:bg-gray-800 dark:text-white">
-          <p>Aqui tem um header</p>
-        </div>
+      <header className="fixed z-50 flex min-h-16 min-w-full flex-col">
+        <Header />
       </header>
 
       <main>
@@ -58,11 +58,7 @@ export default function About() {
         </section>
       </main>
 
-      <footer className="bg-gray-950 py-4 dark:bg-gray-800 dark:text-white">
-        <div className="flex items-center justify-center">
-          <p className="text-white">Aqui tem um footer</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

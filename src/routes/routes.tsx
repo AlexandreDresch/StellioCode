@@ -33,11 +33,8 @@ export default function Routes() {
         <Route element={<FollowUp />} path="/acompanhamento/:id/success" />
         <Route element={<InitialMeeting />} path="/agendamento" />
         <Route element={<Login />} path="/auth" />
-        <Route element={<About />} path="/about" />
-      </Switch>
-
-      <Switch>
-        <Route element={<WhatWeDo />} path="/whatwedo"></Route>
+        <Route element={<About />} path="/sobre-nos" />
+        <Route element={<WhatWeDo />} path="/o-que-fazemos"></Route>
       </Switch>
     </BrowserRouter>
   );

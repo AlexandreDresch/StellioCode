@@ -14,6 +14,7 @@ import "@stream-io/video-react-sdk/dist/css/styles.css";
 import "./style.css";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/header";
+import Footer from "@/components/Footer";
 
 //create call
 const apiKey = import.meta.env.VITE_GETSTREAM_API_KEY;
@@ -25,7 +26,7 @@ const callType = "default";
 //config users
 const user: User = {
   id: userId,
-  name: "alvaropedrosa",
+  name: "John Doe",
   image: "https://getstream.io/random_svg/?id=alvaro&name=alvaro",
 };
 
@@ -51,6 +52,7 @@ export default function Meeting() {
           <MyUILayout />
         </StreamCall>
       </StreamVideo>
+      <Footer />
     </>
   );
 }
