@@ -1,6 +1,6 @@
 import useAsync from "../use-async";
 
-import * as plansApi from "@/services/plans-api";
+import * as plansApi from "../../services/plans-api";
 
 export default function useUpdatePlan() {
   const {

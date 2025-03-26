@@ -216,3 +216,50 @@ export interface FeaturedProject {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface DecodedGoogleToken {
+  iss: string;
+  azp: string;
+  aud: string;
+  sub: string;
+  email: string;
+  email_verified: boolean;
+  exp: number;
+  family_name: string;
+  given_name: string;
+  iat: number;
+  jti: string;
+  name: string;
+  nbf: number;
+  picture: string;
+}
+
+export interface Progress {
+  id: string;
+  title: string;
+  descriptions: string[];
+  imageUrls: string[];
+  progress: number;
+}
+export interface AuthUser {
+  fullName: string;
+  status: string;
+  token: string;
+  id: string;
+  role: string;
+}
+
+export interface LoginData {
+  email: string;
+  password: string;
+}
+
+export type RegisterData = {
+  fullName: string;
+  email: string;
+  password: string;
+  phone: string;
+  role: "DEVELOPER";
+  level: "junior" | "mid" | "senior";
+  technologies: string;
+};
