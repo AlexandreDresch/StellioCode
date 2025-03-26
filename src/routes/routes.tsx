@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes as Switch } from "react-router-dom";
 
 import Home from "@/pages/home";
+import WhatWeDo from "@/pages/whatwedo";
 import ProtectedRoute from "@/components/protected-route";
 import Dashboard from "@/pages/dashboard";
 import useRole from "@/hooks/auth/use-role";
@@ -31,6 +32,10 @@ export default function Routes() {
         <Route element={<InitialMeeting />} path="/agendamento" />
         <Route element={<Login />} path="/auth" />
         <Route element={<About />} path="/about" />
+      </Switch>
+
+      <Switch>
+        <Route element={<WhatWeDo />} path="/whatwedo"></Route>
       </Switch>
     </BrowserRouter>
   );

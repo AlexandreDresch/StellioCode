@@ -70,7 +70,8 @@ export default function Portfolio() {
                     Aplicação Web
                   </span>
                   <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.{" "}
+                    Lorem ipsum dolor sit amet consectetur adipisicing
+                    elit.{" "}
                   </p>
                 </CardContent>
                 <CardFooter className="flex justify-end">
@@ -110,7 +111,8 @@ export default function Portfolio() {
                     Aplicação Web
                   </span>
                   <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.{" "}
+                    Lorem ipsum dolor sit amet consectetur adipisicing
+                    elit.{" "}
                   </p>
                 </CardContent>
                 <CardFooter className="flex justify-end">
@@ -165,7 +167,8 @@ export default function Portfolio() {
                 <CardContent className="justify-start">
                   <span className="rounded bg-purple-400 px-1">ChatBot</span>
                   <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.{" "}
+                    Lorem ipsum dolor sit amet consectetur adipisicing
+                    elit.{" "}
                   </p>
                 </CardContent>
                 <CardFooter className="flex justify-end">
