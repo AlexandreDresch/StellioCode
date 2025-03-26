@@ -75,6 +75,25 @@ export async function getAllMeetingsByProjectId({
   return response.data;
 }
 
+export async function createInitialMeeting({
+  data,
+}: {
+  data: {
+    googleId: string;
+    email: string;
+    profilePicture: string;
+    planId: string;
+    serviceId: string;
+    title: string;
+    description: string;
+    price: number;
+    meetingDate: string;
+  };
+}) {
+  const response = await api.post("/api/public/meetings/initial", data);
+  return response.data;
+}
+
 export async function updateMeetingStatus({
   meetingId,
   status,

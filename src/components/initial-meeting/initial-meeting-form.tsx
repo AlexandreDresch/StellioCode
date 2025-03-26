@@ -38,6 +38,7 @@ import { CalendarIcon } from "lucide-react";
 import { ptBR } from "date-fns/locale";
 import { BackgroundBeams } from "../background-beams";
 import { useNavigate } from "react-router-dom";
+import useCreateInitialMeeting from "@/hooks/api/useCreateInitialMeeting";
 
 type Inputs = z.infer<typeof InitialMeetingSchema>;
 
@@ -63,10 +64,13 @@ const steps = [
 export default function InitialMeetingForm() {
   const [previousStep, setPreviousStep] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
+  const [submissionSuccess, setSubmissionSuccess] = useState(false);
   const delta = currentStep - previousStep;
 
   const { getPlans, plans } = useGetAllPlans();
   const { getAllServices, services } = useGetAllServices();
+  const { meeting, createInitialMeeting, createInitialMeetingLoading } =
+    useCreateInitialMeeting();
 
   const navigate = useNavigate();
 
@@ -80,9 +84,42 @@ export default function InitialMeetingForm() {
     resolver: zodResolver(InitialMeetingSchema),
   });
 
-  const processForm: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
-    form.reset();
+  const processForm: SubmitHandler<Inputs> = async (data) => {
+    console.log("processForm INICIADO - aqui 2", data);
+    try {
+      const selectedService = services?.find(
+        (service) => service.id === data.serviceId,
+      );
+      const servicePrice = selectedService?.price || 0;
+
+      const meetingDate = new Date(data.date);
+      const [hours, minutes] = data.time.split(":").map(Number);
+      meetingDate.setHours(hours, minutes);
+
+      const meetingData = {
+        googleId: data.googleId,
+        email: data.email,
+        profilePicture: data.profilePicture,
+        planId: data.planId,
+        serviceId: data.serviceId,
+        title: data.title,
+        description: data.description,
+        phone: data.phone,
+        price: servicePrice,
+        meetingDate: meetingDate.toISOString(),
+      };
+      console.log("Dados que serão enviados:", meetingData);
+
+      const result = await createInitialMeeting({ data: meetingData });
+      console.log("Resposta da API:", result);
+      setSubmissionSuccess(true);
+      setPreviousStep(currentStep);
+      setCurrentStep((step) => step + 1);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Ocorreu um erro ao agendar a reunião. Tente novamente.");
+      throw error;
+    }
   };
 
   type FieldName = keyof Inputs;
@@ -113,10 +150,17 @@ export default function InitialMeetingForm() {
 
     if (currentStep < steps.length - 1) {
       if (currentStep === steps.length - 2) {
-        await form.handleSubmit(processForm)();
+        try {
+          console.log("Antes de chamar handleSubmit");
+          await form.handleSubmit(processForm)();
+          console.log("Depois de chamar handleSubmit");
+        } catch (error) {
+          console.error("Erro na submissão:", error);
+        }
+      } else {
+        setPreviousStep(currentStep);
+        setCurrentStep((step) => step + 1);
       }
-      setPreviousStep(currentStep);
-      setCurrentStep((step) => step + 1);
     }
   };
 
@@ -196,7 +240,18 @@ export default function InitialMeetingForm() {
       </nav>
 
       <Form {...form}>
-        <form className="py-12" onSubmit={form.handleSubmit(processForm)}>
+        <form
+          className="py-12"
+          onSubmit={(e) => {
+            e.preventDefault();
+            form
+              .handleSubmit(processForm)()
+              .catch((error) => {
+                console.error("Erro na submissão:", error);
+                toast.error("Verifique os campos do formulário");
+              });
+          }}
+        >
           {currentStep === 0 && (
             <motion.div
               initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
@@ -444,7 +499,7 @@ export default function InitialMeetingForm() {
             </motion.div>
           )}
 
-          {currentStep === 3 && (
+          {currentStep === 3 && submissionSuccess && (
             <motion.div
               initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -454,7 +509,7 @@ export default function InitialMeetingForm() {
                 <div className="flex w-full items-center justify-between px-10">
                   <div>
                     <h2 className="text-base font-semibold leading-7 text-gray-900">
-                      Reunião agendada
+                      Reunião agendada com sucesso!
                     </h2>
                     <p className="mt-1 max-w-xs text-sm leading-6 text-gray-600">
                       Obrigado por enviar suas informações! Você já pode acessar
@@ -462,14 +517,16 @@ export default function InitialMeetingForm() {
                     </p>
                   </div>
 
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      handleFollowUpNavigation("1");
-                    }}
-                  >
-                    Acompanhar Projeto
-                  </Button>
+                  {meeting?.projectId && (
+                    <Button
+                      variant="outline"
+                      onClick={() =>
+                        handleFollowUpNavigation(meeting.projectId)
+                      }
+                    >
+                      Acompanhar Projeto
+                    </Button>
+                  )}
                 </div>
               </BackgroundBeams>
             </motion.div>
@@ -491,10 +548,16 @@ export default function InitialMeetingForm() {
             <Button
               type="button"
               onClick={next}
-              disabled={currentStep === steps.length - 1}
+              disabled={
+                currentStep === steps.length - 1 || createInitialMeetingLoading
+              }
               variant="outline"
             >
-              {currentStep === steps.length - 2 ? "Enviar" : "Próximo"}
+              {currentStep === steps.length - 2
+                ? createInitialMeetingLoading
+                  ? "Enviando..."
+                  : "Enviar"
+                : "Próximo"}
             </Button>
           </div>
         </div>
