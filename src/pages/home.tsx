@@ -3,7 +3,7 @@ import Header from "../components/header";
 import Hero from "../components/Hero";
 import OurServices from "../components/OurServices";
 import Portfolio from "@/components/Portfolio";
-import Plans from "@/components/Plans";
+import Plans from "@/components/plans";
 import { plans } from "@/constants/plans";
 
 export default function Home() {
