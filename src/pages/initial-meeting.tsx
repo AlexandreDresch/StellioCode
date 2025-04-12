@@ -1,3 +1,4 @@
+import Footer from "@/components/Footer";
 import Header from "@/components/header";
 import InitialMeetingForm from "@/components/initial-meeting/initial-meeting-form";
 import { WorldMap } from "@/components/initial-meeting/world-map";
@@ -89,6 +90,8 @@ export default function InitialMeeting() {
           </div>
         </>
       )}
+
+      <Footer />
     </div>
   );
 }

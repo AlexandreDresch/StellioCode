@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { z } from "zod";
-import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import type { z } from "zod";
+import { type CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { toast } from "sonner";
 import { jwtDecode } from "jwt-decode";
-import { DecodedGoogleToken } from "@/types";
+import type { DecodedGoogleToken } from "@/types";
 import {
   Form,
   FormControl,
@@ -16,55 +16,39 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/form";
+} from "@/components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import useGetAllPlans from "@/hooks/api/useGetAllPlans";
-import useGetAllServices from "@/hooks/api/useGetAllServices";
-import { InitialMeetingSchema } from "@/schemas/event-schemas";
-import { Textarea } from "../ui/textarea";
-import { Calendar } from "../ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { addDays, format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { ptBR } from "date-fns/locale";
-import { BackgroundBeams } from "../background-beams";
-import { useNavigate } from "react-router-dom";
+import useGetAllPlans from "@/hooks/api/useGetAllPlans";
+import useGetAllServices from "@/hooks/api/useGetAllServices";
 import useCreateInitialMeeting from "@/hooks/api/useCreateInitialMeeting";
+import { useNavigate } from "react-router-dom";
+import { InitialMeetingSchema } from "@/schemas/event-schemas";
+import { steps } from "@/constants/initial-meeting";
 
 type Inputs = z.infer<typeof InitialMeetingSchema>;
-
-const steps = [
-  {
-    id: "Passo 1",
-    name: "Informações Pessoais",
-    fields: ["name", "email", "googleId", "profilePicture"],
-  },
-  {
-    id: "Passo 2",
-    name: "Sobre o Projeto",
-    fields: ["planId", "serviceId", "title", "description", "phone"],
-  },
-  {
-    id: "Passo 3",
-    name: "Escolha de Horário",
-    fields: ["date", "time"],
-  },
-  { id: "Passo 4", name: "Finalizado 🎉" },
-];
 
 export default function InitialMeetingForm() {
   const [previousStep, setPreviousStep] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
-  const [submissionSuccess, setSubmissionSuccess] = useState(false);
   const delta = currentStep - previousStep;
 
   const { getPlans, plans } = useGetAllPlans();
@@ -82,10 +66,22 @@ export default function InitialMeetingForm() {
 
   const form = useForm<Inputs>({
     resolver: zodResolver(InitialMeetingSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      profilePicture: "",
+      googleId: "",
+      planId: "",
+      serviceId: "",
+      title: "",
+      description: "",
+      phone: "",
+      date: undefined,
+      time: "",
+    },
   });
 
   const processForm: SubmitHandler<Inputs> = async (data) => {
-    console.log("processForm INICIADO - aqui 2", data);
     try {
       const selectedService = services?.find(
         (service) => service.id === data.serviceId,
@@ -108,11 +104,8 @@ export default function InitialMeetingForm() {
         price: servicePrice,
         meetingDate: meetingDate.toISOString(),
       };
-      console.log("Dados que serão enviados:", meetingData);
 
-      const result = await createInitialMeeting({ data: meetingData });
-      console.log("Resposta da API:", result);
-      setSubmissionSuccess(true);
+      await createInitialMeeting({ data: meetingData });
       setPreviousStep(currentStep);
       setCurrentStep((step) => step + 1);
     } catch (error) {
@@ -151,11 +144,9 @@ export default function InitialMeetingForm() {
     if (currentStep < steps.length - 1) {
       if (currentStep === steps.length - 2) {
         try {
-          console.log("Antes de chamar handleSubmit");
-          await form.handleSubmit(processForm)();
-          console.log("Depois de chamar handleSubmit");
+          await processForm(form.getValues());
         } catch (error) {
-          console.error("Erro na submissão:", error);
+          console.error("Error in form submission:", error);
         }
       } else {
         setPreviousStep(currentStep);
@@ -184,7 +175,6 @@ export default function InitialMeetingForm() {
         form.setValue("googleId", decoded.sub || "");
 
         toast.success("Login com Google realizado com sucesso!");
-
         next();
       } else {
         toast.error("Erro: Credential não encontrada.");
@@ -204,34 +194,40 @@ export default function InitialMeetingForm() {
   }
 
   return (
-    <section className="absolute inset-0 mx-auto flex max-w-7xl flex-col justify-between p-24">
-      <nav aria-label="Progress">
-        <ol role="list" className="space-y-4 md:flex md:space-x-8 md:space-y-0">
+    <div className="mx-auto w-full max-w-7xl px-4 pb-12 sm:px-6 md:pb-16 lg:px-8">
+      <nav aria-label="Progress" className="mb-6 md:mb-8">
+        <ol className="grid grid-cols-2 gap-2 md:grid-cols-4">
           {steps.map((step, index) => (
-            <li key={step.name} className="md:flex-1">
+            <li key={step.name} className="min-w-[80px] flex-1">
               {currentStep > index ? (
-                <div className="group flex w-full flex-col border-l-4 border-sky-300 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4">
-                  <span className="text-sm font-medium text-sky-400 transition-colors">
+                <div className="group flex flex-col items-center border-t-4 border-sky-300 py-2 transition-colors">
+                  <span className="text-xs font-medium text-sky-400 sm:text-sm">
                     {step.id}
                   </span>
-                  <span className="text-sm font-medium">{step.name}</span>
+                  <span className="text-center text-xs font-medium sm:text-sm">
+                    {step.name}
+                  </span>
                 </div>
               ) : currentStep === index ? (
                 <div
-                  className="flex w-full flex-col border-l-4 border-sky-300 py-2 pl-4 md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4"
+                  className="flex flex-col items-center border-t-4 border-sky-300 py-2"
                   aria-current="step"
                 >
-                  <span className="text-sm font-medium text-sky-400">
+                  <span className="text-xs font-medium text-sky-400 sm:text-sm">
                     {step.id}
                   </span>
-                  <span className="text-sm font-medium">{step.name}</span>
+                  <span className="text-center text-xs font-medium sm:text-sm">
+                    {step.name}
+                  </span>
                 </div>
               ) : (
-                <div className="group flex w-full flex-col border-l-4 border-gray-200 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4">
-                  <span className="text-sm font-medium text-gray-500 transition-colors">
+                <div className="group flex flex-col items-center border-t-4 border-gray-200 py-2 transition-colors">
+                  <span className="text-xs font-medium text-gray-500 sm:text-sm">
                     {step.id}
                   </span>
-                  <span className="text-sm font-medium">{step.name}</span>
+                  <span className="text-center text-xs font-medium sm:text-sm">
+                    {step.name}
+                  </span>
                 </div>
               )}
             </li>
@@ -239,329 +235,348 @@ export default function InitialMeetingForm() {
         </ol>
       </nav>
 
-      <Form {...form}>
-        <form
-          className="py-12"
-          onSubmit={(e) => {
-            e.preventDefault();
-            form
-              .handleSubmit(processForm)()
-              .catch((error) => {
-                console.error("Erro na submissão:", error);
-                toast.error("Verifique os campos do formulário");
-              });
-          }}
-        >
-          {currentStep === 0 && (
-            <motion.div
-              initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <h2 className="text-base font-semibold leading-7 text-gray-900">
-                Entre com o Google
-              </h2>
-              <p className="mt-1 text-sm leading-6 text-gray-600">
-                Para que possamos preencher suas informações pessoais
-              </p>
-              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <GoogleLogin
-                  onSuccess={responseMessage}
-                  onError={errorMessage}
-                  size="medium"
-                  width={208}
-                />
-              </div>
-            </motion.div>
-          )}
+      <div className="mx-auto max-w-7xl">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(processForm)}
+            className="space-y-6 md:space-y-8"
+          >
+            {currentStep === 0 && (
+              <motion.div
+                initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="space-y-4 md:space-y-5"
+              >
+                <h2 className="text-lg font-semibold leading-7 text-gray-900 sm:text-xl">
+                  Entre com o Google
+                </h2>
+                <p className="mt-1 text-sm leading-6 text-gray-600">
+                  Para que possamos preencher suas informações pessoais
+                </p>
+                <div className="mt-4 flex md:mt-6">
+                  <GoogleLogin
+                    onSuccess={responseMessage}
+                    onError={errorMessage}
+                    size="medium"
+                    width={208}
+                    useOneTap
+                  />
+                </div>
+              </motion.div>
+            )}
 
-          {currentStep === 1 && (
-            <motion.div
-              initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <h2 className="text-base font-semibold leading-7 text-gray-900">
-                Seu Projeto
-              </h2>
-              <p className="mt-1 text-sm leading-6 text-gray-600">
-                Algumas informações iniciais. Não se preocupe, podemos mudar
-                depois.
-              </p>
+            {currentStep === 1 && (
+              <motion.div
+                initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="space-y-4 md:space-y-6"
+              >
+                <h2 className="text-lg font-semibold leading-7 text-gray-900 sm:text-xl">
+                  Seu Projeto
+                </h2>
+                <p className="mt-1 text-sm leading-6 text-gray-600">
+                  Algumas informações iniciais. Não se preocupe, podemos mudar
+                  depois.
+                </p>
 
-              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem className="col-span-full">
-                      <FormLabel>Título</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Ex. Lojinha Virtual" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem className="col-span-full">
-                      <FormLabel>Descrição</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          {...field}
-                          placeholder="Uma breve descrição do seu projeto..."
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem className="col-span-full">
-                      <FormLabel>Telefone</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="+55 (11) 99999-9999" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="planId"
-                  render={({ field }) => (
-                    <FormItem className="sm:col-span-3">
-                      <FormLabel>Plano</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
+                <div className="grid grid-cols-1 gap-4 md:gap-6">
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Título</FormLabel>
                         <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione um plano" />
-                          </SelectTrigger>
+                          <Input {...field} placeholder="Ex. Lojinha Virtual" />
                         </FormControl>
-                        <SelectContent>
-                          {plans &&
-                            plans.map((plan) => (
-                              <SelectItem key={plan.id} value={plan.id}>
-                                {plan.name}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={form.control}
-                  name="serviceId"
-                  render={({ field }) => (
-                    <FormItem className="sm:col-span-3">
-                      <FormLabel>Serviço</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Descrição</FormLabel>
                         <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione um serviço" />
-                          </SelectTrigger>
+                          <Textarea
+                            {...field}
+                            placeholder="Uma breve descrição do seu projeto..."
+                            className="min-h-[100px] md:min-h-[120px]"
+                          />
                         </FormControl>
-                        <SelectContent>
-                          {services &&
-                            services.map((service) => (
-                              <SelectItem key={service.id} value={service.id}>
-                                {service.title}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </motion.div>
-          )}
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-          {currentStep === 2 && (
-            <motion.div
-              initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <h2 className="text-base font-semibold leading-7 text-gray-900">
-                Escolha de Horário
-              </h2>
-              <p className="mt-1 text-sm leading-6 text-gray-600">
-                Selecione uma data e horário para a reunião.
-              </p>
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Telefone</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="+55 (11) 99999-9999" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="date"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>Dia da Reunião</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full justify-start text-left font-normal",
-                              !field.value && "text-muted-foreground",
-                            )}
-                          >
-                            <CalendarIcon className="mr-2" />
-                            {field.value ? (
-                              format(field.value.toString(), "PPP", {
-                                locale: ptBR,
-                              })
-                            ) : (
-                              <span>Selecione um dia</span>
-                            )}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="flex w-full flex-col space-y-2 p-2">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
+                    <FormField
+                      control={form.control}
+                      name="planId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Plano</FormLabel>
                           <Select
-                            onValueChange={(value) => {
-                              const newDate =
-                                value === "today"
-                                  ? new Date()
-                                  : value === "tomorrow"
-                                    ? addDays(new Date(), 1)
-                                    : value === "in_3_days"
-                                      ? addDays(new Date(), 3)
-                                      : value === "in_7_days"
-                                        ? addDays(new Date(), 7)
-                                        : null;
-                              if (newDate) {
-                                field.onChange(newDate);
-                              }
-                            }}
+                            onValueChange={field.onChange}
+                            value={field.value || ""}
                           >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Atalhos" />
-                            </SelectTrigger>
-                            <SelectContent position="popper">
-                              <SelectItem value="today">Hoje</SelectItem>
-                              <SelectItem value="tomorrow">Amanhã</SelectItem>
-                              <SelectItem value="in_3_days">
-                                Em 3 dias
-                              </SelectItem>
-                              <SelectItem value="in_7_days">
-                                Em uma semana
-                              </SelectItem>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Selecione um plano" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {plans &&
+                                plans.map((plan) => (
+                                  <SelectItem key={plan.id} value={plan.id}>
+                                    {plan.name}
+                                  </SelectItem>
+                                ))}
                             </SelectContent>
                           </Select>
-                          <div className="rounded-md border">
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              disabled={(date) => date < new Date()}
-                              initialFocus
-                              locale={ptBR}
-                            />
-                          </div>
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                <FormField
-                  control={form.control}
-                  name="time"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>Hora da Reunião</FormLabel>
-                      <Input aria-label="Time" type="time" {...field} />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </motion.div>
-          )}
-
-          {currentStep === 3 && submissionSuccess && (
-            <motion.div
-              initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <BackgroundBeams>
-                <div className="flex w-full items-center justify-between px-10">
-                  <div>
-                    <h2 className="text-base font-semibold leading-7 text-gray-900">
-                      Reunião agendada com sucesso!
-                    </h2>
-                    <p className="mt-1 max-w-xs text-sm leading-6 text-gray-600">
-                      Obrigado por enviar suas informações! Você já pode acessar
-                      a página de acompanhamento do seu projeto.
-                    </p>
+                    <FormField
+                      control={form.control}
+                      name="serviceId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Serviço</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value || ""}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Selecione um serviço" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {services &&
+                                services.map((service) => (
+                                  <SelectItem
+                                    key={service.id}
+                                    value={service.id}
+                                  >
+                                    {service.title}
+                                  </SelectItem>
+                                ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
-
-                  {meeting?.projectId && (
-                    <Button
-                      variant="outline"
-                      onClick={() =>
-                        handleFollowUpNavigation(meeting.projectId)
-                      }
-                    >
-                      Acompanhar Projeto
-                    </Button>
-                  )}
                 </div>
-              </BackgroundBeams>
-            </motion.div>
-          )}
-        </form>
-      </Form>
+              </motion.div>
+            )}
 
-      {currentStep !== steps.length - 1 && (
-        <div className="pt-5">
-          <div className="flex justify-between">
-            <Button
-              type="button"
-              onClick={prev}
-              disabled={currentStep === 0}
-              variant="outline"
-            >
-              Anterior
-            </Button>
-            <Button
-              type="button"
-              onClick={next}
-              disabled={
-                currentStep === steps.length - 1 || createInitialMeetingLoading
-              }
-              variant="outline"
-            >
-              {currentStep === steps.length - 2
-                ? createInitialMeetingLoading
-                  ? "Enviando..."
-                  : "Enviar"
-                : "Próximo"}
-            </Button>
-          </div>
-        </div>
-      )}
-    </section>
+            {currentStep === 2 && (
+              <motion.div
+                initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="space-y-4 md:space-y-6"
+              >
+                <h2 className="text-lg font-semibold leading-7 text-gray-900 sm:text-xl">
+                  Escolha de Horário
+                </h2>
+                <p className="mt-1 text-sm leading-6 text-gray-600">
+                  Selecione uma data e horário para a reunião.
+                </p>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
+                  <FormField
+                    control={form.control}
+                    name="date"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel>Dia da Reunião</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full justify-start text-left font-normal",
+                                !field.value && "text-muted-foreground",
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {field.value ? (
+                                format(field.value.toString(), "PPP", {
+                                  locale: ptBR,
+                                })
+                              ) : (
+                                <span>Selecione um dia</span>
+                              )}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent
+                            className="flex w-full flex-col space-y-2 p-2"
+                            align="start"
+                          >
+                            <Select
+                              onValueChange={(value) => {
+                                const newDate =
+                                  value === "today"
+                                    ? new Date()
+                                    : value === "tomorrow"
+                                      ? addDays(new Date(), 1)
+                                      : value === "in_3_days"
+                                        ? addDays(new Date(), 3)
+                                        : value === "in_7_days"
+                                          ? addDays(new Date(), 7)
+                                          : null;
+                                if (newDate) {
+                                  field.onChange(newDate);
+                                }
+                              }}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Atalhos" />
+                              </SelectTrigger>
+                              <SelectContent position="popper">
+                                <SelectItem value="today">Hoje</SelectItem>
+                                <SelectItem value="tomorrow">Amanhã</SelectItem>
+                                <SelectItem value="in_3_days">
+                                  Em 3 dias
+                                </SelectItem>
+                                <SelectItem value="in_7_days">
+                                  Em uma semana
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <div className="rounded-md border">
+                              <Calendar
+                                mode="single"
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                disabled={(date) => date < new Date()}
+                                initialFocus
+                                locale={ptBR}
+                                className="w-full"
+                              />
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="time"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Hora da Reunião</FormLabel>
+                        <FormControl>
+                          <Input type="time" {...field} className="h-10" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </motion.div>
+            )}
+
+            {currentStep === 3 && (
+              <motion.div
+                initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="py-6 text-center md:py-8"
+              >
+                <h2 className="mb-4 text-xl font-bold text-gray-900 md:text-2xl">
+                  Reunião agendada com sucesso!
+                </h2>
+                <p className="mb-6 text-sm text-gray-600 md:text-base">
+                  Obrigado por enviar suas informações! Você já pode acessar a
+                  página de acompanhamento do seu projeto.
+                </p>
+
+                {meeting?.projectId && (
+                  <Button
+                    onClick={() => handleFollowUpNavigation(meeting.projectId)}
+                    className="w-full sm:w-auto"
+                  >
+                    Acompanhar Projeto
+                  </Button>
+                )}
+              </motion.div>
+            )}
+
+            {currentStep !== steps.length - 1 && (
+              <div className="flex flex-col justify-between gap-3 pt-6 sm:flex-row md:pt-8">
+                <Button
+                  type="button"
+                  onClick={prev}
+                  disabled={currentStep === 0}
+                  variant="outline"
+                  className="order-2 w-full sm:order-1 sm:w-auto"
+                >
+                  Anterior
+                </Button>
+                {currentStep === steps.length - 2 ? (
+                  <Button
+                    type="button"
+                    disabled={createInitialMeetingLoading}
+                    onClick={async () => {
+                      const fields = steps[currentStep].fields;
+                      const isValid = await form.trigger(
+                        fields as FieldName[],
+                        {
+                          shouldFocus: true,
+                        },
+                      );
+
+                      if (isValid) {
+                        await processForm(form.getValues());
+                      }
+                    }}
+                    className="order-1 w-full sm:order-2 sm:w-auto"
+                  >
+                    {createInitialMeetingLoading ? "Enviando..." : "Enviar"}
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    onClick={next}
+                    disabled={currentStep === steps.length - 1}
+                    className="order-1 w-full sm:order-2 sm:w-auto"
+                  >
+                    Próximo
+                  </Button>
+                )}
+              </div>
+            )}
+          </form>
+        </Form>
+      </div>
+    </div>
   );
 }
