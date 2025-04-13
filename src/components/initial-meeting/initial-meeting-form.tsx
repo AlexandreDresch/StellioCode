@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, type SubmitHandler } from "react-hook-form";
@@ -43,6 +43,8 @@ import useCreateInitialMeeting from "@/hooks/api/useCreateInitialMeeting";
 import { useNavigate } from "react-router-dom";
 import { InitialMeetingSchema } from "@/schemas/event-schemas";
 import { steps } from "@/constants/initial-meeting";
+import SuccessAnimation from "./success-animation";
+import UserContext from "@/context/user-context";
 
 type Inputs = z.infer<typeof InitialMeetingSchema>;
 
@@ -57,6 +59,9 @@ export default function InitialMeetingForm() {
     useCreateInitialMeeting();
 
   const navigate = useNavigate();
+
+  const userContext = useContext(UserContext);
+  const prevMeetingId = useRef<string>();
 
   useEffect(() => {
     getPlans();
@@ -81,6 +86,19 @@ export default function InitialMeetingForm() {
     },
   });
 
+  useEffect(() => {
+    if (meeting?.clientId && meeting.clientId !== prevMeetingId.current) {
+      prevMeetingId.current = meeting.clientId;
+
+      const userData = {
+        id: meeting.clientGoogleId,
+        fullName: meeting.clientName,
+        role: "client",
+      };
+      userContext.setUserData(userData);
+    }
+  }, [meeting, userContext]);
+
   const processForm: SubmitHandler<Inputs> = async (data) => {
     try {
       const selectedService = services?.find(
@@ -95,6 +113,7 @@ export default function InitialMeetingForm() {
       const meetingData = {
         googleId: data.googleId,
         email: data.email,
+        name: data.name,
         profilePicture: data.profilePicture,
         planId: data.planId,
         serviceId: data.serviceId,
@@ -491,10 +510,10 @@ export default function InitialMeetingForm() {
                     control={form.control}
                     name="time"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="flex flex-col">
                         <FormLabel>Hora da Reunião</FormLabel>
                         <FormControl>
-                          <Input type="time" {...field} className="h-10" />
+                          <Input type="time" {...field} className="h-9" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -509,16 +528,18 @@ export default function InitialMeetingForm() {
                 initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="py-6 text-center md:py-8"
+                className="w-full space-y-10 rounded-xl border-2 border-dashed border-border bg-background p-14 py-6 text-center transition duration-500 hover:border-border/80 hover:bg-muted/50 hover:duration-200 md:py-8"
               >
-                <h2 className="mb-4 text-xl font-bold text-gray-900 md:text-2xl">
+                <div className="flex h-32 w-full justify-center">
+                  <SuccessAnimation />
+                </div>
+                <h2 className="mb-4 text-xl font-semibold text-gray-900 md:text-2xl">
                   Reunião agendada com sucesso!
                 </h2>
                 <p className="mb-6 text-sm text-gray-600 md:text-base">
                   Obrigado por enviar suas informações! Você já pode acessar a
                   página de acompanhamento do seu projeto.
                 </p>
-
                 {meeting?.projectId && (
                   <Button
                     onClick={() => handleFollowUpNavigation(meeting.projectId)}
@@ -560,7 +581,7 @@ export default function InitialMeetingForm() {
                     }}
                     className="order-1 w-full sm:order-2 sm:w-auto"
                   >
-                    {createInitialMeetingLoading ? "Enviando..." : "Enviar"}
+                    {createInitialMeetingLoading ? "Enviando..." : "Agendar"}
                   </Button>
                 ) : (
                   <Button
