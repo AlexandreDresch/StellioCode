@@ -62,7 +62,7 @@ const AnimatedText = ({ text }: { text: string }) => {
 
 export default function Hero() {
   return (
-    <div className="flex-colitems-center relative -z-10 flex min-h-screen w-full justify-center">
+    <div className="relative -z-10 flex min-h-screen w-full items-center justify-center">
       <div className="hidden h-screen md:flex xl:flex">
         <video
           autoPlay
