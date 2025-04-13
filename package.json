@@ -54,6 +54,7 @@
     "framer-motion": "^11.14.4",
     "jwt-decode": "^4.0.0",
     "keen-slider": "^6.8.6",
+    "lottie-react": "^2.4.1",
     "lucide-react": "^0.468.0",
     "motion": "^11.16.0",
     "next-themes": "^0.4.5",
