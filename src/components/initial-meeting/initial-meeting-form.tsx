@@ -45,6 +45,7 @@ import { InitialMeetingSchema } from "@/schemas/event-schemas";
 import { steps } from "@/constants/initial-meeting";
 import SuccessAnimation from "./success-animation";
 import UserContext from "@/context/user-context";
+import { ShimmerText } from "../shimmer-text";
 
 type Inputs = z.infer<typeof InitialMeetingSchema>;
 
@@ -542,10 +543,27 @@ export default function InitialMeetingForm() {
                 </p>
                 {meeting?.projectId && (
                   <Button
+                    variant={"outline"}
                     onClick={() => handleFollowUpNavigation(meeting.projectId)}
-                    className="w-full sm:w-auto"
+                    className="group relative inline-flex w-full overflow-hidden rounded-md p-[2px] hover:bg-white sm:w-auto"
                   >
-                    Acompanhar Projeto
+                    <span className="inline-flex h-full w-full cursor-pointer items-center justify-center px-8 py-3 text-sm font-medium backdrop-blur-3xl transition-all duration-300">
+                      <span className="relative">Acompanhar Projeto</span>
+
+                      <svg
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
+                      >
+                        <path
+                          d="M13 5l7 7-7 7M5 5l7 7-7 7"
+                          stroke-width="2"
+                          stroke-linejoin="round"
+                          stroke-linecap="round"
+                        ></path>
+                      </svg>
+                    </span>
                   </Button>
                 )}
               </motion.div>
@@ -565,6 +583,9 @@ export default function InitialMeetingForm() {
                 {currentStep === steps.length - 2 ? (
                   <Button
                     type="button"
+                    variant={
+                      createInitialMeetingLoading ? "outline" : "default"
+                    }
                     disabled={createInitialMeetingLoading}
                     onClick={async () => {
                       const fields = steps[currentStep].fields;
@@ -581,7 +602,16 @@ export default function InitialMeetingForm() {
                     }}
                     className="order-1 w-full sm:order-2 sm:w-auto"
                   >
-                    {createInitialMeetingLoading ? "Enviando..." : "Agendar"}
+                    {createInitialMeetingLoading ? (
+                      <ShimmerText
+                        duration={1.4}
+                        className="text-sm [--base-color:theme(colors.slate.600)] [--base-gradient-color:theme(colors.slate.200)] dark:[--base-color:theme(colors.slate.700)] dark:[--base-gradient-color:theme(colors.slate.400)]"
+                      >
+                        Agendando...
+                      </ShimmerText>
+                    ) : (
+                      "Agendar"
+                    )}
                   </Button>
                 ) : (
                   <Button
