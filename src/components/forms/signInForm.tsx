@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -16,15 +16,14 @@ import useLogin from "@/hooks/api/useLogin";
 import { useNavigate } from "react-router-dom";
 import UserContext from "@/context/user-context";
 import { toast } from "sonner";
-
-const formSchema = z.object({
-  email: z.string().min(2).max(50),
-  password: z.string().min(2).max(50),
-});
+import { Eye, EyeOff } from "lucide-react";
+import { loginSchema } from "@/schemas/auth-schemas";
 
 export default function SignInForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -37,7 +36,12 @@ export default function SignInForm() {
 
   const { setUserData } = userContext;
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const toggleVisibility = () => setIsVisible((prevState) => !prevState);
+  const handleHomeNavigation = () => {
+    navigate("/");
+  };
+
+  function onSubmit(values: z.infer<typeof loginSchema>) {
     login({
       data: {
         email: values.email,
@@ -45,8 +49,6 @@ export default function SignInForm() {
       },
     })
       .then((response) => {
-        // Receber e armazenar o token JWT no localStorage
-        console.log(response);
         if (
           response &&
           response.status !== "pending" &&
@@ -54,19 +56,18 @@ export default function SignInForm() {
         ) {
           setUserData(response);
           localStorage.setItem("userData", JSON.stringify(response));
-          console.log(
-            "Usuário salvo no localStorage:",
-            localStorage.getItem("userData"),
-          );
-          // Redirecionar para o dashboard
           navigate("/dashboard");
         } else {
-          toast.error("Usuário com pendência de aprovação ou recusado.");
+          toast.error(
+            "Seu cadastro ainda não foi aprovado pelos nossos administradores.",
+          );
         }
       })
       .catch(() => {
         console.error("Erro: ", useLoginError);
-        toast.error("Erro ao autenticar. Verifique suas credenciais.");
+        toast.error(
+          "Erro ao entrar na sua conta. Por favor, verifique suas credenciais e tente novamente.",
+        );
       });
   }
 
@@ -81,7 +82,11 @@ export default function SignInForm() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input className="" {...field} />
+                  <Input
+                    className="text-sm"
+                    {...field}
+                    placeholder="john@email.com"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -94,15 +99,47 @@ export default function SignInForm() {
               <FormItem>
                 <FormLabel>Senha</FormLabel>
                 <FormControl>
-                  <Input className="" {...field} />
+                  <div className="relative">
+                    <Input
+                      className="text-sm"
+                      {...field}
+                      type={isVisible ? "text" : "password"}
+                    />
+                    <button
+                      className="absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-lg text-muted-foreground/80 outline-offset-2 transition-colors hover:text-foreground focus:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+                      type="button"
+                      onClick={toggleVisibility}
+                      aria-label={
+                        isVisible ? "Esconder senha" : "Mostrar senha"
+                      }
+                      aria-pressed={isVisible}
+                      aria-controls="password"
+                    >
+                      {isVisible ? (
+                        <EyeOff size={16} strokeWidth={2} aria-hidden="true" />
+                      ) : (
+                        <Eye size={16} strokeWidth={2} aria-hidden="true" />
+                      )}
+                    </button>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit" className="px-6">
-            Entrar
-          </Button>
+          <div className="flex w-full items-center justify-between">
+            <Button
+              variant={"outline"}
+              className="px-6"
+              type="button"
+              onClick={handleHomeNavigation}
+            >
+              Voltar
+            </Button>
+            <Button type="submit" className="min-w-40 px-6">
+              Entrar
+            </Button>
+          </div>
         </form>
       </Form>
 
