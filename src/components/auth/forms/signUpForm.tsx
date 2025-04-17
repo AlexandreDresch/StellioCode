@@ -18,6 +18,7 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import useRegister from "@/hooks/api/useRegister";
+import { PasswordCheckInput } from "../password-check-input";
 
 // Regex para validação de email
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -72,10 +73,10 @@ export default function SignUpForm() {
       email: "",
       password: "",
       phone: "",
-      level: "junior", // Valor padrão
+      level: "junior",
       technologies: [],
     },
-    mode: "onChange", // Permite verificar a validade dos campos em tempo real
+    mode: "onChange",
   });
 
   const { register } = useRegister();
@@ -91,10 +92,8 @@ export default function SignUpForm() {
         level: values.level,
         technologies: values.technologies,
       };
-      console.log("Enviando dados para API:", JSON.stringify(formattedData));
 
       register({ data: formattedData });
-      console.log("Cadastro bem-sucedido!");
       alert("Cadastro realizado com sucesso!");
     } catch (error) {
       console.error("Erro no cadastro:", error);
@@ -104,96 +103,95 @@ export default function SignUpForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="grid grid-cols-2 gap-x-4 gap-y-6">
-          <FormField
-            control={form.control}
-            name="fullName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nome Completo</FormLabel>
-                <FormControl>
-                  <Input
-                    className=""
-                    placeholder="Ex: Alex Silva de Oliveira"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    className=""
-                    placeholder="Ex: exemplo@gmail.com"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Senha</FormLabel>
-                <FormControl>
-                  <Input className="" placeholder="Ex: 123456Aa*" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Telefone</FormLabel>
-                <FormControl>
-                  <Input
-                    className=""
-                    placeholder="Ex: 11987654321"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="level"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nível</FormLabel>
-                <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <SelectTrigger>{translateLevel(field.value)}</SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="junior">Júnior</SelectItem>
-                      <SelectItem value="mid_level">Pleno</SelectItem>
-                      <SelectItem value="senior">Sênior</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <FormField
+          control={form.control}
+          name="fullName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nome Completo</FormLabel>
+              <FormControl>
+                <Input
+                  className=""
+                  placeholder="Ex: Alex Silva de Oliveira"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input
+                  className=""
+                  placeholder="Ex: exemplo@gmail.com"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Senha</FormLabel>
+              <FormControl>
+                <PasswordCheckInput
+                  value={field.value}
+                  onChange={(e) => {
+                    field.onChange(e);
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Telefone</FormLabel>
+              <FormControl>
+                <Input className="" placeholder="Ex: 11987654321" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="level"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nível</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <SelectTrigger>{translateLevel(field.value)}</SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="junior">Júnior</SelectItem>
+                    <SelectItem value="mid_level">Pleno</SelectItem>
+                    <SelectItem value="senior">Sênior</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="technologies"

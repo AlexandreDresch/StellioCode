@@ -1,8 +1,8 @@
-import SignInForm from "@/components/forms/signInForm";
-import SignUpForm from "@/components/forms/signUpForm";
+import SignInForm from "@/components/auth/forms/signInForm";
+import SignUpForm from "@/components/auth/forms/signUpForm";
 import { IconCloud } from "@/components/iconCloud";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { technologySlugs } from "@/constants/geral";
+import { technologySlugs } from "@/constants/general";
 
 export default function Login() {
   return (
