@@ -263,3 +263,8 @@ export type RegisterData = {
   level: "junior" | "mid" | "senior";
   technologies: string;
 };
+
+export type Tag = {
+  id: string;
+  label: string;
+};

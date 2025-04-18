@@ -14,7 +14,7 @@ export default function Login() {
       <div className="flex w-full items-center justify-center md:w-1/2">
         <Tabs
           defaultValue="login"
-          className="w-full max-w-md rounded-lg border border-gray-300 p-4"
+          className="w-full max-w-lg rounded-lg border border-gray-300 p-4"
         >
           <img
             src="logo.png"
@@ -23,7 +23,7 @@ export default function Login() {
           />
 
           <div className="flex justify-center">
-            <TabsList className="mb-4 flex w-full max-w-xs justify-center">
+            <TabsList className="mb-4 flex w-full max-w-sm justify-center">
               <TabsTrigger value="login" className="w-1/2 text-sm">
                 Entrar
               </TabsTrigger>
@@ -33,7 +33,7 @@ export default function Login() {
             </TabsList>
           </div>
 
-          <TabsContent value="login">
+          <TabsContent value="login" className="w-full max-w-md">
             <SignInForm />
           </TabsContent>
           <TabsContent value="createAccount">
