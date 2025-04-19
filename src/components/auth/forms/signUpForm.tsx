@@ -39,44 +39,21 @@ import { PasswordCheckInput } from "../password-check-input";
 import { translateDeveloperLevel } from "@/lib/utils";
 import { TagsSelector } from "../tags-selector";
 import { technologyTags } from "@/constants/general";
-import { Tag } from "@/types";
-
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const phoneRegex = /^\(?\d{2}\)?\s?\d{1}?\d{4}[-\s]?\d{4}$/;
-const strongPasswordRegex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
-
-const formSchema = z.object({
-  fullName: z.string().min(2, "O nome deve ter no mínimo 2 caracteres").max(50),
-  email: z.string().regex(emailRegex, "Insira um email válido"),
-  password: z.string().regex(strongPasswordRegex),
-  phone: z
-    .string()
-    .regex(
-      phoneRegex,
-      "Número de telefone inválido. Deve seguir o formato brasileiro, como (11) 91234-5678",
-    ),
-  level: z.enum(["junior", "mid_level", "senior"]),
-  technologies: z
-    .array(
-      z
-        .string()
-        .min(1, "O nome da tecnologia deve ter pelo menos 1 caractere."),
-    )
-    .nonempty("É necessário incluir pelo menos uma tecnologia."),
-});
+import { signUpSchema } from "@/schemas/auth-schemas";
+import { toast } from "sonner";
 
 export default function SignUpForm() {
   const [step, setStep] = useState(1);
   const totalSteps = 3;
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof signUpSchema>>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
       fullName: "",
       email: "",
       password: "",
       phone: "",
+      github: "",
       level: "junior",
       technologies: [],
     },
@@ -99,7 +76,7 @@ export default function SignUpForm() {
     {
       title: "Experiência Profissional",
       icon: <Code className="h-5 w-5" />,
-      fields: ["level", "technologies"],
+      fields: ["github", "level", "technologies"],
     },
   ];
 
@@ -110,7 +87,7 @@ export default function SignUpForm() {
 
     for (const field of currentStepFields) {
       const fieldState = form.getFieldState(
-        field as keyof z.infer<typeof formSchema>,
+        field as keyof z.infer<typeof signUpSchema>,
       );
       if (fieldState.invalid) {
         isValid = false;
@@ -118,7 +95,7 @@ export default function SignUpForm() {
       }
 
       const fieldValue = form.getValues(
-        field as keyof z.infer<typeof formSchema>,
+        field as keyof z.infer<typeof signUpSchema>,
       );
       if (
         !fieldValue ||
@@ -134,7 +111,7 @@ export default function SignUpForm() {
 
   const goToNextStep = () => {
     if (step < totalSteps) {
-      form.trigger(currentStepFields as (keyof z.infer<typeof formSchema>)[]);
+      form.trigger(currentStepFields as (keyof z.infer<typeof signUpSchema>)[]);
 
       if (validateCurrentStep()) {
         setStep(step + 1);
@@ -148,7 +125,7 @@ export default function SignUpForm() {
     }
   };
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof signUpSchema>) {
     try {
       const formattedData = {
         fullName: values.fullName,
@@ -161,12 +138,12 @@ export default function SignUpForm() {
       };
 
       register({ data: formattedData });
-      alert("Cadastro realizado com sucesso!");
+      toast.success("Cadastro realizado com sucesso!");
       form.reset();
       setStep(1);
     } catch (error) {
       console.error("Erro no cadastro:", error);
-      alert("Erro ao realizar cadastro!");
+      toast.error("Erro ao realizar cadastro, tente novamente.");
     }
   }
 
@@ -271,6 +248,23 @@ export default function SignUpForm() {
               <>
                 <FormField
                   control={form.control}
+                  name="github"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Perfil do GitHub</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="https://github.com/seu-usuario"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="level"
                   render={({ field }) => (
                     <FormItem>
@@ -306,8 +300,8 @@ export default function SignUpForm() {
                       <FormControl>
                         <TagsSelector
                           tags={technologyTags}
-                          selectedTags={field.value as unknown as Tag[]}
-                          onChange={field.onChange}
+                          selectedTags={field.value}
+                          onChange={(tags) => field.onChange(tags)}
                         />
                       </FormControl>
                       <FormMessage />
