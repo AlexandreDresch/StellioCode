@@ -101,6 +101,12 @@ export function formatDateToCustomString(date: Date): string {
   return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
 
+/**
+ * Retrieves the current month and year as a formatted string.
+ *
+ * @returns {string} A string representing the current month and year in the format "Month Year".
+ *                   For example: "Janeiro 2023".
+ */
 export function getCurrentMonthYear() {
   const months = [
     "Janeiro",
@@ -124,10 +130,29 @@ export function getCurrentMonthYear() {
   return `${month} ${year}`;
 }
 
+/**
+ * Extracts the time portion from an ISO 8601 date-time string.
+ *
+ * @param dateTimeString - The ISO 8601 date-time string to extract the time from.
+ * @returns The time portion of the date-time string in the format "HH:mm:ss.sssZ".
+ *
+ * @example
+ * ```typescript
+ * const time = getTimeFromDate("2023-03-15T14:30:00Z");
+ * console.log(time); // Output: "14:30:00Z"
+ * ```
+ */
 export function getTimeFromDate(dateTimeString: string) {
   return dateTimeString.split("T")[1];
 }
 
+/**
+ * Formats a given Date object into an ISO 8601 string representation
+ * with the format `YYYY-MM-DDTHH:mm`.
+ *
+ * @param date - The Date object to format.
+ * @returns A string representing the date in ISO 8601 format.
+ */
 export function formatDateToISO(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -138,6 +163,15 @@ export function formatDateToISO(date: Date): string {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
+/**
+ * Updates the time portion of an ISO 8601 date string with a new time.
+ *
+ * @param isoDate - The ISO 8601 date string to update (e.g., "2023-03-15T10:00:00Z").
+ * @param newTime - The new time to set in "HH:mm" format (e.g., "14:30").
+ * @returns A new ISO 8601 date string with the updated time.
+ *
+ * @throws Will throw an error if the input strings are not in the expected format.
+ */
 export function setTimeInISODate(isoDate: string, newTime: string): string {
   const [hours, minutes] = newTime.split(":").map(Number);
   const [year, month, day] = isoDate.split("T")[0].split("-").map(Number);
@@ -147,6 +181,19 @@ export function setTimeInISODate(isoDate: string, newTime: string): string {
   return formatDateToISO(date);
 }
 
+/**
+ * Formats a given date string into the format "DD/MM/YYYY".
+ *
+ * @param dateString - The date string to be formatted. It should be in a format
+ *                     that can be parsed by the JavaScript `Date` object.
+ * @returns A string representing the formatted date in "DD/MM/YYYY" format.
+ *
+ * @example
+ * ```typescript
+ * const formattedDate = formatDate("2023-03-15");
+ * console.log(formattedDate); // Output: "15/03/2023"
+ * ```
+ */
 export function formatDate(dateString: string) {
   const data = new Date(dateString);
 
@@ -156,3 +203,36 @@ export function formatDate(dateString: string) {
 
   return `${day}/${month}/${year}`;
 }
+
+/**
+ * A regular expression to validate GitHub profile URLs.
+ *
+ * This regex ensures that the URL:
+ * - Starts with "https://github.com/"
+ * - Contains a valid GitHub username, which:
+ *   - Can include lowercase letters, digits, and hyphens.
+ *   - Cannot start or end with a hyphen.
+ *   - Must be between 1 and 39 characters long.
+ *
+ * The regex is case-insensitive.
+ */
+export const githubRegex =
+  /^https:\/\/github\.com\/[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i;
+
+/**
+ * A regular expression to validate phone numbers.
+ *
+ * The pattern matches phone numbers with the following format:
+ * - Optional parentheses around the area code (2 digits).
+ * - An optional space after the area code.
+ * - An optional single digit before the main number.
+ * - A 4-digit main number followed by an optional hyphen or space.
+ * - A 4-digit trailing number.
+ *
+ * Examples of valid formats:
+ * - (12) 3456-7890
+ * - 12 34567890
+ * - 123456-7890
+ * - 1234567890
+ */
+export const phoneRegex = /^\(?\d{2}\)?\s?\d{1}?\d{4}[-\s]?\d{4}$/;
