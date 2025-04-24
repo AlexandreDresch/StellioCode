@@ -84,7 +84,7 @@ export default function CallControls({ onLeave }: CallControlsProps) {
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            {microphone.isEnabled ? "Mute Microphone" : "Unmute Microphone"}
+            {microphone.isEnabled ? "Desativar Microfone" : "Ativar Microfone"}
           </TooltipContent>
         </Tooltip>
 
@@ -104,7 +104,7 @@ export default function CallControls({ onLeave }: CallControlsProps) {
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            {camera.isEnabled ? "Turn Off Camera" : "Turn On Camera"}
+            {camera.isEnabled ? "Desligar Câmera" : "Ligar Câmera"}
           </TooltipContent>
         </Tooltip>
 
@@ -120,7 +120,9 @@ export default function CallControls({ onLeave }: CallControlsProps) {
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            {isScreenSharing ? "Stop Screen Sharing" : "Share Screen"}
+            {isScreenSharing
+              ? "Parar de Compartilhar Tela"
+              : "Compartilhar Tela"}
           </TooltipContent>
         </Tooltip>
 
@@ -135,7 +137,7 @@ export default function CallControls({ onLeave }: CallControlsProps) {
               <PhoneOff className="h-5 w-5" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Leave Call</TooltipContent>
+          <TooltipContent>Sair da Chamada</TooltipContent>
         </Tooltip>
       </div>
     </TooltipProvider>

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 
 import { useCallStateHooks } from "@stream-io/video-react-sdk";
 import { Mic, MicOff, Video, VideoOff } from "lucide-react";
@@ -7,31 +7,38 @@ export default function ParticipantsList() {
   const { useParticipants } = useCallStateHooks();
   const participants = useParticipants();
 
-  const getVideoTrack = (participant: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const hasVideo = (participant: any) => {
     return (
-      participant.videoTrack ||
-      (participant.publishedTracks?.includes("videoTrack") &&
-        participant.trackByName?.["videoTrack"]) ||
-      (participant.videoStream && participant.videoStream.active)
+      participant.hasVideo ||
+      participant.videoOn ||
+      participant.publishedTracks?.includes("videoTrack") ||
+      (participant.videoStream instanceof MediaStream &&
+        participant.videoStream.active) ||
+      participant.tracks?.video?.track instanceof MediaStreamTrack
     );
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const hasAudio = (participant: any) => {
     return (
       participant.hasAudio ||
+      participant.audioOn ||
       participant.publishedTracks?.includes("audioTrack") ||
-      (participant.audioStream && participant.audioStream.active)
+      (participant.audioStream instanceof MediaStream &&
+        participant.audioStream.active) ||
+      participant.tracks?.audio?.track instanceof MediaStreamTrack
     );
   };
 
   return (
     <div className="h-full overflow-auto p-4">
       <h2 className="mb-4 text-lg font-semibold">
-        Participants ({participants.length})
+        Participantes ({participants.length})
       </h2>
       <div className="space-y-2">
         {participants.map((participant) => {
-          const hasVideo = !!getVideoTrack(participant);
+          const hasVideoEnabled = hasVideo(participant);
           const hasAudioEnabled = hasAudio(participant);
 
           return (
@@ -44,9 +51,9 @@ export default function ParticipantsList() {
                   {participant.name?.[0] || "?"}
                 </div>
                 <div>
-                  <p className="font-medium">
-                    {participant.name || "Anonymous"}
-                    {participant.isLocalParticipant && " (You)"}
+                  <p className="text-sm font-normal">
+                    {participant.name || "Anonimo"}
+                    {participant.isLocalParticipant && " (Você)"}
                   </p>
                   {participant.isSpeaking && (
                     <p className="text-xs text-muted-foreground">Speaking...</p>
@@ -59,7 +66,7 @@ export default function ParticipantsList() {
                 ) : (
                   <MicOff className="h-4 w-4 text-muted-foreground" />
                 )}
-                {hasVideo ? (
+                {hasVideoEnabled ? (
                   <Video className="h-4 w-4 text-muted-foreground" />
                 ) : (
                   <VideoOff className="h-4 w-4 text-muted-foreground" />

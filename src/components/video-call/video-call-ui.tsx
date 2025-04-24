@@ -12,12 +12,14 @@ import VideoGrid from "./video-grid";
 import CallControls from "./call-controls";
 import ParticipantsList from "./participants-list";
 import { useNavigate, useParams } from "react-router-dom";
+import useUserName from "@/hooks/auth/use-user-name";
 
 export default function VideoCallUI() {
   const [client, setClient] = useState<StreamVideoClient | null>(null);
   const [call, setCall] = useState<Call | null>(null);
-  const [userName] = useState<string>("");
   const [isJoining, setIsJoining] = useState(false);
+
+  const userName = useUserName();
 
   const navigate = useNavigate();
   const { callId: paramCallId } = useParams();
@@ -30,7 +32,7 @@ export default function VideoCallUI() {
 
     const initClient = async () => {
       try {
-        const userId = import.meta.env.VITE_GETSTREAM_USERID;
+        const userId = `user-${Math.random().toString(36).substring(2, 8)}`;
 
         const apiKey = import.meta.env.VITE_GETSTREAM_API_KEY;
         if (!apiKey) {
@@ -41,7 +43,8 @@ export default function VideoCallUI() {
           apiKey,
           user: {
             id: userId,
-            name: "Oliver",
+            name: userName || "Anônimo",
+            type: "guest",
             image: `https://getstream.io/random_svg/?id=${userId}&name=${userName}`,
           },
           token: import.meta.env.VITE_GETSTREAM_TOKEN,
@@ -75,7 +78,6 @@ export default function VideoCallUI() {
         await call.join({ create: false });
         setCall(call);
 
-        // Update URL with call ID
         const params = new URLSearchParams(window.location.search);
         params.set("callId", paramCallId);
         navigate(`${window.location.pathname}?${params.toString()}`);
@@ -98,7 +100,6 @@ export default function VideoCallUI() {
       await call.leave();
       setCall(null);
 
-      // Remove call ID from URL
       const params = new URLSearchParams(window.location.search);
       params.delete("callId");
       navigate(

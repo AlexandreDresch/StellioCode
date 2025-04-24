@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useEffect, useState } from "react";
 import { useCallStateHooks } from "@stream-io/video-react-sdk";
 
@@ -30,17 +32,41 @@ export default function VideoGrid() {
     return "grid-cols-4";
   }, [participants.length]);
 
-  // Helper function to get video track from participant
+  // Helper function to safely get video stream from participant
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const getVideoTrack = (participant: any) => {
-    // Check different possible properties for video track
-    return (
-      participant.videoTrack ||
-      (participant.publishedTracks?.includes("videoTrack") &&
-        participant.trackByName?.["videoTrack"]) ||
-      (participant.videoStream &&
-        new MediaStream([participant.videoStream]).getVideoTracks()[0])
-    );
+  const getVideoStream = (participant: any) => {
+    try {
+      // Check if participant has a videoStream property
+      if (participant.videoStream instanceof MediaStream) {
+        return participant.videoStream;
+      }
+
+      // Check if participant has a videoTrack property that's a MediaStreamTrack
+      if (participant.videoTrack instanceof MediaStreamTrack) {
+        return new MediaStream([participant.videoTrack]);
+      }
+
+      // Check if participant has tracks in a different format
+      if (participant.tracks) {
+        const videoTrack = participant.tracks.video?.track;
+        if (videoTrack instanceof MediaStreamTrack) {
+          return new MediaStream([videoTrack]);
+        }
+      }
+
+      // Check published tracks
+      if (
+        participant.publishedTracks?.includes("videoTrack") &&
+        participant.trackByName?.["videoTrack"] instanceof MediaStreamTrack
+      ) {
+        return new MediaStream([participant.trackByName["videoTrack"]]);
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error getting video stream:", error);
+      return null;
+    }
   };
 
   // Helper function to check if participant has audio
@@ -48,23 +74,40 @@ export default function VideoGrid() {
   const hasAudio = (participant: any) => {
     return (
       participant.hasAudio ||
+      participant.audioOn ||
       participant.publishedTracks?.includes("audioTrack") ||
-      (participant.audioStream && participant.audioStream.active)
+      (participant.audioStream instanceof MediaStream &&
+        participant.audioStream.active) ||
+      participant.tracks?.audio?.track instanceof MediaStreamTrack
     );
   };
 
-  // Remove the SpeakerLayout since it might not be available
+  // Helper function to check if participant has video
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const hasVideo = (participant: any) => {
+    return (
+      participant.hasVideo ||
+      participant.videoOn ||
+      participant.publishedTracks?.includes("videoTrack") ||
+      (participant.videoStream instanceof MediaStream &&
+        participant.videoStream.active) ||
+      participant.tracks?.video?.track instanceof MediaStreamTrack
+    );
+  };
+
+  // Speaker layout
   if (layout === "speaker" && dominantSpeaker) {
-    const dominantVideoTrack = getVideoTrack(dominantSpeaker);
+    const dominantVideoStream = getVideoStream(dominantSpeaker);
+    const hasDominantVideo = hasVideo(dominantSpeaker);
 
     return (
       <div className="h-full w-full">
         <div className="relative h-full w-full overflow-hidden rounded-lg bg-muted">
-          {dominantVideoTrack ? (
+          {hasDominantVideo && dominantVideoStream ? (
             <video
               ref={(node) => {
-                if (node && dominantVideoTrack) {
-                  node.srcObject = new MediaStream([dominantVideoTrack]);
+                if (node) {
+                  node.srcObject = dominantVideoStream;
                 }
               }}
               autoPlay
@@ -88,10 +131,12 @@ export default function VideoGrid() {
     );
   }
 
+  // Grid layout
   return (
     <div className={`grid h-full w-full gap-1 ${getGridTemplateColumns()}`}>
       {participants.map((participant) => {
-        const videoTrack = getVideoTrack(participant);
+        const videoStream = getVideoStream(participant);
+        const hasVideoEnabled = hasVideo(participant);
         const hasAudioEnabled = hasAudio(participant);
 
         return (
@@ -99,11 +144,11 @@ export default function VideoGrid() {
             key={participant.sessionId}
             className="relative aspect-video overflow-hidden rounded-lg bg-muted"
           >
-            {videoTrack ? (
+            {hasVideoEnabled && videoStream ? (
               <video
                 ref={(node) => {
-                  if (node && videoTrack) {
-                    node.srcObject = new MediaStream([videoTrack]);
+                  if (node) {
+                    node.srcObject = videoStream;
                   }
                 }}
                 autoPlay
@@ -129,7 +174,7 @@ export default function VideoGrid() {
               {!hasAudioEnabled && (
                 <div className="rounded bg-background/80 p-1">🔇</div>
               )}
-              {!videoTrack && (
+              {!hasVideoEnabled && (
                 <div className="rounded bg-background/80 p-1">🎦</div>
               )}
             </div>
