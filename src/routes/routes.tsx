@@ -18,7 +18,7 @@ export default function Routes() {
     <BrowserRouter>
       <Switch>
         <Route element={<Home />} path="/" />
-        <Route element={<Meeting />} path="/reuniao" />
+        <Route element={<Meeting />} path="/reuniao/:callId" />
         <Route
           path="/dashboard"
           element={
