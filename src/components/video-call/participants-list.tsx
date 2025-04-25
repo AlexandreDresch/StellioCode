@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallStateHooks } from "@stream-io/video-react-sdk";
 import { Mic, MicOff, Video, VideoOff } from "lucide-react";
 
@@ -32,7 +30,7 @@ export default function ParticipantsList() {
   };
 
   return (
-    <div className="h-full overflow-auto p-4">
+    <div className="h-full overflow-auto p-4 md:pt-0">
       <h2 className="mb-4 text-lg font-semibold">
         Participantes ({participants.length})
       </h2>
@@ -56,7 +54,7 @@ export default function ParticipantsList() {
                     {participant.isLocalParticipant && " (Você)"}
                   </p>
                   {participant.isSpeaking && (
-                    <p className="text-xs text-muted-foreground">Speaking...</p>
+                    <p className="text-xs text-muted-foreground">Falando...</p>
                   )}
                 </div>
               </div>

@@ -119,24 +119,26 @@ export default function VideoCallUI() {
   }
 
   return (
-    <StreamVideo client={client}>
-      <StreamCall call={call}>
-        <div className="flex h-screen flex-col md:flex-row">
-          <div className="flex-1 overflow-hidden">
-            <div className="relative h-full w-full">
-              <VideoGrid />
-              <div className="absolute bottom-4 left-0 right-0 flex justify-center">
-                <CallControls onLeave={handleLeaveCall} />
+    <section className="mt-20 h-auto w-full bg-background">
+      <StreamVideo client={client}>
+        <StreamCall call={call}>
+          <div className="flex h-[88vh] flex-col md:flex-row">
+            <div className="flex-1 overflow-hidden">
+              <div className="relative h-full w-full">
+                <VideoGrid />
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+                  <CallControls onLeave={handleLeaveCall} />
+                </div>
+              </div>
+            </div>
+            <div className="w-full border-t border-border md:w-80 md:border-l md:border-t-0">
+              <div className="h-full overflow-y-auto">
+                <ParticipantsList />
               </div>
             </div>
           </div>
-          <div className="w-full border-t border-border md:w-80 md:border-l md:border-t-0">
-            <div className="h-full overflow-y-auto">
-              <ParticipantsList />
-            </div>
-          </div>
-        </div>
-      </StreamCall>
-    </StreamVideo>
+        </StreamCall>
+      </StreamVideo>
+    </section>
   );
 }

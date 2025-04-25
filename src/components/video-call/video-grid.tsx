@@ -1,7 +1,6 @@
-"use client";
-
 import { useCallback, useEffect, useState } from "react";
 import { useCallStateHooks } from "@stream-io/video-react-sdk";
+import { MicOff, VideoOff, Volume2 } from "lucide-react";
 
 export default function VideoGrid() {
   const { useParticipants, useLocalParticipant } = useCallStateHooks();
@@ -11,7 +10,6 @@ export default function VideoGrid() {
   const [layout] = useState<"grid" | "speaker">("grid");
   const [dominantSpeaker, setDominantSpeaker] = useState(localParticipant);
 
-  // Update dominant speaker based on who is speaking
   useEffect(() => {
     const interval = setInterval(() => {
       const speakers = participants.filter((p) => p.isSpeaking);
@@ -32,21 +30,17 @@ export default function VideoGrid() {
     return "grid-cols-4";
   }, [participants.length]);
 
-  // Helper function to safely get video stream from participant
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const getVideoStream = (participant: any) => {
     try {
-      // Check if participant has a videoStream property
       if (participant.videoStream instanceof MediaStream) {
         return participant.videoStream;
       }
 
-      // Check if participant has a videoTrack property that's a MediaStreamTrack
       if (participant.videoTrack instanceof MediaStreamTrack) {
         return new MediaStream([participant.videoTrack]);
       }
 
-      // Check if participant has tracks in a different format
       if (participant.tracks) {
         const videoTrack = participant.tracks.video?.track;
         if (videoTrack instanceof MediaStreamTrack) {
@@ -54,7 +48,6 @@ export default function VideoGrid() {
         }
       }
 
-      // Check published tracks
       if (
         participant.publishedTracks?.includes("videoTrack") &&
         participant.trackByName?.["videoTrack"] instanceof MediaStreamTrack
@@ -69,7 +62,6 @@ export default function VideoGrid() {
     }
   };
 
-  // Helper function to check if participant has audio
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const hasAudio = (participant: any) => {
     return (
@@ -82,7 +74,6 @@ export default function VideoGrid() {
     );
   };
 
-  // Helper function to check if participant has video
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const hasVideo = (participant: any) => {
     return (
@@ -95,7 +86,6 @@ export default function VideoGrid() {
     );
   };
 
-  // Speaker layout
   if (layout === "speaker" && dominantSpeaker) {
     const dominantVideoStream = getVideoStream(dominantSpeaker);
     const hasDominantVideo = hasVideo(dominantSpeaker);
@@ -123,15 +113,14 @@ export default function VideoGrid() {
             </div>
           )}
           <div className="absolute bottom-4 left-4 rounded bg-background/80 px-3 py-1 text-lg">
-            {dominantSpeaker.name || "Anonymous"}
-            {dominantSpeaker.isLocalParticipant && " (You)"}
+            {dominantSpeaker.name || "Anônimo"}
+            {dominantSpeaker.isLocalParticipant && " (Você)"}
           </div>
         </div>
       </div>
     );
   }
 
-  // Grid layout
   return (
     <div className={`grid h-full w-full gap-1 ${getGridTemplateColumns()}`}>
       {participants.map((participant) => {
@@ -165,17 +154,25 @@ export default function VideoGrid() {
             )}
 
             <div className="absolute bottom-2 left-2 rounded bg-background/80 px-2 py-1 text-sm">
-              {participant.name || "Anonymous"}
-              {participant.isLocalParticipant && " (You)"}
-              {participant.isSpeaking && " 🔊"}
+              <p className="flex items-center gap-1">
+                {participant.name || "Anonymous"}
+                {participant.isLocalParticipant && " (Você)"}
+                {participant.isSpeaking && (
+                  <Volume2 className="size-3 text-muted-foreground" />
+                )}
+              </p>
             </div>
 
             <div className="absolute right-2 top-2 flex gap-1">
               {!hasAudioEnabled && (
-                <div className="rounded bg-background/80 p-1">🔇</div>
+                <div className="rounded bg-background/80 p-1">
+                  <MicOff className="h-4 w-4 text-muted-foreground" />
+                </div>
               )}
               {!hasVideoEnabled && (
-                <div className="rounded bg-background/80 p-1">🎦</div>
+                <div className="rounded bg-background/80 p-1">
+                  <VideoOff className="h-4 w-4 text-muted-foreground" />
+                </div>
               )}
             </div>
           </div>
