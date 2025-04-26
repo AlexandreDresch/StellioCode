@@ -13,6 +13,7 @@ import CallControls from "./call-controls";
 import ParticipantsList from "./participants-list";
 import { useNavigate, useParams } from "react-router-dom";
 import useUserName from "@/hooks/auth/use-user-name";
+import { toast } from "sonner";
 
 export default function VideoCallUI() {
   const [client, setClient] = useState<StreamVideoClient | null>(null);
@@ -24,8 +25,10 @@ export default function VideoCallUI() {
   const navigate = useNavigate();
   const { callId: paramCallId } = useParams();
 
+  const API_KEY = import.meta.env.VITE_GETSTREAM_API_KEY;
+
   useEffect(() => {
-    if (!import.meta.env.VITE_GETSTREAM_API_KEY) {
+    if (!API_KEY) {
       console.error("Stream API key is missing");
       return;
     }
@@ -34,13 +37,12 @@ export default function VideoCallUI() {
       try {
         const userId = `user-${Math.random().toString(36).substring(2, 8)}`;
 
-        const apiKey = import.meta.env.VITE_GETSTREAM_API_KEY;
-        if (!apiKey) {
+        if (!API_KEY) {
           throw new Error("Stream API key is missing");
         }
 
         const client = new StreamVideoClient({
-          apiKey,
+          apiKey: API_KEY,
           user: {
             id: userId,
             name: userName || "Anônimo",
@@ -65,7 +67,7 @@ export default function VideoCallUI() {
         client.disconnectUser();
       }
     };
-  }, [client, userName]);
+  }, [client, userName, API_KEY]);
 
   useEffect(() => {
     const joinCall = async () => {
@@ -83,6 +85,10 @@ export default function VideoCallUI() {
         navigate(`${window.location.pathname}?${params.toString()}`);
       } catch (error) {
         console.error("Error joining call:", error);
+        toast.error(
+          "Ocorreu um erro ao entrar na chamada. Verifique o agendamento e tente novamente.",
+        );
+        navigate(-1);
       } finally {
         setIsJoining(false);
       }
@@ -102,9 +108,7 @@ export default function VideoCallUI() {
 
       const params = new URLSearchParams(window.location.search);
       params.delete("callId");
-      navigate(
-        `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ""}`,
-      );
+      navigate(-1);
     } catch (error) {
       console.error("Error leaving call:", error);
     }
