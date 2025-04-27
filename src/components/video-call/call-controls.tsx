@@ -25,14 +25,10 @@ export default function CallControls({ onLeave }: CallControlsProps) {
 
   const toggleMicrophone = async () => {
     try {
-      try {
-        if (microphone.isEnabled) {
-          await microphone.microphone.disable();
-        } else {
-          await microphone.microphone.enable();
-        }
-      } catch (error) {
-        console.error("Error toggling microphone mute state:", error);
+      if (microphone.isEnabled) {
+        await microphone.microphone.disable();
+      } else {
+        await microphone.microphone.enable();
       }
     } catch (error) {
       console.error("Error toggling microphone:", error);
@@ -54,14 +50,113 @@ export default function CallControls({ onLeave }: CallControlsProps) {
   const toggleScreenShare = async () => {
     try {
       if (isScreenSharing) {
-        await screenShare.screenShare.disable();
-        setIsScreenSharing(false);
+        if (
+          typeof (screenShare as { disable?: () => Promise<void> }).disable ===
+          "function"
+        ) {
+          await (
+            screenShare.screenShare as unknown as {
+              disable: () => Promise<void>;
+            }
+          ).disable();
+          return;
+        }
+        if (
+          typeof (
+            screenShare as { setEnabled?: (enabled: boolean) => Promise<void> }
+          ).setEnabled === "function"
+        ) {
+          await (
+            screenShare as unknown as {
+              setEnabled: (enabled: boolean) => Promise<void>;
+            }
+          ).setEnabled(false);
+          return;
+        }
+        const manager = screenShare.screenShare;
+        if (manager) {
+          if (
+            typeof (manager as { disable?: () => Promise<void> }).disable ===
+            "function"
+          ) {
+            await (manager as { disable: () => Promise<void> }).disable();
+            return;
+          }
+          if (
+            typeof (
+              manager as { setEnabled?: (enabled: boolean) => Promise<void> }
+            ).setEnabled === "function"
+          ) {
+            await (
+              manager as unknown as {
+                setEnabled: (enabled: boolean) => Promise<void>;
+              }
+            ).setEnabled(false);
+            return;
+          }
+        }
       } else {
-        await screenShare.screenShare.enable();
-        setIsScreenSharing(true);
+        if (
+          typeof (screenShare as { enable?: () => Promise<void> }).enable ===
+          "function"
+        ) {
+          await (
+            screenShare.screenShare as { enable: () => Promise<void> }
+          ).enable();
+          return;
+        }
+        if (
+          typeof (
+            screenShare as { setEnabled?: (enabled: boolean) => Promise<void> }
+          ).setEnabled === "function"
+        ) {
+          await (
+            screenShare as unknown as {
+              setEnabled: (enabled: boolean) => Promise<void>;
+            }
+          ).setEnabled(true);
+          return;
+        }
+        const manager = screenShare.screenShare;
+        if (manager) {
+          if (
+            typeof (manager as { enable?: () => Promise<void> }).enable ===
+            "function"
+          ) {
+            await (manager as { enable: () => Promise<void> }).enable();
+            return;
+          }
+          if (
+            typeof (
+              manager as { setEnabled?: (enabled: boolean) => Promise<void> }
+            ).setEnabled === "function"
+          ) {
+            await (
+              manager as unknown as {
+                setEnabled: (enabled: boolean) => Promise<void>;
+              }
+            ).setEnabled(true);
+            return;
+          }
+          if (
+            typeof (manager as { start?: () => Promise<void> }).start ===
+            "function"
+          ) {
+            if (
+              typeof (manager as { start?: () => Promise<void> }).start ===
+              "function"
+            ) {
+              await (
+                manager as unknown as { start: () => Promise<void> }
+              ).start();
+            }
+            return;
+          }
+        }
       }
     } catch (error) {
       console.error("Error toggling screen share:", error);
+      setIsScreenSharing(false);
     }
   };
 
